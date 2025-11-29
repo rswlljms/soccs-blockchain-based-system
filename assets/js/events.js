@@ -67,11 +67,19 @@ class EventsManager {
         const closeSuccessBtn = document.getElementById('closeSuccessModal');
         if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', () => this.closeSuccessModal());
 
-        // Close when clicking overlays
+        // Close when clicking overlays (but not the modal itself)
         const eventOverlay = document.getElementById('eventModalOverlay');
-        if (eventOverlay) eventOverlay.addEventListener('click', () => this.closeModal());
+        if (eventOverlay) {
+            eventOverlay.addEventListener('click', (e) => {
+                if (e.target === eventOverlay) this.closeModal();
+            });
+        }
         const successOverlay = document.getElementById('successOverlay');
-        if (successOverlay) successOverlay.addEventListener('click', () => this.closeSuccessModal());
+        if (successOverlay) {
+            successOverlay.addEventListener('click', (e) => {
+                if (e.target === successOverlay) this.closeSuccessModal();
+            });
+        }
 
         // Filters and search
         document.getElementById('filter-status').addEventListener('change', async () => {
@@ -172,11 +180,11 @@ class EventsManager {
                             </div>
                             <div>
                                 <div style="font-weight: 600; color: var(--text-primary);">${event.name}</div>
-                                <div style="font-size: 12px; color: var(--text-secondary);">${event.time || '09:00'}</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">${this.formatTime12Hour(event.time)}</div>
                             </div>
                         </div>
                     </td>
-                    <td>${this.formatDate(event.date)}</td>
+                    <td>${this.formatEventDate(event)}</td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <i class="fas fa-map-marker-alt" style="color: var(--text-secondary); font-size: 12px;"></i>
@@ -227,6 +235,16 @@ class EventsManager {
                 document.getElementById('eventStatus').value = event.status;
                 document.getElementById('eventCategory').value = event.category || '';
                 document.getElementById('eventTime').value = event.time || '';
+                
+                // Handle multi-day events
+                if (event.is_multi_day && event.end_date) {
+                    document.getElementById('eventDurationType').value = 'multiple';
+                    document.getElementById('eventEndDate').value = event.end_date;
+                    toggleDateInputs();
+                } else {
+                    document.getElementById('eventDurationType').value = 'single';
+                    toggleDateInputs();
+                }
             }
         } else {
             // Add new event
@@ -234,24 +252,25 @@ class EventsManager {
             document.getElementById('eventForm').reset();
             document.getElementById('eventDate').valueAsDate = new Date();
             document.getElementById('eventTime').value = '09:00';
+            document.getElementById('eventDurationType').value = 'single';
+            toggleDateInputs();
         }
 
-        // Prevent body scrolling
         document.body.classList.add('modal-open');
-        document.getElementById('eventModal').classList.add('show');
         document.getElementById('eventModalOverlay').classList.add('show');
     }
 
     closeModal() {
-        // Re-enable body scrolling
         document.body.classList.remove('modal-open');
-        document.getElementById('eventModal').classList.remove('show');
         document.getElementById('eventModalOverlay').classList.remove('show');
         this.editingEventId = null;
         document.getElementById('eventForm').reset();
+        document.getElementById('eventDurationType').value = 'single';
+        toggleDateInputs();
     }
 
     async saveEvent() {
+        const durationType = document.getElementById('eventDurationType').value;
         const eventData = {
             name: document.getElementById('eventName').value,
             date: document.getElementById('eventDate').value,
@@ -259,7 +278,9 @@ class EventsManager {
             description: document.getElementById('eventDescription').value,
             status: document.getElementById('eventStatus').value,
             time: document.getElementById('eventTime').value || "09:00",
-            category: document.getElementById('eventCategory').value
+            category: document.getElementById('eventCategory').value,
+            is_multi_day: durationType === 'multiple',
+            end_date: durationType === 'multiple' ? document.getElementById('eventEndDate').value : null
         };
 
         try {
@@ -289,7 +310,8 @@ class EventsManager {
                 await this.loadEvents();
                 this.updateSummaryCards();
                 this.displayEvents();
-                this.showSuccessModal();
+                // Small delay to ensure modal is closed before showing success
+                setTimeout(() => this.showSuccessModal(), 100);
             } else {
                 alert('Error: ' + result.error);
             }
@@ -333,17 +355,14 @@ class EventsManager {
     }
 
     showSuccessModal(message = 'Event has been saved successfully') {
-        // Prevent body scrolling
         document.body.classList.add('modal-open');
-        document.querySelector('#successModal p').textContent = message;
-        document.getElementById('successModal').classList.add('show');
+        const msgEl = document.getElementById('successMessage');
+        if (msgEl) msgEl.textContent = message;
         document.getElementById('successOverlay').classList.add('show');
     }
 
     closeSuccessModal() {
-        // Re-enable body scrolling
         document.body.classList.remove('modal-open');
-        document.getElementById('successModal').classList.remove('show');
         document.getElementById('successOverlay').classList.remove('show');
     }
 
@@ -352,8 +371,31 @@ class EventsManager {
         return new Date(dateString).toLocaleDateString(undefined, options);
     }
 
+    formatEventDate(event) {
+        const startDate = new Date(event.date);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        
+        if (event.is_multi_day && event.end_date) {
+            const endDate = new Date(event.end_date);
+            const startStr = startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            const endStr = endDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+            return `${startStr} - ${endStr}`;
+        }
+        
+        return startDate.toLocaleDateString(undefined, options);
+    }
+
     capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    formatTime12Hour(time) {
+        if (!time) return '9:00 AM';
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+        return `${displayHour}:${minutes} ${ampm}`;
     }
 }
 

@@ -30,14 +30,23 @@ try {
     $conn = $database->getConnection();
     
     $datetime = $data['date'] . ' ' . $data['time'];
+    $isMultiDay = isset($data['is_multi_day']) ? (bool)$data['is_multi_day'] : false;
+    $endDatetime = null;
     
-    $query = "INSERT INTO events (title, description, date, location, category, status, created_by, created_at) 
-              VALUES (:title, :description, :date, :location, :category, :status, :created_by, NOW())";
+    if ($isMultiDay && isset($data['end_date']) && !empty($data['end_date'])) {
+        $endTime = isset($data['end_time']) ? $data['end_time'] : $data['time'];
+        $endDatetime = $data['end_date'] . ' ' . $endTime;
+    }
+    
+    $query = "INSERT INTO events (title, description, date, end_date, is_multi_day, location, category, status, created_by, created_at) 
+              VALUES (:title, :description, :date, :end_date, :is_multi_day, :location, :category, :status, :created_by, NOW())";
     
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':title', $data['name'], PDO::PARAM_STR);
     $stmt->bindParam(':description', $data['description'], PDO::PARAM_STR);
     $stmt->bindParam(':date', $datetime, PDO::PARAM_STR);
+    $stmt->bindParam(':end_date', $endDatetime, PDO::PARAM_STR);
+    $stmt->bindParam(':is_multi_day', $isMultiDay, PDO::PARAM_BOOL);
     $stmt->bindParam(':location', $data['location'], PDO::PARAM_STR);
     $stmt->bindParam(':category', $data['category'], PDO::PARAM_STR);
     $stmt->bindParam(':status', $data['status'], PDO::PARAM_STR);

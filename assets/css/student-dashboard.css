@@ -416,6 +416,16 @@ body {
   text-transform: uppercase;
 }
 
+.event-date.multi-day {
+  min-width: 65px;
+  width: 65px;
+}
+
+.event-date.multi-day .day {
+  font-size: 16px;
+  letter-spacing: -0.5px;
+}
+
 .event-info {
   flex: 1;
 }
@@ -434,12 +444,41 @@ body {
 }
 
 .event-tag {
-  background: #e0e7ff;
-  color: #3730a3;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Academic - Blue */
+.event-tag.academic {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* Competition - Orange */
+.event-tag.competition {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* Social - Green */
+.event-tag.social {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Workshop - Purple */
+.event-tag.workshop {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+/* Default/General */
+.event-tag.general {
+  background: #e0e7ff;
+  color: #3730a3;
 }
 
 /* === GOVERNANCE CARD === */

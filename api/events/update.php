@@ -41,6 +41,20 @@ try {
         $params[':date'] = $datetime;
     }
     
+    if (isset($data['is_multi_day'])) {
+        $updateFields[] = "is_multi_day = :is_multi_day";
+        $params[':is_multi_day'] = (bool)$data['is_multi_day'];
+        
+        if ($data['is_multi_day'] && isset($data['end_date']) && !empty($data['end_date'])) {
+            $endTime = isset($data['end_time']) ? $data['end_time'] : (isset($data['time']) ? $data['time'] : '23:59');
+            $endDatetime = $data['end_date'] . ' ' . $endTime;
+            $updateFields[] = "end_date = :end_date";
+            $params[':end_date'] = $endDatetime;
+        } else {
+            $updateFields[] = "end_date = NULL";
+        }
+    }
+    
     if (isset($data['location'])) {
         $updateFields[] = "location = :location";
         $params[':location'] = $data['location'];

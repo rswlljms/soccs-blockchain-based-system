@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     preventSidebarFlash();
     loadActiveElection();
+    loadUpcomingEvents();
     initializeAnnouncementsCycle();
     initializeFundCharts();
     initializeSecurityChecks();
@@ -187,6 +188,72 @@ function animateModalEntry() {
         modal.style.transform = 'scale(1)';
         modal.style.opacity = '1';
     }, 50);
+}
+
+// Load Upcoming Events from Database
+async function loadUpcomingEvents() {
+    try {
+        const response = await fetch('../api/get_student_events.php?limit=3&status=upcoming');
+        const result = await response.json();
+        
+        const eventsList = document.getElementById('upcomingEventsList');
+        
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+            eventsList.innerHTML = '';
+            
+            result.data.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = 'event-item';
+                
+                let dateDisplay = `
+                    <div class="event-date">
+                        <span class="day">${event.day}</span>
+                        <span class="month">${event.month}</span>
+                    </div>
+                `;
+                
+                if (event.is_multi_day && event.end_day) {
+                    const startDay = parseInt(event.day);
+                    const endDay = parseInt(event.end_day);
+                    dateDisplay = `
+                        <div class="event-date multi-day">
+                            <span class="day">${startDay}-${endDay}</span>
+                            <span class="month">${event.month}</span>
+                        </div>
+                    `;
+                }
+                
+                eventItem.innerHTML = `
+                    ${dateDisplay}
+                    <div class="event-info">
+                        <h4>${event.title}</h4>
+                        <p>${event.location} • ${event.formatted_time}</p>
+                        <span class="event-tag ${event.category}">${capitalizeFirst(event.category)}</span>
+                    </div>
+                `;
+                eventsList.appendChild(eventItem);
+            });
+        } else {
+            eventsList.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: #6b7280;">
+                    <i class="fas fa-calendar" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                    <p style="margin: 0;">No upcoming events at this time</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading events:', error);
+        document.getElementById('upcomingEventsList').innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; color: #ef4444;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 16px;"></i>
+                <p>Unable to load events</p>
+            </div>
+        `;
+    }
+}
+
+function capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // Navigation Functions
@@ -647,6 +714,22 @@ style.textContent = `
             transform: translateX(-100%);
             transition: transform 0.3s ease-out;
         }
+    }
+    
+    .loading-events {
+        text-align: center;
+        padding: 40px 20px;
+        color: #9ca3af;
+    }
+    
+    .loading-events i {
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+    
+    .loading-events p {
+        margin: 0;
+        font-size: 14px;
     }
 `;
 document.head.appendChild(style);

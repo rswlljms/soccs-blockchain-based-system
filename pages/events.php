@@ -12,16 +12,84 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/events-management.css">
     <style>
-        /* Modal header/footer to match add-candidate.php */
-        .modal{padding:0;overflow:hidden}
-        .modal-header { background: linear-gradient(135deg, #4B0082, #9933ff); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; }
+        /* Modal styling */
+        .modal { 
+            padding: 0; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            max-height: 90vh;
+        }
+        .modal-header { 
+            background: linear-gradient(135deg, #4B0082, #9933ff); 
+            padding: 24px 32px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-radius: 16px 16px 0 0;
+            flex-shrink: 0;
+        }
         .modal-title { font-size: 22px; font-weight: 600; color: #fff; margin: 0; letter-spacing: -0.02em; }
         .modal-close { background: rgba(255,255,255,0.2); border: none; font-size: 18px; color: #fff; cursor: pointer; padding: 8px; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
         .modal-close:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
-        .candidate-form-modal { padding: 32px; max-height: calc(90vh - 120px); overflow-y: auto; }
-        .modal-footer { padding: 24px 32px; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 14px; background: #fafbfc; border-radius: 0 0 16px 16px; }
+        .candidate-form-modal { 
+            padding: 32px; 
+            overflow-y: auto; 
+            flex: 1;
+            max-height: calc(90vh - 180px);
+        }
+        .modal-footer { 
+            padding: 24px 32px; 
+            border-top: 1px solid #e5e7eb; 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 14px; 
+            background: #fafbfc; 
+            border-radius: 0 0 16px 16px;
+            flex-shrink: 0;
+        }
         .modal-btn-secondary { background: #fff; border: 2px solid #e5e7eb; color: #1f2937; }
+        .modal-btn-primary { 
+            background: linear-gradient(135deg, #4B0082, #9933ff); 
+            color: #fff; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .modal-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .input-group { position: relative; margin-bottom: 16px; }
+        .form-row { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 16px;
+        }
+        .form-row .input-group { 
+            flex: 1; 
+            margin-bottom: 0; 
+        }
+        .form-row .input-group.flex-2 { flex: 2; }
+        .form-row .input-group.flex-1 { flex: 1; }
+        #endDateRow { transition: all 0.3s ease; }
     </style>
+    <script>
+        function toggleDateInputs() {
+            const durationType = document.getElementById('eventDurationType').value;
+            const endDateRow = document.getElementById('endDateRow');
+            const endDateInput = document.getElementById('eventEndDate');
+            
+            if (durationType === 'multiple') {
+                endDateRow.style.display = 'flex';
+                endDateInput.required = true;
+            } else {
+                endDateRow.style.display = 'none';
+                endDateInput.required = false;
+                endDateInput.value = '';
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="main-content">
@@ -107,8 +175,8 @@
     </div>
     
     <!-- Add/Edit Event Modal -->
-    <div class="modal-overlay" id="eventModalOverlay"></div>
-    <div class="modal" id="eventModal">
+    <div class="modal-overlay" id="eventModalOverlay">
+        <div class="modal" id="eventModal">
         <div class="modal-header">
             <h2 class="modal-title" id="eventModalTitle">Add Event</h2>
             <button type="button" class="modal-close" id="closeEventModal"><i class="fas fa-times"></i></button>
@@ -118,18 +186,43 @@
                 <i class="fas fa-calendar-day"></i>
                 <input type="text" name="name" id="eventName" placeholder="Event Name" required>
             </div>
-            <div class="input-group">
-                <i class="fas fa-calendar"></i>
-                <input type="date" name="date" id="eventDate" required>
+            
+            <div class="form-row" id="dateTimeRow">
+                <div class="input-group flex-2">
+                    <i class="fas fa-calendar"></i>
+                    <input type="date" name="date" id="eventDate" required>
+                </div>
+                <div class="input-group flex-1">
+                    <i class="fas fa-clock"></i>
+                    <input type="time" name="time" id="eventTime" required>
+                </div>
             </div>
+            
+            <div class="form-row" id="endDateRow" style="display: none;">
+                <div class="input-group">
+                    <i class="fas fa-calendar-check"></i>
+                    <input type="date" name="end_date" id="eventEndDate">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-redo"></i>
+                <select name="duration_type" id="eventDurationType" onchange="toggleDateInputs()">
+                    <option value="single">Single Day Event</option>
+                    <option value="multiple">Multiple Days Event</option>
+                </select>
+            </div>
+            
             <div class="input-group">
                 <i class="fas fa-map-marker-alt"></i>
                 <input type="text" name="location" id="eventLocation" placeholder="Location" required>
             </div>
+            
             <div class="input-group">
                 <i class="fas fa-align-left"></i>
                 <input type="text" name="description" id="eventDescription" placeholder="Description" required>
             </div>
+            
             <div class="input-group">
                 <i class="fas fa-tag"></i>
                 <select name="category" id="eventCategory" required>
@@ -140,12 +233,9 @@
                     <option value="workshop">Workshop</option>
                 </select>
             </div>
+            
             <div class="input-group">
-                <i class="fas fa-clock"></i>
-                <input type="time" name="time" id="eventTime" placeholder="Event Time" required>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-tag"></i>
+                <i class="fas fa-info-circle"></i>
                 <select name="status" id="eventStatus" required>
                     <option value="upcoming">Upcoming</option>
                     <option value="completed">Completed</option>
@@ -157,20 +247,23 @@
             <button type="button" class="modal-btn modal-btn-secondary" id="cancelEventBtn">Cancel</button>
             <button type="submit" form="eventForm" class="modal-btn modal-btn-primary">Save</button>
         </div>
+        </div>
     </div>
     
     <!-- Success Modal -->
-    <div class="modal-overlay" id="successOverlay"></div>
-    <div class="modal success-modal" id="successModal">
-        <div class="modal-header">
-            <h2 class="modal-title">Success!</h2>
-            <button type="button" class="modal-close" id="closeSuccessModal"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="candidate-form-modal">
-            <p style="text-align:center; color:#666; margin:0;">Event has been saved successfully</p>
-        </div>
-        <div class="modal-footer">
-            <button class="modal-btn modal-btn-primary" id="successOk">OK</button>
+    <div class="modal-overlay" id="successOverlay" style="z-index: 1100;">
+        <div class="modal success-modal" id="successModal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Success!</h2>
+                <button type="button" class="modal-close" id="closeSuccessModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="padding: 32px; text-align: center;">
+                <i class="fas fa-check-circle" style="font-size: 48px; color: #10b981; margin-bottom: 16px;"></i>
+                <p style="color:#666; margin:0;" id="successMessage">Event has been saved successfully</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="modal-btn modal-btn-primary" id="successOk">OK</button>
+            </div>
         </div>
     </div>
     

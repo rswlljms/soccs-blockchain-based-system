@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2025 at 09:43 AM
+-- Generation Time: Nov 29, 2025 at 01:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -69,7 +69,35 @@ CREATE TABLE `elections` (
 --
 
 INSERT INTO `elections` (`id`, `title`, `description`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'SOCCS Officer Election', '', '2025-11-29 16:12:00', '2025-11-29 17:00:00', 'active', '2025-11-29 08:12:52', '2025-11-29 08:13:15');
+(3, 'SOCCS Officer Election 2025', '', '2025-11-29 17:06:00', '2025-11-29 17:20:00', 'completed', '2025-11-29 09:06:46', '2025-11-29 09:08:32');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `events`
+--
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `date` datetime NOT NULL,
+  `end_date` datetime DEFAULT NULL,
+  `is_multi_day` tinyint(1) DEFAULT 0,
+  `location` varchar(255) DEFAULT NULL,
+  `category` varchar(50) DEFAULT 'general',
+  `status` enum('upcoming','ongoing','completed','cancelled','archived') DEFAULT 'upcoming',
+  `created_by` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `events`
+--
+
+INSERT INTO `events` (`id`, `title`, `description`, `date`, `end_date`, `is_multi_day`, `location`, `category`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
+(2, 'Research Colloquim', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'upcoming', 'admin', '2025-11-29 12:02:51', '2025-11-29 12:03:24');
 
 -- --------------------------------------------------------
 
@@ -287,6 +315,13 @@ CREATE TABLE `votes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `votes`
+--
+
+INSERT INTO `votes` (`id`, `election_id`, `voter_id`, `candidate_id`, `position_id`, `vote_hash`, `voted_at`) VALUES
+(1, 3, '0122-1141', 1, 1, NULL, '2025-11-29 09:07:29');
+
+--
 -- Indexes for dumped tables
 --
 
@@ -304,6 +339,15 @@ ALTER TABLE `candidates`
 --
 ALTER TABLE `elections`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `events`
+--
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_date` (`date`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_category` (`category`);
 
 --
 -- Indexes for table `expenses`
@@ -378,7 +422,13 @@ ALTER TABLE `candidates`
 -- AUTO_INCREMENT for table `elections`
 --
 ALTER TABLE `elections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `events`
+--
+ALTER TABLE `events`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `expenses`
@@ -402,7 +452,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `votes`
 --
 ALTER TABLE `votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

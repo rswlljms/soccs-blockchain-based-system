@@ -106,41 +106,10 @@ $student = $_SESSION['student'];
             <button class="btn-link" onclick="viewAllEvents()">View All</button>
           </div>
           <div class="card-content">
-            <div class="events-list">
-              <div class="event-item">
-                <div class="event-date">
-                  <span class="day">15</span>
-                  <span class="month">Dec</span>
-                </div>
-                <div class="event-info">
-                  <h4>Annual Tech Summit</h4>
-                  <p>Main Auditorium • 9:00 AM</p>
-                  <span class="event-tag">Academic</span>
-                </div>
-              </div>
-              
-              <div class="event-item">
-                <div class="event-date">
-                  <span class="day">18</span>
-                  <span class="month">Dec</span>
-                </div>
-                <div class="event-info">
-                  <h4>Programming Competition</h4>
-                  <p>Computer Lab • 1:00 PM</p>
-                  <span class="event-tag">Competition</span>
-                </div>
-              </div>
-              
-              <div class="event-item">
-                <div class="event-date">
-                  <span class="day">22</span>
-                  <span class="month">Dec</span>
-                </div>
-                <div class="event-info">
-                  <h4>Year-End Social</h4>
-                  <p>Function Hall • 6:00 PM</p>
-                  <span class="event-tag">Social</span>
-                </div>
+            <div class="events-list" id="upcomingEventsList">
+              <div class="loading-events">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading events...</p>
               </div>
             </div>
           </div>

@@ -18,6 +18,8 @@ try {
                 title,
                 description,
                 date,
+                end_date,
+                is_multi_day,
                 location,
                 category,
                 status,
@@ -37,7 +39,7 @@ try {
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $eventDate = new DateTime($row['date']);
         
-        $events[] = [
+        $event = [
             'id' => (int) $row['id'],
             'title' => $row['title'],
             'description' => $row['description'],
@@ -49,8 +51,18 @@ try {
             'formatted_time' => $eventDate->format('g:i A'),
             'day' => $eventDate->format('d'),
             'month' => $eventDate->format('M'),
-            'created_at' => $row['created_at']
+            'created_at' => $row['created_at'],
+            'is_multi_day' => (bool) $row['is_multi_day']
         ];
+        
+        if ($row['is_multi_day'] && $row['end_date']) {
+            $endDate = new DateTime($row['end_date']);
+            $event['end_date'] = $row['end_date'];
+            $event['end_day'] = $endDate->format('d');
+            $event['end_month'] = $endDate->format('M');
+        }
+        
+        $events[] = $event;
     }
     
     echo json_encode([

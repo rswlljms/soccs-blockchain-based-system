@@ -28,7 +28,9 @@ class EventsCalendar {
           time: this.formatTime(event.time),
           location: event.location,
           category: event.category,
-          description: event.description
+          description: event.description,
+          is_multi_day: event.is_multi_day,
+          end_date: event.end_date
         }));
         this.renderCalendar();
       } else {
@@ -211,11 +213,21 @@ class EventsCalendar {
       eventsForDate.forEach(event => {
         const eventCard = document.createElement('div');
         eventCard.className = 'event-card';
+        
+        let durationInfo = '';
+        if (event.is_multi_day && event.end_date) {
+          const startDate = new Date(event.date);
+          const endDate = new Date(event.end_date);
+          const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+          durationInfo = `<div class="event-duration"><i class="fas fa-calendar-week"></i> ${days} days event</div>`;
+        }
+        
         eventCard.innerHTML = `
           <div class="event-header">
             <div class="event-time">${event.time}</div>
           </div>
           <div class="event-title">${event.title}</div>
+          ${durationInfo}
           <div class="event-location">
             <i class="fas fa-map-marker-alt"></i>
             ${event.location}
@@ -233,11 +245,23 @@ class EventsCalendar {
 
   getEventsForDate(date) {
     const dateString = this.formatDateForComparison(date);
-    return this.events.filter(event => event.date === dateString);
+    return this.events.filter(event => {
+      const eventStart = event.date;
+      
+      if (event.is_multi_day && event.end_date) {
+        const eventEnd = event.end_date;
+        return dateString >= eventStart && dateString <= eventEnd;
+      }
+      
+      return event.date === dateString;
+    });
   }
 
   formatDateForComparison(date) {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   isSameDay(date1, date2) {

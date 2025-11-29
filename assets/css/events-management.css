@@ -350,15 +350,18 @@
   align-items: center !important;
   justify-content: center !important;
   z-index: 1000 !important;
-  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  backdrop-filter: blur(8px) !important;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: var(--transition);
 }
 
 .modal-overlay.show {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .modal {
@@ -402,6 +405,44 @@
   margin-bottom: 16px;
   position: relative;
   text-align: left;
+}
+
+.modal .form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modal .form-row .input-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.modal .form-row .input-group.flex-2 {
+  flex: 2;
+}
+
+.modal .form-row .input-group.flex-1 {
+  flex: 1;
+}
+
+.modal input[type="date"],
+.modal input[type="time"] {
+  cursor: pointer;
+}
+
+.modal input[type="date"]::-webkit-calendar-picker-indicator,
+.modal input[type="time"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  opacity: 0;
 }
 
 .modal form {

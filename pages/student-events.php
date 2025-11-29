@@ -48,12 +48,6 @@ $student = $_SESSION['student'];
           <h1 class="page-title">Events Calendar</h1>
           <p class="welcome-text">Stay updated with SOCCS events and activities</p>
         </div>
-        <div class="header-right">
-          <div class="blockchain-badge">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Event Portal</span>
-          </div>
-        </div>
       </div>
 
       <!-- Calendar Container -->
