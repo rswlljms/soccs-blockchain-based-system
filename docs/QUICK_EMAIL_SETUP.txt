@@ -1,0 +1,150 @@
+═══════════════════════════════════════════════════════════════
+  📧 QUICK EMAIL SETUP - roswelljamesvitaliz@gmail.com
+═══════════════════════════════════════════════════════════════
+
+🎯 GOAL: Send emails using your Gmail, but show as SOCCS email
+
+═══════════════════════════════════════════════════════════════
+  STEP 1: Get Gmail App Password (2 minutes)
+═══════════════════════════════════════════════════════════════
+
+1. Go to: https://myaccount.google.com/security
+
+2. Enable "2-Step Verification" if not yet enabled
+
+3. Click "App passwords"
+
+4. Select:
+   - App: Mail
+   - Device: Windows Computer
+
+5. Click "Generate"
+
+6. COPY the 16-character password
+   Example: abcd efgh ijkl mnop
+
+═══════════════════════════════════════════════════════════════
+  STEP 2: Update sendmail.ini
+═══════════════════════════════════════════════════════════════
+
+File: C:\xampp\sendmail\sendmail.ini
+
+Find line 47 and paste your App Password:
+
+   auth_password=YOUR_GMAIL_APP_PASSWORD_HERE
+   
+Change to (use your actual 16-char password):
+
+   auth_password=abcd efgh ijkl mnop
+
+SAVE the file!
+
+═══════════════════════════════════════════════════════════════
+  STEP 3: Update php.ini
+═══════════════════════════════════════════════════════════════
+
+File: C:\xampp\php\php.ini
+
+Find [mail function] section and ensure:
+
+   SMTP = smtp.gmail.com
+   smtp_port = 587
+   sendmail_from = lspuscc.soccs@gmail.com
+   sendmail_path = "\"C:\xampp\sendmail\sendmail.exe\" -t"
+
+SAVE the file!
+
+═══════════════════════════════════════════════════════════════
+  STEP 4: Restart Apache
+═══════════════════════════════════════════════════════════════
+
+1. Open XAMPP Control Panel
+2. Click STOP on Apache
+3. Wait 2 seconds  
+4. Click START on Apache
+
+═══════════════════════════════════════════════════════════════
+  STEP 5: Test Email
+═══════════════════════════════════════════════════════════════
+
+Visit: http://localhost/soccs-financial-management/test_email.php
+
+1. Enter any Gmail address
+2. Click "Send Test Email"
+3. Check inbox (and spam folder!)
+
+═══════════════════════════════════════════════════════════════
+  ✅ WHAT YOU'LL SEE
+═══════════════════════════════════════════════════════════════
+
+From: SOCCS Admin <lspuscc.soccs@gmail.com>
+Subject: SOCCS Registration - Confirmation
+
+Professional email with:
+✓ SOCCS branding
+✓ Purple gradient banner
+✓ Student details
+✓ Professional footer
+
+═══════════════════════════════════════════════════════════════
+  📋 CHECKLIST
+═══════════════════════════════════════════════════════════════
+
+Setup:
+□ Get Gmail App Password
+□ Update sendmail.ini line 47 with password
+□ Update php.ini [mail function]
+□ Restart Apache
+
+Testing:
+□ Visit test_email.php
+□ Send test email
+□ Check inbox/spam
+□ Email looks professional ✓
+
+═══════════════════════════════════════════════════════════════
+  🔍 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+Email not sending?
+
+1. Check: C:\xampp\sendmail\error.log
+2. Check: C:\xampp\sendmail\debug.log
+3. Verify App Password has NO SPACES
+4. Ensure 2-Step Verification is ON
+5. Restart Apache again
+
+Authentication failed?
+→ Regenerate Gmail App Password
+→ Double-check it's 16 characters
+→ No regular Gmail password!
+
+═══════════════════════════════════════════════════════════════
+  📧 CURRENT CONFIGURATION
+═══════════════════════════════════════════════════════════════
+
+SMTP Server:     smtp.gmail.com
+Port:            587 (TLS)
+Auth Email:      roswelljamesvitaliz@gmail.com ← Your Gmail
+Display From:    lspuscc.soccs@gmail.com       ← Shows as this
+Display Name:    SOCCS Admin
+Reply-To:        lspuscc.soccs@gmail.com
+
+═══════════════════════════════════════════════════════════════
+  🎉 DONE!
+═══════════════════════════════════════════════════════════════
+
+After setup, your emails will:
+✓ Send using roswelljamesvitaliz@gmail.com (authentication)
+✓ Appear from SOCCS Admin <lspuscc.soccs@gmail.com>
+✓ Look professional like LSPU admission emails
+✓ Be mobile-responsive
+
+═══════════════════════════════════════════════════════════════
+
+For detailed guide, see: GMAIL_SETUP_INSTRUCTIONS.md
+For email preview, visit: email_preview.html
+For testing, visit: test_email.php
+
+═══════════════════════════════════════════════════════════════
+

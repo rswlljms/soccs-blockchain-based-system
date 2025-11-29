@@ -1,0 +1,139 @@
+/* General Page Styles */
+body {
+    font-family: 'Work Sans', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #374151;
+}
+
+.main-content {
+    margin-left: 280px;
+    /* Same as sidebar width */
+    padding: 32px;
+    min-height: 100vh;
+    background-color: #f9fafb;
+}
+
+.dashboard-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1f2937;
+    margin: 32px 0 16px 0;
+}
+
+/* Form Styles */
+.candidate-form {
+    background-color: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.candidate-form .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.candidate-form .input-group label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 14px;
+}
+
+.candidate-form .input-group input[type="text"],
+.candidate-form .input-group input[type="file"],
+.candidate-form .input-group select {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    /* Grey border */
+    border-radius: 6px;
+    font-size: 15px;
+    color: #1f2937;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.candidate-form .input-group input[type="text"]:focus,
+.candidate-form .input-group input[type="file"]:focus,
+.candidate-form .input-group select:focus {
+    border-color: #4B0082;
+    /* Indigo focus */
+    box-shadow: 0 0 0 2px rgba(75, 0, 130, 0.2);
+    outline: none;
+}
+
+.candidate-form .input-group input[type="file"] {
+    padding: 10px;
+    /* Slightly less padding for file input */
+}
+
+/* Button Styles (assuming you have a global button style, or define here) */
+.btn-primary {
+    background-color: #4B0082;
+    /* Primary button color (indigo) */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    justify-content: center;
+}
+
+.btn-primary:hover {
+    background-color: #36005e;
+    /* Darker indigo on hover */
+}
+
+.btn-primary i {
+    font-size: 16px;
+}
+
+/* Responsive adjustments (optional, if needed) */
+    @media (min-width: 769px) {
+        .main-content {
+            margin-left: 280px !important;
+            width: calc(100% - 280px) !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0;
+            padding: 16px;
+        }
+
+    .dashboard-wrapper {
+        padding: 16px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+}

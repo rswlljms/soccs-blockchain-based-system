@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>SOCCS Email Template Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #e0e0e0; 
+            padding: 20px;
+        }
+        .preview-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .email-type {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .email-type h2 {
+            color: #B366FF;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #B366FF;
+        }
+        .type-approved h2 {
+            color: #4CAF50;
+            border-bottom-color: #4CAF50;
+        }
+        .preview-frame {
+            border: 3px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        /* Email styles from template */
+        .email-wrapper { width: 100%; background-color: #f0f0f0; padding: 20px 0; }
+        .email-container { max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .header { background-color: #ffffff; text-align: center; padding: 30px 20px 20px; }
+        .logo { max-width: 80px; height: auto; margin-bottom: 15px; }
+        .org-name { color: #2c3e50; font-size: 22px; font-weight: 600; margin: 10px 0 5px; }
+        .tagline { color: #B366FF; font-size: 12px; font-weight: 600; letter-spacing: 2px; margin: 5px 0; }
+        .tagline-green { color: #4CAF50; }
+        .banner { width: 100%; height: 180px; background: linear-gradient(135deg, #B366FF 0%, #9933ff 100%); display: flex; align-items: center; justify-content: center; }
+        .banner-green { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); }
+        .banner-icon { font-size: 60px; color: white; }
+        .content { background-color: #f8f9fa; padding: 35px 30px; line-height: 1.7; }
+        .greeting { color: #2c3e50; font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+        .message { color: #4a5568; font-size: 15px; margin-bottom: 15px; }
+        .info-box { background-color: #ffffff; border-left: 4px solid #B366FF; padding: 20px; margin: 25px 0; }
+        .info-box-green { border-left-color: #4CAF50; }
+        .info-title { color: #2c3e50; font-weight: 600; margin-bottom: 12px; }
+        .info-item { color: #4a5568; margin: 8px 0; }
+        .info-item strong { color: #2c3e50; }
+        .button { display: inline-block; padding: 14px 35px; background: #4CAF50; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 20px 0; }
+        .divider { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
+        .footer-note { background-color: #ffffff; padding: 20px 30px; border-top: 1px solid #e0e0e0; }
+        .note-text { color: #718096; font-size: 13px; margin: 8px 0; }
+        .contact-info { color: #4a5568; font-size: 14px; margin-top: 15px; }
+        .contact-link { color: #B366FF; text-decoration: none; }
+        .contact-link-green { color: #4CAF50; }
+        .footer { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: #ffffff; text-align: center; padding: 25px 20px; }
+        .footer-org { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+        .copyright { font-size: 12px; color: #bdc3c7; }
+        
+        .info-banner {
+            background: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1>📧 SOCCS Email Templates Preview</h1>
+        
+        <div class="info-banner">
+            <strong>ℹ️ Preview Mode:</strong> This shows how your emails will look when sent to students. 
+            The actual emails will be automatically sent during registration and approval.
+        </div>
+
+        <!-- Registration Confirmation Email -->
+        <div class="email-type">
+            <h2>1️⃣ Registration Confirmation Email</h2>
+            <p><strong>When it's sent:</strong> Immediately after student completes registration</p>
+            <p><strong>Purpose:</strong> Confirm registration received and inform about pending approval</p>
+            
+            <div class="preview-frame">
+                <div class='email-wrapper'>
+                    <div class='email-container'>
+                        <div class='header'>
+                            <img src='assets/img/logo.png' alt='SOCCS Logo' class='logo' onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style='font-size: 60px; margin-bottom: 15px; display: none;'>📚</div>
+                            <div class='org-name'>Student Organization of the College of Computer Studies</div>
+                        </div>
+                        
+                        <div class='banner'>
+                            <div class='banner-icon'>✓</div>
+                        </div>
+                        
+                        <div class='content'>
+                            <div class='greeting'>Good day, Juan Dela Cruz ST2024001 !</div>
+                            
+                            <p class='message'>
+                                Thank you so much for applying for SOCCS membership and we want to 
+                                congratulate you for successfully finishing the registration process.
+                            </p>
+                            
+                            <p class='message'>
+                                Kindly wait for the official notification from the SOCCS Admin Team 
+                                regarding your registration status via email and online portal.
+                            </p>
+                            
+                            <div class='info-box'>
+                                <div class='info-title'>Your Registration Details:</div>
+                                <div class='info-item'><strong>Student ID:</strong> ST2024001</div>
+                                <div class='info-item'><strong>Email:</strong> student@gmail.com</div>
+                                <div class='info-item'><strong>Status:</strong> Pending Approval</div>
+                            </div>
+                            
+                            <p class='message'>
+                                Keep safe and stay connected.
+                            </p>
+                        </div>
+                        
+                        <div class='footer-note'>
+                            <p class='note-text'>
+                                <strong>This is a system generated message. Do not reply.</strong>
+                            </p>
+                            <p class='note-text'>
+                                This message is intended to <strong>student@gmail.com</strong> upon request this Oct 11, 2025 12:50 am.
+                            </p>
+                            
+                            <hr class='divider'>
+                            
+                            <p class='contact-info'>
+                                If you have questions, feedback or suggestions, feel free to contact us at 
+                                <a href='mailto:lspuscc.soccs@gmail.com' class='contact-link'>lspuscc.soccs@gmail.com</a>
+                            </p>
+                            
+                            <p class='note-text' style='margin-top: 20px;'>
+                                To help keep your account secure, please do not forward this email.<br>
+                                We recommend to mark this email as not spam to improve the integrity of SOCCS mail servers.
+                            </p>
+                        </div>
+                        
+                        <div class='footer'>
+                            <div class='footer-org'>Student Organization of the College of Computer Studies</div>
+                            <div class='copyright'>Copyright © 2025</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approval Email -->
+        <div class="email-type type-approved">
+            <h2>2️⃣ Registration Approval Email</h2>
+            <p><strong>When it's sent:</strong> When admin approves the student registration</p>
+            <p><strong>Purpose:</strong> Welcome student and provide login access</p>
+            
+            <div class="preview-frame">
+                <div class='email-wrapper'>
+                    <div class='email-container'>
+                        <div class='header'>
+                            <img src='assets/img/logo.png' alt='SOCCS Logo' class='logo' onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style='font-size: 60px; margin-bottom: 15px; display: none;'>📚</div>
+                            <div class='org-name'>Student Organization of the College of Computer Studies</div>
+                        </div>
+                        
+                        <div class='banner banner-green'>
+                            <div class='banner-icon'>🎉</div>
+                        </div>
+                        
+                        <div class='content'>
+                            <div class='greeting'>Congratulations, Juan!</div>
+                            
+                            <p class='message'>
+                                We are pleased to inform you that your SOCCS membership application has been 
+                                <strong>successfully approved</strong>. Welcome to the Student Organization of the College of Computer Studies!
+                            </p>
+                            
+                            <div class='info-box info-box-green'>
+                                <div class='info-title'>Your Account Information:</div>
+                                <div class='info-item'><strong>Student ID:</strong> ST2024001</div>
+                                <div class='info-item'><strong>Email:</strong> student@gmail.com</div>
+                                <div class='info-item'><strong>Status:</strong> <span style='color: #4CAF50; font-weight: 600;'>✓ Approved</span></div>
+                            </div>
+                            
+                            <p class='message'>
+                                You can now access the SOCCS student portal using your registered email and password.
+                            </p>
+                            
+                            <div style='text-align: center; margin: 25px 0;'>
+                                <a href='#' class='button'>Login to Student Portal</a>
+                            </div>
+                            
+                            <p class='message'>
+                                As a SOCCS member, you now have access to:
+                            </p>
+                            <ul class='message'>
+                                <li>Student dashboard and announcements</li>
+                                <li>Organization events and activities</li>
+                                <li>Financial reports and transparency</li>
+                                <li>Voting system for organization elections</li>
+                            </ul>
+                            
+                            <p class='message'>
+                                Welcome aboard! Keep safe and stay connected.
+                            </p>
+                        </div>
+                        
+                        <div class='footer-note'>
+                            <p class='note-text'>
+                                <strong>This is a system generated message. Do not reply.</strong>
+                            </p>
+                            
+                            <hr class='divider'>
+                            
+                            <p class='contact-info'>
+                                If you have questions, feedback or suggestions, feel free to contact us at 
+                                <a href='mailto:lspuscc.soccs@gmail.com' class='contact-link contact-link-green'>lspuscc.soccs@gmail.com</a>
+                            </p>
+                        </div>
+                        
+                        <div class='footer'>
+                            <div class='footer-org'>Student Organization of the College of Computer Studies</div>
+                            <div class='copyright'>Copyright © 2025</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-banner" style="margin-top: 30px;">
+            <strong>🧪 Ready to Test?</strong><br>
+            1. Configure your email settings (see <a href="docs/EMAIL_TESTING_GUIDE.md">EMAIL_TESTING_GUIDE.md</a>)<br>
+            2. Visit <a href="test_email.php">test_email.php</a> to send a test email<br>
+            3. Check your Gmail inbox for the professional email!
+        </div>
+    </div>
+</body>
+</html>
+

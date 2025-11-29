@@ -1,0 +1,15 @@
+/* Force hide all last updated timestamps */
+.last-updated,
+.last-refresh,
+[class*="last-updated"],
+[class*="last-refresh"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Hide any fixed positioned element at bottom right that might be a timestamp */
+div[style*="position: fixed"][style*="bottom: 20px"][style*="right: 20px"] {
+    display: none !important;
+}
+

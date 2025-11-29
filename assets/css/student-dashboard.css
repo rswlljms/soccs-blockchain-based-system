@@ -1,0 +1,1499 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Work Sans', sans-serif;
+}
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #4B0082, #9933ff);
+  --primary-hover: linear-gradient(135deg, #3a0066, #7a29cc);
+  --secondary-color: #f8f9fa;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --border-color: #e5e7eb;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --info-color: #3b82f6;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition: all 0.2s ease-in-out;
+}
+
+body {
+  background: linear-gradient(135deg, #f7f8fc 0%, #eef1f7 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* === MAIN CONTENT === */
+/* Main content styles are now handled by student-mobile-first.css for proper responsive behavior */
+
+  .dashboard-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  position: relative;
+}
+
+/* === DASHBOARD HEADER === */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header-left .page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcome-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.header-right .blockchain-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+.blockchain-badge i {
+  font-size: 16px;
+}
+
+/* === PROFILE OVERVIEW === */
+.profile-overview {
+  margin-bottom: 24px;
+}
+
+.profile-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid var(--border-color);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--primary-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.student-id {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.academic-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.course-badge {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.year-section {
+  background: var(--secondary-color);
+  color: var(--text-primary);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+}
+
+.voting-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status-indicator.pending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.status-indicator.voted {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+/* === DASHBOARD GRID === */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* === CARDS === */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: var(--transition);
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  background: linear-gradient(135deg, #fafbfc, #f7f8fc);
+}
+
+.card-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.card-header i {
+  color: #9933ff;
+  font-size: 20px;
+}
+
+.card-content {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* === ELECTIONS CARD === */
+.elections-card .election-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.election-status.live {
+  color: #10b981;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.election-info {
+  margin-bottom: 20px;
+}
+
+.election-info h4 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.election-date,
+.time-remaining {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.time-remaining {
+  color: var(--warning-color);
+  font-weight: 600;
+}
+
+.quick-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--secondary-color);
+  border-radius: var(--radius-md);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.voting-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-vote {
+  flex: 1;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-vote:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-candidates {
+  flex: 1;
+  background: white;
+  color: #9933ff;
+  border: 2px solid #9933ff;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-candidates:hover {
+  background: #9933ff;
+  color: white;
+}
+
+/* === EVENTS CARD === */
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.event-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--secondary-color);
+  transition: var(--transition);
+}
+
+.event-item:hover {
+  background: #e5e7eb;
+}
+
+.event-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-gradient);
+  color: white;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  min-width: 60px;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.event-date .day {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.event-date .month {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.event-info {
+  flex: 1;
+}
+
+.event-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.event-info p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.event-tag {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* === GOVERNANCE CARD === */
+.fund-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.fund-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--secondary-color);
+  border-radius: var(--radius-md);
+}
+
+.fund-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.fund-icon.total {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.fund-icon.expenses {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.fund-icon.balance {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.fund-info h4 {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.amount {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.amount.balance-positive {
+  color: var(--success-color);
+}
+
+.recent-transactions h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--secondary-color);
+  border-radius: var(--radius-sm);
+}
+
+.transaction-info {
+  flex: 1;
+}
+
+.transaction-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.transaction-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.transaction-amount {
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.transaction-amount.expense {
+  color: var(--danger-color);
+}
+
+.transaction-amount.income {
+  color: var(--success-color);
+}
+
+.blockchain-hash {
+  color: #9933ff;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.blockchain-hash:hover {
+  color: #7a29cc;
+  transform: scale(1.1);
+}
+
+.btn-view-all {
+  width: 100%;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-view-all:hover {
+  background: var(--primary-hover);
+}
+
+/* === ANNOUNCEMENTS CARD === */
+.new-badge {
+  background: var(--danger-color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.announcements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.announcement-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--secondary-color);
+  transition: var(--transition);
+}
+
+.announcement-item.new {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-left: 4px solid var(--warning-color);
+}
+
+.announcement-item:hover {
+  background: #e5e7eb;
+}
+
+.announcement-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.announcement-icon.important {
+  background: var(--danger-color);
+}
+
+.announcement-icon.info {
+  background: var(--info-color);
+}
+
+.announcement-icon.success {
+  background: var(--success-color);
+}
+
+.announcement-content h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.announcement-content p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.announcement-time {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* === VOTING HISTORY CARD === */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--secondary-color);
+  border-radius: var(--radius-md);
+}
+
+.history-info {
+  flex: 1;
+}
+
+.history-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.history-info p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.history-date {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.history-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--success-color);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.voting-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 16px;
+  background: var(--secondary-color);
+  border-radius: var(--radius-md);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item .stat-number {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.stat-item .stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* === SECURITY CARD === */
+.security-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.security-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--secondary-color);
+  border-radius: var(--radius-md);
+}
+
+.security-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.security-icon.blockchain {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.security-icon.encryption {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.security-icon.verification {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.security-details h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.security-details p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background: var(--success-color);
+  color: white;
+}
+
+.status-badge.verified {
+  background: var(--info-color);
+  color: white;
+}
+
+.blockchain-explorer {
+  padding: 20px;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.blockchain-explorer h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.blockchain-explorer p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.btn-explorer {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-explorer:hover {
+  background: var(--primary-hover);
+}
+
+/* === BLOCKCHAIN VERIFIED === */
+.blockchain-verified {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #10b981, #059669);
+  padding: 6px 10px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #9933ff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+.btn-link:hover {
+  color: #7a29cc;
+}
+
+/* === VOTING MODAL === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 20px;
+  padding: 4px;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+}
+
+.modal-content {
+  padding: 24px;
+}
+
+.voting-security {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--secondary-color);
+  border-radius: var(--radius-md);
+}
+
+.security-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--success-color);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.voting-instructions {
+  margin-bottom: 24px;
+}
+
+.voting-instructions h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.voting-instructions ol {
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+
+.voting-instructions li {
+  margin-bottom: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cancel {
+  flex: 1;
+  background: white;
+  color: var(--text-secondary);
+  border: 2px solid var(--border-color);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-cancel:hover {
+  background: var(--secondary-color);
+}
+
+.btn-proceed {
+  flex: 1;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-proceed:hover {
+  background: var(--primary-hover);
+}
+
+/* === SIDEBAR ENHANCEMENTS === */
+.student-sidebar .user-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.blockchain-status {
+  margin-bottom: 16px;
+}
+
+.blockchain-status .status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  width: 100%;
+  justify-content: center;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--danger-color);
+  text-decoration: none;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+  font-weight: 600;
+  justify-content: center;
+  border: 2px solid var(--danger-color);
+}
+
+.logout-btn:hover {
+  background: var(--danger-color);
+  color: white;
+}
+
+/* === MOBILE MENU === */
+/* Mobile menu styles are now handled in student-mobile-first.css for proper responsive behavior */
+
+.mobile-menu-toggle:hover {
+  transform: scale(1.1);
+}
+
+.mobile-menu-toggle i {
+  font-size: 20px;
+}
+
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+.mobile-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .card {
+    height: 450px;
+  }
+}
+
+/* Responsive sidebar behavior is now handled in student-mobile-first.css */
+
+@media (max-width: 768px) {
+  /* Mobile main content and sidebar styles are now handled by student-mobile-first.css */
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .header-right {
+    width: 100%;
+  }
+  
+  .blockchain-badge {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .profile-overview {
+    margin-bottom: 20px;
+  }
+  
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    padding: 20px;
+  }
+  
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  
+  .academic-info {
+    justify-content: center;
+  }
+  
+  .dashboard-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px;
+  }
+
+  .dashboard-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .card {
+    height: auto !important;
+    min-height: 300px !important;
+    width: 100% !important;
+    margin: 0;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .card-header {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .card-header h3 {
+    font-size: 16px;
+  }
+  
+  .card-content {
+    padding: 20px;
+  }
+  
+  .voting-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .btn-vote,
+  .btn-candidates {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+  
+  .quick-stats {
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 12px;
+  }
+  
+  .stat-number {
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 11px;
+  }
+  
+  .fund-summary {
+    gap: 12px;
+  }
+  
+  .fund-item {
+    padding: 12px;
+  }
+  
+  .fund-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+  
+  .amount {
+    font-size: 18px;
+  }
+  
+  .events-list {
+    gap: 12px;
+  }
+  
+  .event-item {
+    padding: 12px;
+  }
+  
+  .event-date {
+    min-width: 55px;
+    width: 55px;
+    height: 55px;
+    padding: 8px;
+  }
+  
+  .event-date .day {
+    font-size: 16px;
+  }
+  
+  .event-date .month {
+    font-size: 10px;
+  }
+  
+  .announcements-list {
+    gap: 12px;
+  }
+  
+  .announcement-item {
+    padding: 12px;
+  }
+  
+  .announcement-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+  
+  .transaction-list {
+    gap: 8px;
+  }
+  
+  .transaction-item {
+    padding: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .blockchain-hash {
+    margin-top: 4px;
+  }
+  
+  .modal {
+    width: 95%;
+    margin: 20px;
+    max-height: 85vh;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 80px 12px 12px 12px;
+  }
+  
+  .mobile-menu-toggle {
+    width: 45px;
+    height: 45px;
+    top: 15px;
+    left: 15px;
+  }
+  
+  .mobile-menu-toggle i {
+    font-size: 18px;
+  }
+  
+  .header-left .page-title {
+    font-size: 22px;
+  }
+  
+  .welcome-text {
+    font-size: 14px;
+  }
+  
+  .profile-info h3 {
+    font-size: 18px;
+  }
+  
+  .student-id {
+    font-size: 13px;
+  }
+  
+  .course-badge,
+  .year-section {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  
+  .card {
+    min-height: 300px;
+  }
+  
+  .card-header {
+    padding: 14px 16px;
+  }
+  
+  .card-header h3 {
+    font-size: 15px;
+  }
+  
+  .card-content {
+    padding: 16px;
+  }
+  
+  .election-info h4 {
+    font-size: 18px;
+  }
+  
+  .quick-stats {
+    padding: 10px;
+  }
+  
+  .stat-number {
+    font-size: 18px;
+  }
+  
+  .fund-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+    padding: 10px;
+  }
+  
+  .fund-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  .fund-info h4 {
+    font-size: 13px;
+  }
+  
+  .amount {
+    font-size: 16px;
+  }
+  
+  .event-item {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .event-info h4 {
+    font-size: 14px;
+  }
+  
+  .event-info p {
+    font-size: 13px;
+  }
+  
+  .announcement-item {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .announcement-content h4 {
+    font-size: 14px;
+  }
+  
+  .announcement-content p {
+    font-size: 13px;
+  }
+  
+  .transaction-item {
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  .transaction-amount {
+    font-size: 13px;
+  }
+  
+  .btn-view-all,
+  .btn-explorer {
+    font-size: 13px;
+    padding: 10px;
+  }
+  
+  .blockchain-verified {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  
+  .new-badge {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .main-content {
+    padding: 75px 8px 8px 8px;
+  }
+  
+  .dashboard-grid {
+    gap: 16px;
+  }
+  
+  .card-header {
+    padding: 12px;
+  }
+  
+  .card-content {
+    padding: 12px;
+  }
+  
+  .profile-card {
+    padding: 16px;
+  }
+  
+  .quick-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .voting-actions {
+    gap: 6px;
+  }
+  
+  .btn-vote,
+  .btn-candidates {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeInMobileContent {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    
+    .mobile-menu-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1002;
+      background: linear-gradient(135deg, #4B0082, #9933ff);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .main-content {
+      padding: 100px 20px 20px 20px;
+      min-height: 100vh;
+    }
+    
+    .test-card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #4B0082;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-menu-toggle {
+        display: flex;
+      }
+      
+      .main-content {
+        padding: 80px 15px 15px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-menu-toggle">
+    <i>☰</i>
+  </div>
+  
+  <div class="main-content">
+    <h1>Mobile Test Page</h1>
+    
+    <div class="test-card">
+      <h3>Test Card 1</h3>
+      <p>This should be visible on mobile. If you can see this content below the hamburger menu, then the basic layout is working.</p>
+    </div>
+    
+    <div class="test-card">
+      <h3>Test Card 2</h3>
+      <p>This is another test card to verify the mobile layout is functioning properly.</p>
+    </div>
+    
+    <div class="test-card">
+      <h3>Test Card 3</h3>
+      <p>If all these cards are visible and properly spaced on mobile, then we can debug the main dashboard.</p>
+    </div>
+  </div>
+</body>
+</html>

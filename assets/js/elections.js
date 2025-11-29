@@ -1,0 +1,402 @@
+let elections = [];
+let editingElectionId = null;
+let currentPage = 1;
+const itemsPerPage = 6;
+
+function showNotification(type, title, message) {
+  const modal = document.getElementById('notificationModal');
+  const overlay = document.getElementById('notificationOverlay');
+  const icon = document.getElementById('notificationIcon');
+  const titleEl = document.getElementById('notificationTitle');
+  const messageEl = document.getElementById('notificationMessage');
+
+  icon.className = `notification-icon ${type}`;
+  icon.innerHTML = type === 'success' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';
+
+  titleEl.textContent = title;
+  messageEl.textContent = message;
+
+  overlay.classList.add('show');
+  setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function closeNotification() {
+  const modal = document.getElementById('notificationModal');
+  const overlay = document.getElementById('notificationOverlay');
+  
+  modal.classList.remove('show');
+  setTimeout(() => overlay.classList.remove('show'), 300);
+}
+
+async function loadElections() {
+  try {
+    const response = await fetch('../api/elections/read.php');
+    const result = await response.json();
+    
+    if (result.success) {
+      elections = result.data;
+      currentPage = 1;
+      renderElectionsTable();
+    } else {
+      console.error('Failed to load elections:', result.error);
+    }
+  } catch (error) {
+    console.error('Error loading elections:', error);
+  }
+}
+
+function formatDateTime(dateTimeString) {
+  const date = new Date(dateTimeString);
+  const options = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  };
+  return date.toLocaleDateString('en-US', options);
+}
+
+function getStatusBadge(election) {
+  const now = new Date();
+  const startDate = new Date(election.start_date);
+  const endDate = new Date(election.end_date);
+  
+  let status = election.status;
+  
+  if (status === 'active' && now > endDate) {
+    status = 'completed';
+  } else if (status === 'upcoming' && now >= startDate && now <= endDate) {
+    status = 'active';
+  }
+  
+  return `<span class="status-badge ${status}">${status}</span>`;
+}
+
+function getActionButtons(election) {
+  const now = new Date();
+  const startDate = new Date(election.start_date);
+  const endDate = new Date(election.end_date);
+  
+  let buttons = '<div class="action-buttons">';
+  
+  if (election.status === 'upcoming') {
+    buttons += `
+      <button class="btn-action btn-start" onclick="startElection(${election.id})" title="Start Election">
+        <i class="fas fa-play"></i> Start
+      </button>
+      <button class="btn-action btn-edit" onclick="editElection(${election.id})" title="Edit">
+        <i class="fas fa-edit"></i> Edit
+      </button>
+      <button class="btn-action btn-delete" onclick="deleteElection(${election.id})" title="Delete">
+        <i class="fas fa-trash"></i> Delete
+      </button>
+    `;
+  } else if (election.status === 'active') {
+    buttons += `
+      <button class="btn-action btn-stop" onclick="stopElection(${election.id})" title="Stop Election Immediately">
+        <i class="fas fa-stop-circle"></i> Stop
+      </button>
+      <button class="btn-action btn-close" onclick="closeElection(${election.id})" title="Close & Finalize Results">
+        <i class="fas fa-check-circle"></i> Close
+      </button>
+    `;
+  } else if (election.status === 'completed') {
+    buttons += `
+      <button class="btn-action btn-edit" onclick="editElection(${election.id})" title="View Details">
+        <i class="fas fa-eye"></i> View
+      </button>
+      <button class="btn-action btn-delete" onclick="deleteElection(${election.id})" title="Delete">
+        <i class="fas fa-trash"></i> Delete
+      </button>
+    `;
+  } else if (election.status === 'cancelled') {
+    buttons += `
+      <button class="btn-action btn-delete" onclick="deleteElection(${election.id})" title="Delete">
+        <i class="fas fa-trash"></i> Delete
+      </button>
+    `;
+  }
+  
+  buttons += '</div>';
+  return buttons;
+}
+
+function renderElectionsTable(electionsList = elections) {
+  const tbody = document.getElementById('elections-table-body');
+  tbody.innerHTML = '';
+
+  if (electionsList.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="empty-message">No elections found. Create your first election to get started.</td>
+      </tr>
+    `;
+    updatePagination(1, 1);
+    return;
+  }
+
+  const totalPages = Math.ceil(electionsList.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedElections = electionsList.slice(startIndex, endIndex);
+
+  paginatedElections.forEach(election => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><strong>${election.title}</strong></td>
+      <td>${formatDateTime(election.start_date)}</td>
+      <td>${formatDateTime(election.end_date)}</td>
+      <td>${getStatusBadge(election)}</td>
+      <td>${getActionButtons(election)}</td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  updatePagination(currentPage, totalPages);
+}
+
+function updatePagination(page, totalPages) {
+  const pageIndicator = document.querySelector('.page-indicator');
+  const prevBtn = document.querySelector('.prev-btn');
+  const nextBtn = document.querySelector('.next-btn');
+  
+  if (pageIndicator) {
+    pageIndicator.textContent = `Page ${page} of ${totalPages || 1}`;
+  }
+  
+  if (prevBtn) {
+    prevBtn.classList.toggle('disabled', page <= 1);
+  }
+  
+  if (nextBtn) {
+    nextBtn.classList.toggle('disabled', page >= totalPages);
+  }
+}
+
+function goToPage(direction) {
+  const totalPages = Math.ceil(elections.length / itemsPerPage);
+  
+  if (direction === 'prev' && currentPage > 1) {
+    currentPage--;
+    renderElectionsTable();
+  } else if (direction === 'next' && currentPage < totalPages) {
+    currentPage++;
+    renderElectionsTable();
+  }
+}
+
+function openElectionModal(election = null) {
+  const modal = document.getElementById('electionModal');
+  const overlay = document.getElementById('electionModalOverlay');
+  const title = document.getElementById('modalTitle');
+  const form = document.getElementById('electionForm');
+
+  if (election) {
+    title.textContent = 'Edit Election';
+    document.getElementById('electionTitle').value = election.title;
+    document.getElementById('electionDescription').value = election.description || '';
+    
+    const startDate = new Date(election.start_date);
+    const endDate = new Date(election.end_date);
+    document.getElementById('electionStartDate').value = formatDateForInput(startDate);
+    document.getElementById('electionEndDate').value = formatDateForInput(endDate);
+    
+    editingElectionId = election.id;
+  } else {
+    title.textContent = 'Add New Election';
+    form.reset();
+    editingElectionId = null;
+  }
+
+  modal.classList.add('show');
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeElectionModal() {
+  const modal = document.getElementById('electionModal');
+  const overlay = document.getElementById('electionModalOverlay');
+  const form = document.getElementById('electionForm');
+  
+  modal.classList.remove('show');
+  overlay.classList.remove('show');
+  document.body.style.overflow = '';
+  form.reset();
+  editingElectionId = null;
+}
+
+function formatDateForInput(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function editElection(id) {
+  const election = elections.find(e => e.id === id);
+  if (election) {
+    openElectionModal(election);
+  }
+}
+
+async function startElection(id) {
+  const election = elections.find(e => e.id === id);
+  if (election && confirm(`Are you sure you want to start "${election.title}"? Students will be able to vote.`)) {
+    try {
+      const response = await fetch('../api/elections/update_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'active' })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showNotification('success', 'Election Started!', `"${election.title}" is now active. Students can cast their votes.`);
+        loadElections();
+      } else {
+        showNotification('error', 'Failed to Start', result.error || 'Could not start the election.');
+      }
+    } catch (error) {
+      console.error('Error starting election:', error);
+      showNotification('error', 'Error', 'An unexpected error occurred.');
+    }
+  }
+}
+
+async function stopElection(id) {
+  const election = elections.find(e => e.id === id);
+  if (election && confirm(`Are you sure you want to STOP "${election.title}"?\n\nThis will:\n- Immediately stop all voting\n- Mark the election as cancelled\n- Students will no longer be able to vote\n\nNote: Use "Close" instead if you want to finalize the results.`)) {
+    try {
+      const response = await fetch('../api/elections/update_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'cancelled' })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showNotification('success', 'Election Stopped!', `"${election.title}" has been cancelled. Voting is now closed.`);
+        loadElections();
+      } else {
+        showNotification('error', 'Failed to Stop', result.error || 'Could not stop the election.');
+      }
+    } catch (error) {
+      console.error('Error stopping election:', error);
+      showNotification('error', 'Error', 'An unexpected error occurred.');
+    }
+  }
+}
+
+async function closeElection(id) {
+  const election = elections.find(e => e.id === id);
+  if (election && confirm(`Are you sure you want to CLOSE "${election.title}"?\n\nThis will:\n- Stop all voting\n- Finalize and publish results\n- Mark the election as completed\n\nUse this when the election has ended successfully.`)) {
+    try {
+      const response = await fetch('../api/elections/update_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'completed' })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showNotification('success', 'Election Closed!', `"${election.title}" has been completed. Results are now available.`);
+        loadElections();
+      } else {
+        showNotification('error', 'Failed to Close', result.error || 'Could not close the election.');
+      }
+    } catch (error) {
+      console.error('Error closing election:', error);
+      showNotification('error', 'Error', 'An unexpected error occurred.');
+    }
+  }
+}
+
+async function deleteElection(id) {
+  const election = elections.find(e => e.id === id);
+  if (election && confirm(`Are you sure you want to delete "${election.title}"? This action cannot be undone.`)) {
+    try {
+      const response = await fetch('../api/elections/delete.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showNotification('success', 'Deleted!', `Election "${election.title}" has been deleted.`);
+        loadElections();
+      } else {
+        showNotification('error', 'Delete Failed', result.error || 'Could not delete the election.');
+      }
+    } catch (error) {
+      console.error('Error deleting election:', error);
+      showNotification('error', 'Error', 'An unexpected error occurred.');
+    }
+  }
+}
+
+document.getElementById('electionForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const data = {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    start_date: formData.get('start_date'),
+    end_date: formData.get('end_date')
+  };
+
+  const startDate = new Date(data.start_date);
+  const endDate = new Date(data.end_date);
+  
+  if (endDate <= startDate) {
+    showNotification('error', 'Invalid Dates', 'End date must be after start date.');
+    return;
+  }
+
+  try {
+    const url = editingElectionId 
+      ? '../api/elections/update.php' 
+      : '../api/elections/create.php';
+    
+    if (editingElectionId) {
+      data.id = editingElectionId;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      closeElectionModal();
+      loadElections();
+      
+      const actionType = editingElectionId ? 'updated' : 'created';
+      const title = editingElectionId ? 'Updated!' : 'Success!';
+      showNotification('success', title, `Election "${data.title}" has been ${actionType} successfully.`);
+    } else {
+      showNotification('error', 'Save Failed', result.error || 'Failed to save election.');
+    }
+  } catch (error) {
+    console.error('Error saving election:', error);
+    showNotification('error', 'Error', 'An unexpected error occurred while saving the election.');
+  }
+});
+
+document.getElementById('electionModalOverlay').addEventListener('click', closeElectionModal);
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadElections();
+});
+

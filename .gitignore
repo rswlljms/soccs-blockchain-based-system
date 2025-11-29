@@ -1,0 +1,32 @@
+# Composer
+/vendor/
+composer.lock
+
+# Uploads
+/uploads/receipts/*
+/uploads/documents/*
+/uploads/student-ids/*
+!uploads/receipts/.gitkeep
+!uploads/documents/.gitkeep
+!uploads/student-ids/.gitkeep
+
+# Environment files
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node modules (if any)
+node_modules/
+

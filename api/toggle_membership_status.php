@@ -1,0 +1,63 @@
+<?php
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
+
+require_once '../includes/database.php';
+
+try {
+    $database = new Database();
+    $pdo = $database->getConnection();
+    
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!isset($input['student_id'])) {
+        throw new Exception('Student ID is required');
+    }
+    
+    $studentId = $input['student_id'];
+    $action = $input['action'] ?? 'toggle';
+    
+    $stmt = $pdo->prepare("SELECT membership_fee_status, membership_fee_receipt FROM students WHERE id = ?");
+    $stmt->execute([$studentId]);
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$student) {
+        throw new Exception('Student not found');
+    }
+    
+    $currentStatus = $student['membership_fee_status'] ?? 'unpaid';
+    $newStatus = $currentStatus === 'paid' ? 'unpaid' : 'paid';
+    
+    if ($action === 'set_unpaid') {
+        $newStatus = 'unpaid';
+    }
+    
+    // Check if trying to mark as paid without receipt
+    if ($newStatus === 'paid' && empty($student['membership_fee_receipt'])) {
+        throw new Exception('Receipt is required to mark student as paid. Please upload a receipt first.');
+    }
+    
+    $updateSql = "UPDATE students SET 
+                  membership_fee_status = ?,
+                  membership_fee_paid_at = " . ($newStatus === 'paid' ? 'NOW()' : 'NULL') . "
+                  WHERE id = ?";
+    
+    $updateStmt = $pdo->prepare($updateSql);
+    $updateStmt->execute([$newStatus, $studentId]);
+    
+    echo json_encode([
+        'success' => true,
+        'message' => 'Membership status updated successfully',
+        'new_status' => $newStatus
+    ]);
+    
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+}
+

@@ -1,0 +1,23 @@
+/* Soft glow background for auth pages; uses CSS variables for primary color */
+:root{--primary:#9333ea;--primary-rgb:147,51,234;--bg:#f3f4f6}
+
+.auth-page{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;background:
+  /* subtle page tint using primary */
+  linear-gradient(180deg, rgba(var(--primary-rgb),.06), rgba(var(--primary-rgb),.03)),
+  var(--bg);
+padding:24px;overflow:hidden}
+@supports(height: 100svh){.auth-page{height:100svh}}
+
+.auth-glow{position:absolute;inset:0;z-index:0;pointer-events:none}
+.auth-glow::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:2400px;height:2400px;background:
+  /* core subtle glow */
+  radial-gradient(circle at 50% 45%, rgba(var(--primary-rgb),.22) 0%, rgba(var(--primary-rgb),.12) 22%, rgba(var(--primary-rgb),.07) 40%, rgba(var(--primary-rgb),.035) 58%, rgba(var(--primary-rgb),0) 78%),
+  /* lifted top halo */
+  radial-gradient(1200px 900px at 50% 10%, rgba(var(--primary-rgb),.09) 0%, rgba(var(--primary-rgb),0) 70%),
+  /* gentle bottom bloom */
+  radial-gradient(1200px 900px at 50% 92%, rgba(var(--primary-rgb),.07) 0%, rgba(var(--primary-rgb),0) 70%);
+filter:blur(80px);opacity:.55;mix-blend-mode:multiply}
+
+.auth-card{position:relative;z-index:1}
+
+
