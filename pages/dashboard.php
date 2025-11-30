@@ -42,9 +42,9 @@ include('../components/sidebar.php');
           </div>
           <div class="card-content">
             <h3>Total Funds</h3>
-            <p class="amount">₱50,000.00</p>
-            <span class="trend positive">
-              <i class="fas fa-arrow-up"></i> 12% from last month
+            <p class="amount" id="adminTotalFundsAmount">₱0.00</p>
+            <span class="trend" id="adminTotalFundsTrend">
+              <i class="fas fa-spinner fa-spin"></i> Loading...
             </span>
           </div>
         </div>
@@ -55,9 +55,9 @@ include('../components/sidebar.php');
           </div>
           <div class="card-content">
             <h3>Total Expenses</h3>
-            <p class="amount">₱32,250.00</p>
-            <span class="trend negative">
-              <i class="fas fa-arrow-down"></i> 8% from last month
+            <p class="amount" id="adminTotalExpensesAmount">₱0.00</p>
+            <span class="trend" id="adminTotalExpensesTrend">
+              <i class="fas fa-spinner fa-spin"></i> Loading...
             </span>
           </div>
         </div>
@@ -68,9 +68,9 @@ include('../components/sidebar.php');
           </div>
           <div class="card-content">
             <h3>Current Balance</h3>
-            <p class="amount">₱17,750.00</p>
-            <span class="trend neutral">
-              <i class="fas fa-minus"></i> No change
+            <p class="amount" id="adminCurrentBalanceAmount">₱0.00</p>
+            <span class="trend" id="adminCurrentBalanceTrend">
+              <i class="fas fa-spinner fa-spin"></i> Loading...
             </span>
           </div>
         </div>
@@ -119,10 +119,99 @@ include('../components/sidebar.php');
   <script src="../assets/js/admin-dashboard-chart.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      loadFinancialData();
       loadUpcomingEvents();
       updateDateTime();
       setInterval(updateDateTime, 1000);
     });
+
+    async function loadFinancialData() {
+      try {
+        const apiUrl = '../api/get_student_financial_summary.php?t=' + Date.now();
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.status === 'success' && result.data) {
+          updateAdminFinancialDisplay(result.data);
+        } else {
+          throw new Error(result.message || 'Failed to load financial data');
+        }
+      } catch (error) {
+        console.error('Error loading financial data:', error);
+        updateAdminFinancialDisplayError();
+      }
+    }
+
+    function updateAdminFinancialDisplay(data) {
+      const formatCurrency = (amount) => {
+        const num = parseFloat(amount) || 0;
+        return `₱${num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+      };
+
+      const formatPercentage = (change) => {
+        if (change === null || change === undefined || isNaN(change)) {
+          return { text: 'No change', class: 'neutral', icon: 'fa-minus' };
+        }
+        
+        const absChange = Math.abs(change);
+        if (absChange < 0.1) {
+          return { text: 'No change', class: 'neutral', icon: 'fa-minus' };
+        } else if (change > 0) {
+          return { text: `${absChange.toFixed(1)}% from last month`, class: 'positive', icon: 'fa-arrow-up' };
+        } else {
+          return { text: `${absChange.toFixed(1)}% from last month`, class: 'negative', icon: 'fa-arrow-down' };
+        }
+      };
+
+      const totalFundsEl = document.getElementById('adminTotalFundsAmount');
+      const totalFundsTrendEl = document.getElementById('adminTotalFundsTrend');
+      if (totalFundsEl && totalFundsTrendEl) {
+        if (data.totalFunds !== undefined) {
+          totalFundsEl.textContent = formatCurrency(data.totalFunds);
+        }
+        const fundsTrend = formatPercentage(data.fundsChange);
+        totalFundsTrendEl.innerHTML = `<i class="fas ${fundsTrend.icon}"></i> ${fundsTrend.text}`;
+        totalFundsTrendEl.className = `trend ${fundsTrend.class}`;
+      }
+
+      const totalExpensesEl = document.getElementById('adminTotalExpensesAmount');
+      const totalExpensesTrendEl = document.getElementById('adminTotalExpensesTrend');
+      if (totalExpensesEl && totalExpensesTrendEl) {
+        if (data.totalExpenses !== undefined) {
+          totalExpensesEl.textContent = formatCurrency(data.totalExpenses);
+        }
+        const expensesTrend = formatPercentage(data.expensesChange);
+        totalExpensesTrendEl.innerHTML = `<i class="fas ${expensesTrend.icon}"></i> ${expensesTrend.text}`;
+        totalExpensesTrendEl.className = `trend ${expensesTrend.class}`;
+      }
+
+      const currentBalanceEl = document.getElementById('adminCurrentBalanceAmount');
+      const currentBalanceTrendEl = document.getElementById('adminCurrentBalanceTrend');
+      if (currentBalanceEl && currentBalanceTrendEl) {
+        if (data.availableBalance !== undefined) {
+          currentBalanceEl.textContent = formatCurrency(data.availableBalance);
+        }
+        const balanceTrend = formatPercentage(data.balanceChange);
+        currentBalanceTrendEl.innerHTML = `<i class="fas ${balanceTrend.icon}"></i> ${balanceTrend.text}`;
+        currentBalanceTrendEl.className = `trend ${balanceTrend.class}`;
+      }
+    }
+
+    function updateAdminFinancialDisplayError() {
+      const trendElements = ['adminTotalFundsTrend', 'adminTotalExpensesTrend', 'adminCurrentBalanceTrend'];
+      trendElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Unable to load';
+          el.className = 'trend error';
+        }
+      });
+    }
 
     function updateDateTime() {
       const now = new Date();

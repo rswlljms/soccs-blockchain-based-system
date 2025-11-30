@@ -124,47 +124,46 @@ try {
 
     $db->commit();
     
-    $blockchainUrl = 'http://localhost:3001/add-vote';
-    $voteHashes = [];
+    $blockchainUrl = 'http://localhost:3001/add-batch-votes';
+    $candidateIds = [];
+    $positionIds = [];
     
     foreach ($votes as $vote) {
-        $stmt = $db->prepare("SELECT position_id FROM candidates WHERE id = ?");
-        $stmt->execute([$vote['candidate_id']]);
-        $candidate = $stmt->fetch(PDO::FETCH_ASSOC);
-        $positionId = $candidate['position_id'];
-        
-        $voteData = [
-            'electionId' => (int)$electionId,
-            'voterId' => $studentId,
-            'candidateId' => (int)$vote['candidate_id'],
-            'positionId' => (int)$positionId,
-            'method' => 'VOTE'
-        ];
-        
-        $ch = curl_init($blockchainUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($voteData));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
-        
-        $blockchainResponse = @curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($httpCode === 200 && $blockchainResponse) {
-            $blockchainResult = json_decode($blockchainResponse, true);
-            if (isset($blockchainResult['status']) && $blockchainResult['status'] === 'success') {
-                $voteHash = $blockchainResult['txHash'];
-                $updateStmt = $db->prepare("UPDATE votes SET vote_hash = ? WHERE id = ?");
-                $updateStmt->execute([$voteHash, $vote['vote_id']]);
-                $voteHashes[] = $voteHash;
-            }
-        }
+        $candidateIds[] = (int)$vote['candidate_id'];
+        $positionIds[] = (int)$vote['position_id'];
     }
     
-    $transactionHash = !empty($voteHashes) ? $voteHashes[0] : null;
+    $batchVoteData = [
+        'electionId' => (int)$electionId,
+        'voterId' => $studentId,
+        'candidateIds' => $candidateIds,
+        'positionIds' => $positionIds,
+        'method' => 'BATCH_VOTE'
+    ];
+    
+    $ch = curl_init($blockchainUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($batchVoteData));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
+    
+    $blockchainResponse = @curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    $transactionHash = null;
+    
+    if ($httpCode === 200 && $blockchainResponse) {
+        $blockchainResult = json_decode($blockchainResponse, true);
+        if (isset($blockchainResult['status']) && $blockchainResult['status'] === 'success') {
+            $transactionHash = $blockchainResult['txHash'];
+            
+            $updateStmt = $db->prepare("UPDATE votes SET vote_hash = ? WHERE election_id = ? AND voter_id = ?");
+            $updateStmt->execute([$transactionHash, $electionId, $studentId]);
+        }
+    }
 
     echo json_encode([
         'success' => true,
@@ -173,7 +172,6 @@ try {
             'student_id' => $studentId,
             'election_id' => $electionId,
             'votes' => $votes,
-            'transaction_hashes' => $voteHashes,
             'transaction_hash' => $transactionHash,
             'timestamp' => date('Y-m-d H:i:s')
         ]

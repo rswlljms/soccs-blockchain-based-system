@@ -26,11 +26,16 @@
 4. Wait for green checkmark - compilation successful
 5. If there are errors, check the error messages and fix them
 
-### 4. Get the ABI
+### 4. Get the ABI and Compiler Settings
 1. After successful compilation, click **Compilation Details** button
 2. In the popup, scroll to find **ABI** section
 3. Click the **copy icon** next to the ABI JSON
-4. **Save this** - you may need to update `blockchain/blockchain-signer/abi.json`
+4. **Save this** - you'll need to update `blockchain/blockchain-signer/abi.json`
+5. **Note Compiler Settings** (needed for Etherscan verification):
+   - **Compiler Version**: Note the exact version (e.g., `0.8.20`)
+   - **Optimization**: Check if enabled (Yes/No)
+   - **Runs**: If optimization enabled, note the value (e.g., `200`)
+   - **License**: Should be `MIT` (matches contract SPDX identifier)
 
 ### 5. Deploy Contract
 1. Click **Deploy & Run Transactions** icon (bottom of left sidebar, Ethereum logo)
@@ -65,7 +70,103 @@ PRIVATE_KEY=your_private_key_here
 2. Compare with the ABI from Remix
 3. If different, replace the entire content with the ABI from Remix
 
-### 8. Restart Blockchain Signer
+### 8. Verify Contract Source Code on Etherscan
+
+#### Method 1: Using Remix Etherscan Plugin (Recommended)
+
+1. **Install Etherscan Plugin in Remix**:
+   - In Remix, click the **Plugin Manager** icon (bottom of left sidebar, puzzle piece icon)
+   - Search for **"Etherscan"** or **"flatten"**
+   - Click **Activate** on the **Etherscan - Contract Verification** plugin
+
+2. **Get Compiler Settings**:
+   - Go to **Solidity Compiler** tab
+   - Note the **Compiler version** (e.g., `0.8.20`)
+   - Note **Optimization** settings:
+     - If enabled, note the **Runs** value (e.g., 200)
+     - If disabled, optimization is `false`
+
+3. **Verify Contract**:
+   - Go to **Deploy & Run Transactions** tab
+   - Find your deployed contract in **Deployed Contracts** section
+   - Click the **⋮** (three dots) menu next to your contract
+   - Select **Verify on Etherscan** or **Verify on Block Explorer**
+   - Fill in the form:
+     - **Contract Address**: Your contract address (auto-filled)
+     - **Compiler Version**: Match exactly (e.g., `v0.8.20+commit.a1b79de6`)
+     - **Optimization**: `Yes` or `No` (match your compilation settings)
+     - **Runs**: If optimization enabled, enter the runs value (e.g., `200`)
+     - **License**: Select `MIT` (matches SPDX-License-Identifier in contract)
+   - Click **Verify**
+   - Wait for verification (usually 30-60 seconds)
+   - You'll see a success message with link to Etherscan
+
+4. **Verify Success**:
+   - Click the link to view your contract on Etherscan
+   - You should see a green checkmark ✓ next to "Contract" tab
+   - Source code should be visible and verified
+
+#### Method 2: Manual Verification on Etherscan
+
+1. **Get Contract Source Code**:
+   - Open `blockchain/contracts/SOCCS_SYSTEM.sol` from your project
+   - Copy the entire file content
+
+2. **Get Compiler Settings from Remix**:
+   - In Remix, go to **Solidity Compiler** tab
+   - Click **Compilation Details** button
+   - Note:
+     - **Compiler version** (e.g., `0.8.20`)
+     - **Optimization** enabled/disabled
+     - **Runs** value if optimization enabled
+
+3. **Navigate to Etherscan**:
+   - Go to the appropriate explorer:
+     - **Mainnet**: https://etherscan.io
+     - **Sepolia**: https://sepolia.etherscan.io
+     - **Goerli**: https://goerli.etherscan.io
+   - Search for your contract address
+   - Click on the contract address
+
+4. **Start Verification**:
+   - Click **Contract** tab
+   - Click **Verify and Publish** button
+   - Select **Via Standard JSON Input** (recommended) or **Via Source Code**
+
+5. **Fill Verification Form**:
+   - **Compiler Type**: `Solidity (Single file)` or `Solidity (Standard JSON Input)`
+   - **Compiler Version**: Select exact version (e.g., `v0.8.20+commit.a1b79de6`)
+   - **Open Source License Type**: `MIT License (MIT)`
+   - **Optimization**: `Yes` or `No` (match Remix settings)
+   - **Runs**: If optimization enabled, enter runs value
+
+6. **Paste Source Code**:
+   - If using "Via Source Code":
+     - Paste the entire contract source code
+   - If using "Via Standard JSON Input":
+     - In Remix, go to **Compilation Details**
+     - Copy the entire JSON from **Standard JSON Input** section
+     - Paste it in Etherscan
+
+7. **Submit for Verification**:
+   - Click **Verify and Publish**
+   - Wait for processing (30-60 seconds)
+   - You'll see success message when verified
+
+8. **Confirm Verification**:
+   - Refresh the contract page on Etherscan
+   - Green checkmark ✓ should appear next to "Contract" tab
+   - Source code should be visible and readable
+
+#### Important Notes for Verification
+
+- **Compiler Version Must Match**: The version used for verification must exactly match the deployment version
+- **Optimization Settings Must Match**: If you compiled with optimization, verify with optimization enabled
+- **License Must Match**: Use `MIT` to match the SPDX-License-Identifier in your contract
+- **Contract Name**: Use `SOCCS_SYSTEM` (must match contract name in source code)
+- **Constructor Arguments**: Not needed for this contract (no constructor parameters)
+
+### 9. Restart Blockchain Signer
 1. Navigate to `blockchain/blockchain-signer/` in terminal
 2. Stop the current process (Ctrl+C if running)
 3. Restart: `npm start` or `node index.js`
@@ -102,6 +203,25 @@ PRIVATE_KEY=your_private_key_here
 - Ensure blockchain signer is restarted
 - Check network matches (testnet vs mainnet)
 
+### Method Name Shows as Hex (e.g., 0x4a8f7a62)
+**Problem**: Blockchain explorer shows hexadecimal values instead of readable function names like `recordTransaction` or `recordBudget`.
+
+**Cause**: The contract is not verified on the blockchain explorer, so it cannot decode function selectors to readable names.
+
+**Solution**: Verify your contract on the blockchain explorer (see Step 8 above). Once verified:
+- Function calls will show readable names (e.g., `recordTransaction`, `recordBudget`)
+- Transaction details will be human-readable
+- Contract source code will be visible and verified
+
+**Quick Fix**:
+1. Go to your blockchain explorer (Etherscan, BSCScan, etc.)
+2. Navigate to your contract address
+3. Click the **Contract** tab
+4. Click **Verify and Publish**
+5. Follow the verification steps in Step 8 above
+6. After verification (30-60 seconds), refresh the page
+7. Method names will now display correctly
+
 ## Important Notes
 
 ⚠️ **Security Warning**: Never commit your `.env` file with real private keys to version control!
@@ -112,11 +232,13 @@ PRIVATE_KEY=your_private_key_here
 - Document deployment date and network
 - Save transaction hash for verification
 
-## Verification
+## Post-Deployment Testing
 
-After deployment, test the contract:
+After deployment and verification, test the contract:
 1. Check contract is visible on blockchain explorer (Etherscan)
-2. Test a transaction (e.g., add expense) through your application
-3. Verify transaction hash is returned
-4. Check transaction appears on blockchain explorer
+2. Verify source code is verified (green checkmark on Etherscan)
+3. Test a transaction (e.g., add expense) through your application
+4. Verify transaction hash is returned
+5. Check transaction appears on blockchain explorer
+6. Verify transaction details on Etherscan match your application logs
 

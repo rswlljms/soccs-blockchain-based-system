@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../includes/page_access.php';
+require_once '../includes/auth_check.php';
 checkPageAccess(['view_funds', 'manage_funds', 'view_financial_records']);
 include '../components/sidebar.php';
 ?>
@@ -66,9 +67,11 @@ include '../components/sidebar.php';
           </select>
         </div>
       <div class="toolbar-actions">
+        <?php if (hasPermission('manage_funds')): ?>
         <button type="button" class="btn-add-funds" id="openFundModal">
           <i class="fas fa-plus"></i> Add Budget
         </button>
+        <?php endif; ?>
         <button class="btn-print" onclick="printFundsReport()">
           <i class="fas fa-print"></i> Print Report
         </button>
@@ -235,22 +238,7 @@ include '../components/sidebar.php';
     window.open(`print-funds-report-pdf.php?${params.toString()}`, '_blank');
   }
 
-  function updateSummaryCards(summary) {
-    if (summary) {
-      const totalFunds = parseFloat(summary.total_amount) || 0;
-      document.getElementById('totalFunds').textContent = `₱${totalFunds.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-      document.getElementById('totalRecords').textContent = summary.total_count || 0;
-      const monthlyTotal = parseFloat(summary.monthly_total) || 0;
-      document.getElementById('monthlyTotal').textContent = `₱${monthlyTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    }
-  }
-
   document.addEventListener('DOMContentLoaded', function() {
-    updateSummaryCards({
-      total_amount: 15000,
-      total_count: 2,
-      monthly_total: 15000
-    });
 
     const fundModal = document.getElementById('fundModal');
     const fundModalOverlay = document.getElementById('fundModalOverlay');
@@ -271,10 +259,18 @@ include '../components/sidebar.php';
       document.getElementById('fund-form').reset();
     }
 
-    openFundModal.addEventListener('click', openModal);
-    closeFundModal.addEventListener('click', closeModal);
-    cancelFundForm.addEventListener('click', closeModal);
-    fundModalOverlay.addEventListener('click', closeModal);
+    if (openFundModal) {
+      openFundModal.addEventListener('click', openModal);
+    }
+    if (closeFundModal) {
+      closeFundModal.addEventListener('click', closeModal);
+    }
+    if (cancelFundForm) {
+      cancelFundForm.addEventListener('click', closeModal);
+    }
+    if (fundModalOverlay) {
+      fundModalOverlay.addEventListener('click', closeModal);
+    }
   });
 </script>
 <script src="../assets/js/funds.js"></script>

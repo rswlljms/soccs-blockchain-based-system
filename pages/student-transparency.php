@@ -31,223 +31,198 @@ $student = $_SESSION['student'];
   <style>
     .transparency-header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 2rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
       color: white;
       text-align: center;
     }
 
     .transparency-header h1 {
-      margin: 0 0 0.5rem 0;
-      font-size: 2rem;
+      margin: 0 0 0.25rem 0;
+      font-size: 1.5rem;
       font-weight: 700;
     }
 
     .transparency-header p {
       margin: 0;
       opacity: 0.95;
-      font-size: 1.1rem;
+      font-size: 0.9rem;
     }
 
     .blockchain-verified-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       background: rgba(255, 255, 255, 0.2);
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.8rem;
       border-radius: 50px;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
       font-weight: 600;
+      font-size: 0.85rem;
     }
 
     .results-section {
       background: white;
-      padding: 2rem;
-      border-radius: 12px;
+      padding: 1.25rem;
+      border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
     }
 
     .results-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .results-header h2 {
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       color: #1f2937;
     }
 
     .results-count {
       color: #6b7280;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
     }
 
     .transaction-card {
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
       transition: all 0.3s ease;
-      cursor: pointer;
       background: white;
     }
 
     .transaction-card:hover {
       border-color: #667eea;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
-      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
     }
 
     .transaction-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
     }
 
     .transaction-title {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #1f2937;
-      margin: 0 0 0.25rem 0;
-    }
-
-    .transaction-category {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 50px;
-      font-size: 0.85rem;
       font-weight: 600;
-      background: #e0e7ff;
-      color: #4338ca;
+      font-size: 0.95rem;
+      color: #1f2937;
+      margin: 0;
     }
 
     .transaction-amount {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: #ef4444;
     }
 
     .transaction-details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
     }
 
     .detail-item {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.2rem;
     }
 
     .detail-label {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       color: #6b7280;
       font-weight: 600;
       text-transform: uppercase;
     }
 
     .detail-value {
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: #1f2937;
       font-weight: 500;
     }
 
     .blockchain-hash-section {
       background: #f9fafb;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 1rem;
-      border-left: 4px solid #10b981;
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-top: 0.75rem;
+      border-left: 3px solid #10b981;
     }
 
     .blockchain-hash-label {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-weight: 700;
+      gap: 0.4rem;
+      font-weight: 600;
       color: #1f2937;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
     }
 
     .blockchain-hash-label i {
       color: #10b981;
+      font-size: 0.9rem;
     }
 
     .blockchain-hash-value {
       font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #4b5563;
       word-break: break-all;
       background: white;
-      padding: 0.75rem;
-      border-radius: 6px;
+      padding: 0.5rem;
+      border-radius: 4px;
       border: 1px solid #e5e7eb;
-    }
-
-    .document-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: #3b82f6;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .document-link:hover {
-      background: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
     .no-results {
       text-align: center;
-      padding: 3rem;
+      padding: 2rem;
       color: #6b7280;
     }
 
     .no-results i {
-      font-size: 4rem;
-      margin-bottom: 1rem;
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
       opacity: 0.5;
     }
 
     .no-results h3 {
       margin: 0 0 0.5rem 0;
       color: #374151;
+      font-size: 1rem;
     }
 
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 1rem;
-      margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 2px solid #e5e7eb;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e5e7eb;
     }
 
     .page-btn {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1rem;
       background: white;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
       color: #374151;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       text-decoration: none;
+      font-size: 0.9rem;
     }
 
     .page-btn:hover:not(.disabled) {
@@ -265,20 +240,19 @@ $student = $_SESSION['student'];
     .page-indicator {
       font-weight: 600;
       color: #374151;
+      font-size: 0.9rem;
     }
+
 
     @media (max-width: 768px) {
       .transparency-header h1 {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
       }
 
       .transaction-header {
         flex-direction: column;
-        gap: 1rem;
-      }
-
-      .transaction-details {
-        grid-template-columns: 1fr;
+        align-items: flex-start;
+        gap: 0.5rem;
       }
     }
   </style>
@@ -295,7 +269,7 @@ $student = $_SESSION['student'];
     <div class="dashboard-wrapper">
       <div class="transparency-header">
         <h1><i class="fas fa-shield-alt"></i> Financial Transparency </h1>
-        <p>All financial transactions recorded and verified on blockchain</p>
+        <p>All SOCCS Organization financial transactions are recorded and verified on the blockchain</p>
         <div class="blockchain-verified-badge">
           <i class="fas fa-check-circle"></i>
           <span>Blockchain Verified</span>
@@ -304,7 +278,7 @@ $student = $_SESSION['student'];
 
       <div class="results-section">
         <div class="results-header">
-          <h2><i class="fas fa-list"></i> Transaction Records</h2>
+          <h2><i class="fas fa-list"></i> Financial Transactions</h2>
           <span class="results-count" id="resultsCount">Loading...</span>
         </div>
         
@@ -320,6 +294,7 @@ $student = $_SESSION['student'];
           </a>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -375,40 +350,14 @@ $student = $_SESSION['student'];
           card.className = 'transaction-card';
           card.innerHTML = `
             <div class="transaction-header">
-              <div>
-                <h3 class="transaction-title">${expense.name}</h3>
-                <span class="transaction-category">${expense.category}</span>
-              </div>
+              <h3 class="transaction-title">${expense.name}</h3>
               <div class="transaction-amount">-₱${parseFloat(expense.amount).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
             </div>
             
             <div class="transaction-details">
               <div class="detail-item">
-                <span class="detail-label">Description</span>
-                <span class="detail-value">${expense.description}</span>
-              </div>
-              
-              <div class="detail-item">
-                <span class="detail-label">Supplier</span>
-                <span class="detail-value">${expense.supplier}</span>
-              </div>
-              
-              <div class="detail-item">
                 <span class="detail-label">Date</span>
                 <span class="detail-value">${expense.date}</span>
-              </div>
-              
-              <div class="detail-item">
-                <span class="detail-label">Document</span>
-                <span class="detail-value">
-                  ${expense.document ? 
-                    `<a href="../api/view_document.php?filename=${expense.document}" 
-                        target="_blank" 
-                        class="document-link">
-                        <i class="fas fa-file-alt"></i> View Document
-                    </a>` : 
-                    '<span style="color: #9ca3af;">No document</span>'}
-                </span>
               </div>
             </div>
             
@@ -416,7 +365,7 @@ $student = $_SESSION['student'];
             <div class="blockchain-hash-section">
               <div class="blockchain-hash-label">
                 <i class="fas fa-shield-alt"></i>
-                Blockchain Hash
+                Transaction Hash
               </div>
               <div class="blockchain-hash-value">${expense.transaction_hash}</div>
             </div>

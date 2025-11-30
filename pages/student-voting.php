@@ -367,10 +367,6 @@ if ($hasActiveElection) {
           <div class="voting-actions">
             <div class="security-notice">
               <div class="security-item">
-                <i class="fas fa-shield-alt"></i>
-                <span>Blockchain Secured</span>
-              </div>
-              <div class="security-item">
                 <i class="fas fa-lock"></i>
                 <span>Anonymous & Encrypted</span>
               </div>

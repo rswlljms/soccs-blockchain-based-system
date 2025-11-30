@@ -708,8 +708,17 @@ tr:last-child td {
 .loading-modal {
   width: 360px;
   max-width: 90%;
-  padding: 32px;
+  padding: 0;
   text-align: center;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.loading-modal .modal-header {
+  border-radius: 16px;
+  margin-bottom: 0;
 }
 
 .loading-modal .spinner {
@@ -729,7 +738,9 @@ tr:last-child td {
 }
 
 .loading-modal .modal-content {
-  padding: 0;
+  padding: 20px 24px 24px 24px;
+  background: white;
+  border-radius: 0 0 16px 16px;
 }
 
 .loading-modal p {

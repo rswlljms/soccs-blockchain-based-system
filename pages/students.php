@@ -67,29 +67,63 @@ include('../components/sidebar.php');
         
         .filters-container {
             display: flex;
-            gap: 12px;
-            margin: 24px 0;
+            gap: 16px;
+            margin: 0 0 24px 0;
             flex-wrap: wrap;
             align-items: center;
-        }
-        
-        .filters-container select,
-        .filters-container input {
-            height: 42px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 8px 12px;
-            background-color: white;
-            min-width: 160px;
+            background: white;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
         }
         
         .filters-container select {
-            padding-right: 32px;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 12px center;
-            background-repeat: no-repeat;
-            background-size: 16px;
+            height: 44px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 36px 12px 18px;
+            background-color: white;
+            min-width: 180px;
+            font-size: 14px;
+            font-family: 'Work Sans', sans-serif;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
             appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px 12px;
+        }
+
+        .filters-container select:hover {
+            border-color: #9933ff;
+        }
+
+        .filters-container select:focus {
+            outline: none;
+            border-color: #9933ff;
+            box-shadow: 0 0 0 4px rgba(153, 51, 255, 0.1);
+        }
+        
+        .filters-container input {
+            height: 44px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 18px;
+            background-color: white;
+            font-size: 14px;
+            font-family: 'Work Sans', sans-serif;
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+        
+        .filters-container input:focus {
+            outline: none;
+            border-color: #9933ff;
+            box-shadow: 0 0 0 4px rgba(153, 51, 255, 0.1);
         }
         
         .filters-container button {

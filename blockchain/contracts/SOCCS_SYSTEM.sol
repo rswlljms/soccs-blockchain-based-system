@@ -165,6 +165,41 @@ contract SOCCS_SYSTEM {
         );
     }
 
+    function recordBatchVotes(
+        uint256 electionId,
+        string memory voterId,
+        uint256[] memory candidateIds,
+        uint256[] memory positionIds,
+        string memory method
+    ) public {
+        require(candidateIds.length == positionIds.length, "Arrays length mismatch");
+        require(candidateIds.length > 0, "No votes to record");
+        
+        bytes32 methodHash = keccak256(abi.encodePacked(method));
+        
+        for (uint256 i = 0; i < candidateIds.length; i++) {
+            Vote memory newVote = Vote({
+                electionId: electionId,
+                voterId: voterId,
+                candidateId: candidateIds[i],
+                positionId: positionIds[i],
+                timestamp: block.timestamp
+            });
+            
+            votes.push(newVote);
+            
+            emit VoteRecorded(
+                electionId,
+                voterId,
+                candidateIds[i],
+                positionIds[i],
+                block.timestamp
+            );
+        }
+        
+        emit MethodExecuted(methodHash, method);
+    }
+
     function confirmElection(
         uint256 electionId,
         string memory electionTitle,

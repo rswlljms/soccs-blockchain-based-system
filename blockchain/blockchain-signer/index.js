@@ -179,6 +179,98 @@ app.post('/add-vote', async (req, res) => {
   }
 });
 
+app.post('/add-batch-votes', async (req, res) => {
+  console.log('Received batch vote data:', req.body);
+  const { electionId, voterId, candidateIds, positionIds, method } = req.body;
+
+  try {
+    console.log('Attempting to record batch votes...');
+    console.log('Using contract address:', process.env.CONTRACT_ADDRESS);
+
+    if (!electionId || !voterId || !candidateIds || !positionIds) {
+      throw new Error('Missing required fields: electionId, voterId, candidateIds, positionIds');
+    }
+
+    if (!Array.isArray(candidateIds) || !Array.isArray(positionIds)) {
+      throw new Error('candidateIds and positionIds must be arrays');
+    }
+
+    if (candidateIds.length === 0) {
+      throw new Error('No votes to record');
+    }
+
+    if (candidateIds.length !== positionIds.length) {
+      throw new Error('candidateIds and positionIds arrays must have the same length');
+    }
+
+    let estimatedGas;
+    try {
+      estimatedGas = await contract.methods.recordBatchVotes(
+        electionId,
+        voterId.toString(),
+        candidateIds,
+        positionIds,
+        method || 'BATCH_VOTE'
+      ).estimateGas({ from: account.address });
+
+      console.log('Gas estimate successful:', estimatedGas);
+    } catch (estimateError) {
+      if (estimateError.message && (estimateError.message.includes('revert') || estimateError.message.includes('function'))) {
+        throw new Error('Contract function recordBatchVotes not found. Please redeploy the contract with the updated SOCCS_SYSTEM.sol that includes the recordBatchVotes function.');
+      }
+      throw estimateError;
+    }
+
+    const data = contract.methods.recordBatchVotes(
+      electionId,
+      voterId.toString(),
+      candidateIds,
+      positionIds,
+      method || 'BATCH_VOTE'
+    ).encodeABI();
+
+    const gasLimit = Math.min(estimatedGas + 50000, 5000000);
+
+    console.log('Batch vote transaction details:');
+    console.log('From address:', account.address);
+    console.log('To contract:', process.env.CONTRACT_ADDRESS);
+    console.log('Election ID:', electionId);
+    console.log('Voter ID:', voterId);
+    console.log('Number of votes:', candidateIds.length);
+    console.log('Gas limit:', gasLimit);
+
+    const tx = await web3.eth.sendTransaction({
+      from: account.address,
+      to: process.env.CONTRACT_ADDRESS,
+      gas: gasLimit,
+      data: data
+    });
+
+    console.log('Batch vote transaction successful:', tx.transactionHash);
+    res.json({
+      status: 'success',
+      txHash: tx.transactionHash,
+      contractAddress: process.env.CONTRACT_ADDRESS,
+      voteCount: candidateIds.length
+    });
+  } catch (err) {
+    console.error('Blockchain error:', err);
+    
+    let errorMessage = err.message;
+    if (err.receipt && err.receipt.status === false) {
+      errorMessage = 'Transaction reverted. The contract may not have the recordBatchVotes function. Please redeploy the contract with the updated SOCCS_SYSTEM.sol file.';
+    }
+    
+    res.status(500).json({
+      status: 'error',
+      message: errorMessage,
+      details: err.toString(),
+      contractAddress: process.env.CONTRACT_ADDRESS,
+      hint: 'If this error persists, ensure the contract at ' + process.env.CONTRACT_ADDRESS + ' includes the recordBatchVotes function. Redeploy the contract if needed.'
+    });
+  }
+});
+
 app.post('/confirm-election', async (req, res) => {
   console.log('Received election confirmation data:', req.body);
   const { electionId, electionTitle, totalVotes, method } = req.body;

@@ -34,10 +34,6 @@
     <li><a href="../pages/student-events.php" class="<?= $currentPage == 'student-events.php' ? 'active' : '' ?>">
       <i class="fas fa-calendar-alt"></i><span>Events</span>
     </a></li>
-    
-    <li><a href="../pages/student-announcements.php" class="<?= $currentPage == 'student-announcements.php' ? 'active' : '' ?>">
-      <i class="fas fa-bullhorn"></i><span>Announcements</span>
-    </a></li>
 
     <li><a href="../pages/student-transparency.php" class="<?= $currentPage == 'student-transparency.php' ? 'active' : '' ?>">
       <i class="fas fa-shield-alt"></i><span>Transparency</span>

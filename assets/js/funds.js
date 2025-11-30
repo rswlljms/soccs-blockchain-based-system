@@ -190,6 +190,9 @@ document.getElementById('fund-form').addEventListener('submit', async function (
                         showModal('successModal');
                         this.reset();
                         await loadFunds();
+                        if (typeof loadBudgetSummary === 'function') {
+                            await loadBudgetSummary();
+                        }
                     } else {
                         throw new Error(dbResult.message || 'Failed to save to database');
                     }
@@ -272,5 +275,55 @@ document.getElementById('filter-date').addEventListener('change', function () {
     loadFunds(currentPage);
 });
 
+// Load budget summary function
+async function loadBudgetSummary() {
+    try {
+        const response = await fetch('../api/get_budget_summary.php?t=' + Date.now());
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            updateSummaryCards(result.data);
+        } else {
+            throw new Error(result.message || 'Failed to load budget summary');
+        }
+    } catch (error) {
+        console.error('Error loading budget summary:', error);
+        updateSummaryCards({
+            total_amount: 0,
+            total_count: 0,
+            monthly_total: 0
+        });
+    }
+}
+
+function updateSummaryCards(summary) {
+    if (summary) {
+        const totalFunds = parseFloat(summary.total_amount) || 0;
+        const totalFundsEl = document.getElementById('totalFunds');
+        if (totalFundsEl) {
+            totalFundsEl.textContent = `₱${totalFunds.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+        
+        const totalRecordsEl = document.getElementById('totalRecords');
+        if (totalRecordsEl) {
+            totalRecordsEl.textContent = summary.total_count || 0;
+        }
+        
+        const monthlyTotal = parseFloat(summary.monthly_total) || 0;
+        const monthlyTotalEl = document.getElementById('monthlyTotal');
+        if (monthlyTotalEl) {
+            monthlyTotalEl.textContent = `₱${monthlyTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+    }
+}
+
 // Initial load
-document.addEventListener('DOMContentLoaded', () => loadFunds(currentPage)); 
+document.addEventListener('DOMContentLoaded', () => {
+    loadFunds(currentPage);
+    loadBudgetSummary();
+}); 

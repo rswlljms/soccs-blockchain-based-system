@@ -95,12 +95,6 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
     <?php endif; ?>
     <?php endif; ?>
 
-    <?php if (hasAnyPermission(['generate_reports', 'generate_financial_reports', 'generate_membership_reports', 'generate_event_reports', 'export_reports'])): ?>
-    <li><a href="../pages/reports.php" class="<?= $currentPage == 'reports.php' ? 'active' : '' ?>">
-      <i class="fas fa-file-alt"></i><span>Reports</span>
-    </a></li>
-    <?php endif; ?>
-
     <?php if (hasAnyPermission(['view_election', 'manage_election_status', 'register_candidates', 'manage_positions', 'view_election_results'])): ?>
     <li class="dropdown">
       <a href="javascript:void(0);" class="dropdown-toggle <?= ($currentPage == 'add-candidate.php' || $currentPage == 'positions.php' || $currentPage == 'elections.php' || $currentPage == 'admin-election-overview.php') ? 'active' : '' ?>">
@@ -134,12 +128,6 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
     <?php if (isAdviser() || isDean()): ?>
     <li><a href="../pages/activity-logs.php" class="<?= $currentPage == 'activity-logs.php' ? 'active' : '' ?>">
       <i class="fas fa-history"></i><span>Activity Logs</span>
-    </a></li>
-    <?php endif; ?>
-
-    <?php if (hasAnyPermission(['view_settings', 'manage_settings'])): ?>
-    <li><a href="../pages/settings.php" class="<?= $currentPage == 'settings.php' ? 'active' : '' ?>">
-      <i class="fas fa-cog"></i><span>Settings</span>
     </a></li>
     <?php endif; ?>
   </ul>

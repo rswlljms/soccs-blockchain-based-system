@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../includes/page_access.php';
+require_once '../includes/auth_check.php';
 checkPageAccess(['view_expenses', 'manage_expenses', 'view_financial_records']);
 include('../components/sidebar.php');
 ?>
@@ -68,9 +69,11 @@ include('../components/sidebar.php');
           </select>
         </div>
         <div class="toolbar-actions">
+          <?php if (hasPermission('manage_expenses')): ?>
           <button type="button" class="btn-add-expense" id="openExpenseModal">
             <i class="fas fa-plus"></i> Add Expense
           </button>
+          <?php endif; ?>
           <button class="btn-print" onclick="printExpensesReport()">
             <i class="fas fa-print"></i> Print Report
           </button>
@@ -343,10 +346,18 @@ include('../components/sidebar.php');
       document.getElementById('filePreview').innerHTML = '';
     }
 
-    openExpenseModalBtn.addEventListener('click', openExpenseModal);
-    closeExpenseModalBtn.addEventListener('click', closeExpenseModal);
-    cancelExpenseFormBtn.addEventListener('click', closeExpenseModal);
-    expenseModalOverlay.addEventListener('click', closeExpenseModal);
+    if (openExpenseModalBtn) {
+      openExpenseModalBtn.addEventListener('click', openExpenseModal);
+    }
+    if (closeExpenseModalBtn) {
+      closeExpenseModalBtn.addEventListener('click', closeExpenseModal);
+    }
+    if (cancelExpenseFormBtn) {
+      cancelExpenseFormBtn.addEventListener('click', closeExpenseModal);
+    }
+    if (expenseModalOverlay) {
+      expenseModalOverlay.addEventListener('click', closeExpenseModal);
+    }
 
     // Handle file input styling and preview
     const fileInput = document.getElementById('expense-document');

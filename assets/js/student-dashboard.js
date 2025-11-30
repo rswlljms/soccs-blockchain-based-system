@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     preventSidebarFlash();
     loadActiveElection();
     loadUpcomingEvents();
+    loadFinancialData();
+    loadRecentTransactions();
+    
     initializeAnnouncementsCycle();
     initializeFundCharts();
     initializeSecurityChecks();
@@ -60,16 +63,23 @@ async function loadActiveElection() {
         if (result.success && result.data) {
             const election = result.data;
             const stats = election.stats;
-            
-            statusBadge.className = 'election-status live';
-            statusText.textContent = 'Election Live';
-            
+            const now = new Date();
+            const startDate = new Date(election.start_date);
             const endDate = new Date(election.end_date);
+            const isUpcoming = election.status === 'upcoming' || now < startDate;
             
-            electionContent.innerHTML = `
+            if (isUpcoming) {
+                statusBadge.className = 'election-status upcoming';
+                statusText.textContent = 'Election Not Started';
+            } else {
+                statusBadge.className = 'election-status live';
+                statusText.textContent = 'Election Live';
+            }
+            
+            let contentHTML = `
                 <div class="election-info">
                     <h4>${election.title}</h4>
-                    <p class="election-date"><i class="fas fa-calendar"></i> ${formatElectionDate(election.end_date)}</p>
+                    <p class="election-date"><i class="fas fa-calendar"></i> ${formatElectionDate(isUpcoming ? election.start_date : election.end_date)}</p>
                     <p class="time-remaining">
                         <i class="fas fa-clock"></i> 
                         <span id="countdown">Calculating...</span>
@@ -78,31 +88,46 @@ async function loadActiveElection() {
                 
                 <div class="quick-stats">
                     <div class="stat">
-                        <div class="stat-number">${stats.total_positions}</div>
+                        <div class="stat-number">${stats.total_positions || 0}</div>
                         <div class="stat-label">Positions</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number">${stats.total_candidates}</div>
+                        <div class="stat-number">${stats.total_candidates || 0}</div>
                         <div class="stat-label">Candidates</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number">${stats.eligible_voters}</div>
+                        <div class="stat-number">${stats.eligible_voters || 0}</div>
                         <div class="stat-label">Eligible Voters</div>
                     </div>
                 </div>
-
-                <div class="voting-actions">
-                    <button class="btn-vote" onclick="goToVoting()">
-                        <i class="fas fa-vote-yea"></i>
-                        Cast Your Vote
-                    </button>
-                </div>
             `;
             
-            initializeCountdown(endDate);
+            if (isUpcoming) {
+                contentHTML += `
+                    <div class="voting-actions">
+                        <button class="btn-vote" disabled style="opacity: 0.6; cursor: not-allowed;">
+                            <i class="fas fa-clock"></i>
+                            Voting Not Available Yet
+                        </button>
+                    </div>
+                `;
+                initializeCountdown(startDate, true);
+            } else {
+                contentHTML += `
+                    <div class="voting-actions">
+                        <button class="btn-vote" onclick="goToVoting()">
+                            <i class="fas fa-vote-yea"></i>
+                            Cast Your Vote
+                        </button>
+                    </div>
+                `;
+                initializeCountdown(endDate, false);
+            }
+            
+            electionContent.innerHTML = contentHTML;
             
         } else {
-            statusBadge.className = 'election-status';
+            statusBadge.className = 'election-status no-active';
             statusText.textContent = 'No Active Election';
             
             electionContent.innerHTML = `
@@ -134,7 +159,7 @@ function formatElectionDate(dateString) {
     });
 }
 
-function initializeCountdown(electionDate) {
+function initializeCountdown(electionDate, isUpcoming = false) {
     const countdownElement = document.getElementById('countdown');
     if (!countdownElement) return;
 
@@ -145,7 +170,11 @@ function initializeCountdown(electionDate) {
         const distance = electionTime - now;
 
         if (distance < 0) {
-            countdownElement.innerHTML = "Election has ended";
+            if (isUpcoming) {
+                countdownElement.innerHTML = "Election has started";
+            } else {
+                countdownElement.innerHTML = "Election has ended";
+            }
             return;
         }
 
@@ -153,7 +182,11 @@ function initializeCountdown(electionDate) {
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 
-        countdownElement.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes remaining`;
+        if (isUpcoming) {
+            countdownElement.innerHTML = `Starts in ${days} days, ${hours} hours, ${minutes} minutes`;
+        } else {
+            countdownElement.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes remaining`;
+        }
     }
 
     updateCountdown();
@@ -400,36 +433,92 @@ function updateVotingStatus(hasVoted = false) {
     }
 }
 
-// Load Dynamic Financial Data
 async function loadFinancialData() {
     try {
-        // In a real application, this would fetch from your API
-        const response = await fetch('../api/get_student_financial_summary.php');
-        const data = await response.json();
+        const apiUrl = '../api/get_student_financial_summary.php?t=' + Date.now();
+        const response = await fetch(apiUrl);
         
-        updateFinancialDisplay(data);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.status === 'success' && result.data) {
+            updateFinancialDisplay(result.data);
+        } else {
+            throw new Error(result.message || 'Failed to load financial data');
+        }
     } catch (error) {
         console.error('Error loading financial data:', error);
-        showNotification('Unable to load latest financial data', 'warning');
+        updateFinancialDisplayError();
     }
 }
 
 function updateFinancialDisplay(data) {
-    const elements = {
-        totalFunds: document.querySelector('.fund-item:nth-child(1) .amount'),
-        totalExpenses: document.querySelector('.fund-item:nth-child(2) .amount'),
-        availableBalance: document.querySelector('.fund-item:nth-child(3) .amount')
+    const formatCurrency = (amount) => {
+        const num = parseFloat(amount) || 0;
+        return `₱${num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
     };
 
-    if (elements.totalFunds && data.totalFunds) {
-        elements.totalFunds.textContent = `₱${data.totalFunds.toLocaleString()}`;
+    const formatPercentage = (change) => {
+        if (change === null || change === undefined || isNaN(change)) {
+            return { text: '— No change', class: 'neutral', icon: 'fa-minus' };
+        }
+        
+        const absChange = Math.abs(change);
+        if (absChange < 0.1) {
+            return { text: '— No change', class: 'neutral', icon: 'fa-minus' };
+        } else if (change > 0) {
+            return { text: `↑ ${absChange.toFixed(1)}% from last month`, class: 'positive', icon: 'fa-arrow-up' };
+        } else {
+            return { text: `↓ ${absChange.toFixed(1)}% from last month`, class: 'negative', icon: 'fa-arrow-down' };
+        }
+    };
+
+    const totalFundsEl = document.getElementById('totalFundsAmount');
+    const totalFundsStatusEl = document.getElementById('totalFundsStatus');
+    if (totalFundsEl && totalFundsStatusEl) {
+        if (data.totalFunds !== undefined) {
+            totalFundsEl.textContent = formatCurrency(data.totalFunds);
+        }
+        const fundsTrend = formatPercentage(data.fundsChange);
+        totalFundsStatusEl.innerHTML = `<i class="fas ${fundsTrend.icon}"></i> ${fundsTrend.text}`;
+        totalFundsStatusEl.className = `fund-status ${fundsTrend.class}`;
     }
-    if (elements.totalExpenses && data.totalExpenses) {
-        elements.totalExpenses.textContent = `₱${data.totalExpenses.toLocaleString()}`;
+
+    const totalExpensesEl = document.getElementById('totalExpensesAmount');
+    const totalExpensesStatusEl = document.getElementById('totalExpensesStatus');
+    if (totalExpensesEl && totalExpensesStatusEl) {
+        if (data.totalExpenses !== undefined) {
+            totalExpensesEl.textContent = formatCurrency(data.totalExpenses);
+        }
+        const expensesTrend = formatPercentage(data.expensesChange);
+        totalExpensesStatusEl.innerHTML = `<i class="fas ${expensesTrend.icon}"></i> ${expensesTrend.text}`;
+        totalExpensesStatusEl.className = `fund-status ${expensesTrend.class}`;
     }
-    if (elements.availableBalance && data.availableBalance) {
-        elements.availableBalance.textContent = `₱${data.availableBalance.toLocaleString()}`;
+
+    const currentBalanceEl = document.getElementById('currentBalanceAmount');
+    const currentBalanceStatusEl = document.getElementById('currentBalanceStatus');
+    if (currentBalanceEl && currentBalanceStatusEl) {
+        if (data.availableBalance !== undefined) {
+            currentBalanceEl.textContent = formatCurrency(data.availableBalance);
+        }
+        const balanceTrend = formatPercentage(data.balanceChange);
+        currentBalanceStatusEl.innerHTML = `<i class="fas ${balanceTrend.icon}"></i> ${balanceTrend.text}`;
+        currentBalanceStatusEl.className = `fund-status ${balanceTrend.class}`;
     }
+}
+
+function updateFinancialDisplayError() {
+    const statusElements = ['totalFundsStatus', 'totalExpensesStatus', 'currentBalanceStatus'];
+    statusElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Unable to load';
+            el.className = 'fund-status error';
+        }
+    });
 }
 
 // Load Recent Transactions

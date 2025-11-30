@@ -5,9 +5,9 @@ session_start();
 $_SESSION['student'] = [
   'id' => '0122-1141', 
   'firstName' => 'Roswell James',
-  'middleName' => 'D.',
+  'middleName' => 'Democrito',
   'lastName' => 'Vitaliz',
-  'yearLevel' => '3',
+  'yearLevel' => '4',
   'section' => 'A',
   'course' => 'BSIT',
   'email' => 'roswelljamesvitaliz@gmail.com'
@@ -49,10 +49,6 @@ $student = $_SESSION['student'];
           <p class="welcome-text">Manage your account information and preferences</p>
         </div>
         <div class="header-right">
-          <div class="blockchain-badge">
-            <i class="fas fa-user-cog"></i>
-            <span>Student Profile</span>
-          </div>
         </div>
       </div>
 

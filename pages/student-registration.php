@@ -254,20 +254,23 @@
 
         select {
             width: 100%;
-            padding: 0.625rem 2.5rem 0.625rem 0.75rem;
-            font-size: 0.875rem;
+            height: 44px;
+            padding: 12px 36px 12px 18px;
+            font-size: 14px;
+            font-family: 'Work Sans', sans-serif;
             color: #1f2937;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background-color: #f9fafb;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-color: white;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 14px 14px;
+            background-position: right 12px center;
+            background-size: 12px 12px;
+            transition: all 0.2s ease-in-out;
         }
 
         .form-group {
@@ -281,11 +284,15 @@
             box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
         }
 
+        select:hover {
+            border-color: #9933ff;
+        }
+
         select:focus {
             outline: none;
             background-color: white;
-            border-color: #9333ea;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239333ea' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            border-color: #9933ff;
+            box-shadow: 0 0 0 4px rgba(153, 51, 255, 0.1);
         }
 
         input::placeholder {

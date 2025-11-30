@@ -331,21 +331,24 @@ include('../components/sidebar.php');
     }
 
     .filter-group select {
-      padding: 10px 14px;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
+      height: 44px;
+      padding: 12px 36px 12px 18px;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-sm);
       background: white;
       color: var(--text-primary);
       font-size: 14px;
-      font-weight: 500;
+      font-family: 'Work Sans', sans-serif;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: var(--transition);
       appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
-      padding-right: 36px;
-      min-width: 200px;
+      background-size: 12px 12px;
+      min-width: 180px;
     }
 
     .filter-group select:hover {
@@ -693,11 +696,15 @@ include('../components/sidebar.php');
     }
 
     .form-group select {
+      height: 44px;
       cursor: pointer;
       appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
+      background-size: 12px 12px;
       padding-right: 36px;
     }
 

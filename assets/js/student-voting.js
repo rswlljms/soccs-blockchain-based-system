@@ -267,6 +267,8 @@ async function submitVoteToBlockchain() {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
     submitBtn.disabled = true;
     
+    disableCandidateSelection();
+    
     const selectedVotes = getSelectedVotes();
     
     try {
@@ -306,6 +308,8 @@ async function submitVoteToBlockchain() {
     } catch (error) {
         console.error('Vote submission error:', error);
         showNotification('Failed to submit vote: ' + error.message, 'error');
+        
+        enableCandidateSelection();
         
         submitBtn.innerHTML = '<i class="fas fa-vote-yea"></i> Cast Vote';
         submitBtn.disabled = false;
@@ -553,6 +557,78 @@ function preloadModalContent() {
     const successModal = document.getElementById('successModal');
     if (previewModal) previewModal.style.display = 'none';
     if (successModal) successModal.style.display = 'none';
+}
+
+function disableCandidateSelection() {
+    const allInputs = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+    const allResetButtons = document.querySelectorAll('.reset-btn');
+    const allCandidateCards = document.querySelectorAll('.candidate-card');
+    const previewBtn = document.querySelector('.btn-preview');
+    
+    allInputs.forEach(input => {
+        input.disabled = true;
+        input.setAttribute('data-was-disabled', 'true');
+    });
+    
+    allResetButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+    });
+    
+    allCandidateCards.forEach(card => {
+        card.classList.add('vote-locked');
+        card.style.cursor = 'not-allowed';
+        card.style.pointerEvents = 'none';
+    });
+    
+    if (previewBtn) {
+        previewBtn.disabled = true;
+        previewBtn.style.opacity = '0.5';
+        previewBtn.style.cursor = 'not-allowed';
+    }
+    
+    const votingContainer = document.querySelector('.voting-container');
+    if (votingContainer) {
+        votingContainer.classList.add('voting-disabled');
+    }
+}
+
+function enableCandidateSelection() {
+    const allInputs = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+    const allResetButtons = document.querySelectorAll('.reset-btn');
+    const allCandidateCards = document.querySelectorAll('.candidate-card');
+    const previewBtn = document.querySelector('.btn-preview');
+    
+    allInputs.forEach(input => {
+        if (input.getAttribute('data-was-disabled') === 'true') {
+            input.disabled = false;
+            input.removeAttribute('data-was-disabled');
+        }
+    });
+    
+    allResetButtons.forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = '';
+        btn.style.cursor = '';
+    });
+    
+    allCandidateCards.forEach(card => {
+        card.classList.remove('vote-locked');
+        card.style.cursor = '';
+        card.style.pointerEvents = '';
+    });
+    
+    if (previewBtn) {
+        previewBtn.disabled = false;
+        previewBtn.style.opacity = '';
+        previewBtn.style.cursor = '';
+    }
+    
+    const votingContainer = document.querySelector('.voting-container');
+    if (votingContainer) {
+        votingContainer.classList.remove('voting-disabled');
+    }
 }
 
 const additionalStyles = document.createElement('style');

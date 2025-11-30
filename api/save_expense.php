@@ -2,11 +2,14 @@
 session_start();
 require_once '../includes/expense_operations.php';
 require_once '../includes/activity_logger.php';
+require_once '../includes/auth_check.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
+
+requirePermission('manage_expenses');
 
 error_log("save_expense.php started");
 

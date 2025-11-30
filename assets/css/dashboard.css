@@ -204,6 +204,10 @@ body {
   color: var(--text-secondary);
 }
 
+.trend.error {
+  color: var(--danger-color);
+}
+
 /* === DASHBOARD GRID === */
 .dashboard-grid {
   display: grid;

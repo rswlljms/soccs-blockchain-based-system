@@ -6,12 +6,15 @@ header('Access-Control-Allow-Methods: POST');
 
 require_once '../includes/database.php';
 require_once '../includes/activity_logger.php';
+require_once '../includes/auth_check.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
     exit;
 }
+
+requirePermission('manage_funds');
 
 try {
     $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
