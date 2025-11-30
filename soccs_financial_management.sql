@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2025 at 10:44 AM
+-- Generation Time: Nov 30, 2025 at 10:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,53 @@ SET time_zone = "+00:00";
 --
 -- Database: `soccs_financial_management`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activity_logs`
+--
+
+CREATE TABLE `activity_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `activity_type` varchar(100) NOT NULL,
+  `activity_description` text NOT NULL,
+  `module` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `activity_description`, `module`, `created_at`) VALUES
+(32, 3, 'election_created', 'Created election: SOCCS Election (ID: 19)', 'elections', '2025-11-30 19:15:45'),
+(33, 3, 'election_ended', 'End election: SOCCS Election (ID: 19)', 'elections', '2025-11-30 19:24:23'),
+(34, 3, 'fund_created', 'Created fund: Budget in bank - Amount: ₱25,675.65', 'financial', '2025-11-30 19:28:59'),
+(35, 3, 'expense_created', 'Created expense: ₱3,500.00 - Teacher’s Day Expenses (FOOD AND DRINKS)', 'financial', '2025-11-30 19:31:36'),
+(36, 3, 'election_deleted', 'Deleted election: Election #19 (ID: 19)', 'elections', '2025-11-30 19:33:22'),
+(37, 3, 'election_created', 'Created election: SOCCS Election (ID: 20)', 'elections', '2025-11-30 19:33:42'),
+(38, 3, 'election_ended', 'End election: SOCCS Election (ID: 20) - Blockchain TX: 0x89ea7df1e8c7533f14f3fa4fee386fce7212490f0a6ed2b7cb382061d922f389', 'elections', '2025-11-30 19:38:12'),
+(39, 3, 'election_created', 'Created election: SOCCS (ID: 21)', 'elections', '2025-11-30 19:41:56'),
+(40, 3, 'election_ended', 'End election: SOCCS (ID: 21)', 'elections', '2025-11-30 19:42:09'),
+(41, 3, 'election_deleted', 'Deleted election: Election #21 (ID: 21)', 'elections', '2025-11-30 19:42:22'),
+(42, 3, 'election_created', 'Created election: SOCCS (ID: 22)', 'elections', '2025-11-30 19:42:36'),
+(43, 3, 'election_ended', 'End election: SOCCS (ID: 22)', 'elections', '2025-11-30 19:42:44'),
+(44, 3, 'election_deleted', 'Deleted election: Election #22 (ID: 22)', 'elections', '2025-11-30 19:49:16'),
+(45, 3, 'election_created', 'Created election: SOCCS (ID: 23)', 'elections', '2025-11-30 19:50:34'),
+(46, 3, 'election_ended', 'End election: SOCCS (ID: 23)', 'elections', '2025-11-30 19:50:42'),
+(47, 3, 'election_deleted', 'Deleted election: Election #23 (ID: 23)', 'elections', '2025-11-30 19:50:55'),
+(48, 3, 'election_created', 'Created election: SOCCS (ID: 24)', 'elections', '2025-11-30 19:51:32'),
+(49, 3, 'election_ended', 'End election: SOCCS (ID: 24)', 'elections', '2025-11-30 19:51:51'),
+(50, 3, 'election_created', 'Created election: SOCCS (ID: 25)', 'elections', '2025-11-30 20:02:51'),
+(51, 3, 'election_ended', 'End election: SOCCS (ID: 25)', 'elections', '2025-11-30 20:03:00'),
+(52, 3, 'event_updated', 'Updated event: Research Colloquium / FOD', 'events', '2025-11-30 20:10:10'),
+(53, 6, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 20:30:04'),
+(54, 3, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:05:38'),
+(55, 4, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:27:26'),
+(56, 6, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:28:14'),
+(57, 5, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:37:59');
 
 -- --------------------------------------------------------
 
@@ -45,7 +92,7 @@ CREATE TABLE `candidates` (
 
 INSERT INTO `candidates` (`id`, `firstname`, `lastname`, `partylist`, `position_id`, `platform`, `photo`, `created_at`, `updated_at`) VALUES
 (3, 'Ross Cedric', 'Nazareno', 'Nexus Partylist', 1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bcfe7e5086.png', '2025-11-30 05:02:31', '2025-11-30 05:02:31'),
-(4, 'Avegail', 'Sadiasa', 'Grid Partylist', 1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd05062aac.png', '2025-11-30 05:04:16', '2025-11-30 05:04:16'),
+(4, 'Avegail', 'Sadiasa', 'Grid Partylist', 1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692c2b912755b.png', '2025-11-30 05:04:16', '2025-11-30 11:33:37'),
 (5, 'Zaren', 'Gellido', 'Nexus Partylist', 2, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd09763c40.png', '2025-11-30 05:05:27', '2025-11-30 05:05:27'),
 (6, 'Jayvee', 'Aguila', 'Nexus Partylist', 4, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd0c6642c2.png', '2025-11-30 05:06:14', '2025-11-30 05:06:14'),
 (7, 'Jake', 'Jaqueza', 'Nexus Partylist', 5, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd0eff1499.png', '2025-11-30 05:06:55', '2025-11-30 05:06:55'),
@@ -82,6 +129,7 @@ CREATE TABLE `elections` (
   `start_date` datetime NOT NULL,
   `end_date` datetime NOT NULL,
   `status` enum('upcoming','active','completed','cancelled') DEFAULT 'upcoming',
+  `transaction_hash` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -112,7 +160,7 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `title`, `description`, `date`, `end_date`, `is_multi_day`, `location`, `category`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
-(2, 'Research Colloquim', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'upcoming', 'admin', '2025-11-29 12:02:51', '2025-11-29 13:40:55');
+(2, 'Research Colloquium / FOD', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'upcoming', 'admin', '2025-11-29 12:02:51', '2025-11-30 20:10:10');
 
 -- --------------------------------------------------------
 
@@ -138,24 +186,8 @@ CREATE TABLE `expenses` (
 --
 
 INSERT INTO `expenses` (`id`, `name`, `amount`, `category`, `description`, `supplier`, `document`, `date`, `transaction_hash`, `created_at`) VALUES
-(1, 'Event', 500.00, 'Events', 'CCS Night', 'ABC', NULL, '2025-05-07', '0xb7939f6c6525cfdf7cb5f9ed1adddabc5bf729fc4687e74958f1a29fa339f968', '2025-05-07 12:16:50'),
-(2, 'Buffet ', 500.00, 'Food', 'Food for guest', 'Nanot\'s', '681b502de377e_Subject.pdf', '2025-05-07', '0x7248a4fab0886ff33947c69d73e7aa554fcb4bac115f3b4801d28010856a25a6', '2025-05-07 12:21:01'),
-(3, 'Computer Set', 50000.00, 'Supplies', 'PC set for computer lab', 'FRSS', '681b5645bc5a0_black.jpg', '2025-05-07', '0x3b6909655115eb68ac149b8bc677ce7a2b999345894b58c1286a9e03b9abf2de', '2025-05-07 12:47:01'),
-(4, 'Aircon', 10000.00, 'Supplies', 'Aircon for room 106', 'Ikea', '681b665b2f78a_black.jpg', '2025-05-07', '0x9fa4dca47a387228f1188d8a3c71629a004430a8c68a91a34b62ee66c75686c6', '2025-05-07 13:55:39'),
-(5, 'Renovation', 10000.00, 'Supplies', 'Renovation of room 102', 'N/A', '681b677a1b665_black.jpg', '2025-05-07', '0x6d3fd639e768dfe20438043d25cafb0bdb30476c838b5cbad46b5abc49aeea69', '2025-05-07 14:00:26'),
-(6, 'table', 1304.00, 'Supplies', 'table for room 203', 'N/A', NULL, '2025-05-07', '0x77189612cd1b53a7ee0f06941c37c0ef83deb293d9eb51f8d6406f9394135888', '2025-05-07 14:12:26'),
-(11, 'Event', 13000.00, 'Events', 'CCS Days', 'N/A', '681b739cd1d3a_black.jpg', '2025-05-31', '0x47c8f68f37da48a385303823e852844e7a4d694e9ba7c149c078ea59ab240abb', '2025-05-07 14:52:12'),
-(12, 'IT Assembly', 4400.00, 'Events', 'Speaker fee', 'N/A', '681b77b21f3f7_black.jpg', '2025-05-16', '0xe3294df17633fbcbb12d22920f0ccab5c99f85b2c350aef4462b10fcdca187db', '2025-05-07 15:09:38'),
-(13, 'Seminar', 5000.00, 'Events', 'Guest Speaker Fee', 'N/A', NULL, '2025-05-14', '0x7433e8f84ac88de2574421eabcaaa65868784ebddfe0d2b2e6888a55d7c48128', '2025-05-07 15:15:49'),
-(14, 'asd', 555.00, 'Transport', 'asdasd', 'asdad ', NULL, '2025-05-01', '0x64cacd924e429ae524420211c1d61168d5e16d21c7c0da1b2232894b02c1680a', '2025-05-07 15:21:49'),
-(15, 'Test', 12313.00, 'Food', 'Test', 'Test', '681b7e065a479_black.jpg', '2025-05-07', '0x3376a57505fab7fb22fcb666ca518bc3c38fb54c0e3f6dd13cd90dacf8f5f4dc', '2025-05-07 15:36:38'),
-(16, 'Computer Set', 50000.00, 'Supplies', 'PC set for room 206', 'FRSS', '681b814f648ea_black.jpg', '2025-06-13', '0xe2f71eb4fe6669a3ff1f28487ba481a10673bd7fc3167af9453fa40076da68ae', '2025-05-07 15:50:39'),
-(17, 'Test1 ', 500.00, 'Transport', 'Test2', 'N/A', NULL, '2025-05-08', '0x04ce8c1c34c203f8192f1c2f0b95bda9d1398813cd1142953b0e9e2cf3cbe4f1', '2025-05-07 16:20:13'),
-(18, 'Computer ', 15000.00, 'Supplies', 'COmputer set for room 205', 'FRSS', NULL, '2025-05-08', '0xa01838e18b6444ae893fa728b6a9ea22015620347523acafc1c3a482e8e14867', '2025-05-08 06:23:36'),
-(19, 'Buffet ', 200.00, 'Food', 'For Event', 'Nanot\'s', NULL, '2025-05-08', '0x4a1c0808bb65e56599154be4a75fbe0738de7c79639dbf69dee1b2a9c178b114', '2025-05-08 08:24:24'),
-(20, 'Test', 1234.00, 'Food', 'For Event', 'N/a', '681cb96868645_Subject.pdf', '2025-05-08', '0x8c043e9fefdfff05ce77d6899e942deee3cb6a50994003c512a17a74d7ba6911', '2025-05-08 14:02:16'),
-(21, 'Test2', 200.00, 'Food', 'For Event', 'N/a', NULL, '2025-05-09', '0x7f0e0e5cd20a3e82370981dc8212aacc6eb2a4230866754df14c0391bcabbb2a', '2025-05-08 15:39:37'),
-(22, 'Sample', 200.00, 'Transport', 'For Event', 'N/a', '685fb4a4c9b71_bb576c06c6ae2eaf03203401d9ee0a05.png', '2025-06-28', '0xaadc22e764f1d8970e4cbd7d3eed7a3dafec6bc5d24f183cb21baa1a1c94dd49', '2025-06-28 09:23:49');
+(25, 'Teacher’s Day Expenses', 136.00, 'EVENT EXPENSES', 'Materials for appreciation wall.', 'Adorable School Supplies', '692c8d1085196_Expense_proof.png', '2025-11-30', '0x807f8161f4032467de1436c08308b6edcaa4d1dfb483d4270b73789c567dfb18', '2025-11-30 18:29:36'),
+(27, 'Teacher’s Day Expenses', 3500.00, 'FOOD AND DRINKS', 'Catering Service', 'Thatalicious - Food Packages And Catering Services', '692c9b98809b9_food and drinks.png', '2025-11-30', '0x50a54665ecab60a4a578884c800e1a034a4b040ee621b6dedfa297806ea916e7', '2025-11-30 19:31:36');
 
 -- --------------------------------------------------------
 
@@ -178,8 +210,7 @@ CREATE TABLE `funds` (
 --
 
 INSERT INTO `funds` (`id`, `source`, `amount`, `description`, `date_received`, `transaction_hash`, `created_at`) VALUES
-(1, 'Manual Entry', 10000.00, 'Initial Funding', '2025-04-22', NULL, '2025-11-30 08:18:50'),
-(2, 'Manual Entry', 5000.00, 'Sponsor Contribution', '2025-04-23', NULL, '2025-11-30 08:18:50');
+(5, 'Manual Entry', 25675.65, 'Budget in bank', '2025-11-30', '0xbad4caa1c80438e344d4bd6072ad6ef56669f998e2ccd03588e2d2863e45023a', '2025-11-30 19:28:59');
 
 -- --------------------------------------------------------
 
@@ -199,6 +230,58 @@ CREATE TABLE `password_resets` (
 
 INSERT INTO `password_resets` (`email`, `otp`, `expires_at`) VALUES
 ('roswelljamesvitaliz@gmail.com', '731054', '2025-11-03 17:23:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `permissions`
+--
+
+CREATE TABLE `permissions` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(100) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `module` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `permissions`
+--
+
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `module`, `created_at`) VALUES
+(1, 'View Dashboard', 'view_dashboard', 'Access to view the main dashboard', 'dashboard', '2025-11-30 10:07:44'),
+(2, 'View Funds', 'view_funds', 'View funds records', 'financial', '2025-11-30 10:07:44'),
+(3, 'View Expenses', 'view_expenses', 'View expense records', 'financial', '2025-11-30 10:07:44'),
+(4, 'Manage Funds', 'manage_funds', 'Create, edit, delete fund records', 'financial', '2025-11-30 10:07:44'),
+(5, 'Manage Expenses', 'manage_expenses', 'Create, edit, delete expense records', 'financial', '2025-11-30 10:07:44'),
+(6, 'View Financial Records', 'view_financial_records', 'View all financial records (read-only)', 'financial', '2025-11-30 10:07:44'),
+(7, 'View Membership Fee', 'view_membership_fee', 'View membership fee records', 'membership', '2025-11-30 10:07:44'),
+(8, 'Modify Membership Fee', 'modify_membership_fee', 'Update membership fee status and receipts', 'membership', '2025-11-30 10:07:44'),
+(9, 'View Students', 'view_students', 'View student records', 'students', '2025-11-30 10:07:44'),
+(10, 'Manage Students', 'manage_students', 'Archive and manage student records', 'students', '2025-11-30 10:07:44'),
+(11, 'Verify Students', 'verify_students', 'Approve or reject student registrations', 'students', '2025-11-30 10:07:44'),
+(12, 'View Events', 'view_events', 'View events', 'events', '2025-11-30 10:07:44'),
+(13, 'Add Events', 'add_events', 'Create new events', 'events', '2025-11-30 10:07:44'),
+(14, 'Manage Events', 'manage_events', 'Create, edit, delete events', 'events', '2025-11-30 10:07:44'),
+(15, 'Generate Reports', 'generate_reports', 'Generate and view reports', 'reports', '2025-11-30 10:07:44'),
+(16, 'Generate Financial Reports', 'generate_financial_reports', 'Generate financial reports', 'reports', '2025-11-30 10:07:44'),
+(17, 'Generate Membership Reports', 'generate_membership_reports', 'Generate membership fee reports (paid/unpaid)', 'reports', '2025-11-30 10:07:44'),
+(18, 'Generate Event Reports', 'generate_event_reports', 'Generate event reports', 'reports', '2025-11-30 10:07:44'),
+(19, 'Export Reports', 'export_reports', 'Export reports to PDF', 'reports', '2025-11-30 10:07:44'),
+(20, 'View Election', 'view_election', 'View election data and results', 'elections', '2025-11-30 10:07:44'),
+(21, 'Start/End Election', 'manage_election_status', 'Start, stop, and end elections', 'elections', '2025-11-30 10:07:44'),
+(22, 'Register Candidates', 'register_candidates', 'Add and manage election candidates', 'elections', '2025-11-30 10:07:44'),
+(23, 'Manage Positions', 'manage_positions', 'Create and manage election positions', 'elections', '2025-11-30 10:07:44'),
+(24, 'View Election Results', 'view_election_results', 'View election results', 'elections', '2025-11-30 10:07:44'),
+(25, 'Generate Election Reports', 'generate_election_reports', 'Generate report of election results', 'elections', '2025-11-30 10:07:44'),
+(26, 'View Users', 'view_users', 'View user accounts', 'users', '2025-11-30 10:07:44'),
+(27, 'Create Accounts', 'create_accounts', 'Create new user accounts', 'users', '2025-11-30 10:07:44'),
+(28, 'Demote Accounts', 'demote_accounts', 'Change user roles (demote/promote)', 'users', '2025-11-30 10:07:44'),
+(29, 'Manage Users', 'manage_users', 'Full user management (create, edit, deactivate)', 'users', '2025-11-30 10:07:44'),
+(30, 'View Settings', 'view_settings', 'View system settings', 'settings', '2025-11-30 10:07:44'),
+(31, 'Manage Settings', 'manage_settings', 'Modify system settings', 'settings', '2025-11-30 10:07:44');
 
 -- --------------------------------------------------------
 
@@ -231,6 +314,123 @@ INSERT INTO `positions` (`id`, `description`, `max_votes`, `created_at`, `update
 (10, '2nd Year Representative', 1, '2025-11-29 06:27:47', '2025-11-29 06:27:47'),
 (11, '3rd Year Representative', 1, '2025-11-29 06:27:55', '2025-11-29 06:27:55'),
 (12, '4th Year Representative', 1, '2025-11-29 06:28:03', '2025-11-29 06:28:03');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `role_default_permissions`
+--
+
+CREATE TABLE `role_default_permissions` (
+  `id` int(11) NOT NULL,
+  `role` varchar(50) NOT NULL,
+  `permission_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `role_default_permissions`
+--
+
+INSERT INTO `role_default_permissions` (`id`, `role`, `permission_id`) VALUES
+(1, 'adviser', 1),
+(11, 'adviser', 2),
+(12, 'adviser', 3),
+(13, 'adviser', 4),
+(14, 'adviser', 5),
+(15, 'adviser', 6),
+(16, 'adviser', 7),
+(17, 'adviser', 8),
+(25, 'adviser', 9),
+(26, 'adviser', 10),
+(27, 'adviser', 11),
+(8, 'adviser', 12),
+(9, 'adviser', 13),
+(10, 'adviser', 14),
+(18, 'adviser', 15),
+(19, 'adviser', 16),
+(20, 'adviser', 17),
+(21, 'adviser', 18),
+(22, 'adviser', 19),
+(2, 'adviser', 20),
+(3, 'adviser', 21),
+(4, 'adviser', 22),
+(5, 'adviser', 23),
+(6, 'adviser', 24),
+(7, 'adviser', 25),
+(28, 'adviser', 26),
+(29, 'adviser', 27),
+(30, 'adviser', 28),
+(31, 'adviser', 29),
+(23, 'adviser', 30),
+(24, 'adviser', 31),
+(81, 'auditor', 1),
+(84, 'auditor', 2),
+(83, 'auditor', 3),
+(85, 'auditor', 7),
+(80, 'auditor', 8),
+(82, 'auditor', 12),
+(79, 'auditor', 15),
+(78, 'auditor', 16),
+(77, 'auditor', 19),
+(95, 'comelec', 1),
+(92, 'comelec', 19),
+(96, 'comelec', 20),
+(94, 'comelec', 21),
+(97, 'comelec', 24),
+(93, 'comelec', 25),
+(35, 'dean', 1),
+(41, 'dean', 2),
+(39, 'dean', 3),
+(40, 'dean', 6),
+(42, 'dean', 9),
+(38, 'dean', 12),
+(36, 'dean', 20),
+(37, 'dean', 24),
+(43, 'dean', 26),
+(32, 'dean', 27),
+(33, 'dean', 28),
+(34, 'dean', 29),
+(103, 'event_coordinator', 1),
+(107, 'event_coordinator', 2),
+(105, 'event_coordinator', 3),
+(106, 'event_coordinator', 6),
+(104, 'event_coordinator', 12),
+(99, 'event_coordinator', 13),
+(102, 'event_coordinator', 14),
+(101, 'event_coordinator', 18),
+(100, 'event_coordinator', 19),
+(121, 'officer', 1),
+(124, 'officer', 12),
+(122, 'officer', 20),
+(123, 'officer', 24),
+(53, 'president', 1),
+(56, 'president', 2),
+(55, 'president', 3),
+(57, 'president', 7),
+(52, 'president', 8),
+(54, 'president', 12),
+(51, 'president', 15),
+(49, 'president', 16),
+(50, 'president', 17),
+(48, 'president', 18),
+(47, 'president', 19),
+(117, 'secretary', 1),
+(119, 'secretary', 9),
+(116, 'secretary', 10),
+(118, 'secretary', 12),
+(115, 'secretary', 15),
+(114, 'secretary', 19),
+(68, 'treasurer', 1),
+(71, 'treasurer', 2),
+(70, 'treasurer', 3),
+(66, 'treasurer', 4),
+(65, 'treasurer', 5),
+(72, 'treasurer', 7),
+(67, 'treasurer', 8),
+(69, 'treasurer', 12),
+(64, 'treasurer', 15),
+(63, 'treasurer', 16),
+(62, 'treasurer', 19);
 
 -- --------------------------------------------------------
 
@@ -325,17 +525,148 @@ INSERT INTO `student_registrations` (`id`, `first_name`, `middle_name`, `last_na
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
+  `first_name` varchar(100) NOT NULL DEFAULT '',
+  `last_name` varchar(100) NOT NULL DEFAULT '',
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `role` enum('adviser','dean','president','treasurer','auditor','secretary','comelec','event_coordinator','officer') NOT NULL DEFAULT 'officer',
+  `status` enum('active','inactive','suspended') NOT NULL DEFAULT 'active',
+  `last_login` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password`, `created_at`) VALUES
-(3, 'lspuscc.soccs@gmail.com', '$2y$10$4OXZcgtKLD3UH2GMyZK09ui6mgtIPCJyex/lsmhLS.brVzIXi/h32', '2025-04-18 12:18:54');
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password`, `role`, `status`, `last_login`, `created_by`, `created_at`, `updated_at`) VALUES
+(3, 'SOCCS', 'Adviser', 'soccsadviser.test@gmail.com', '$2y$10$R731fPWbB7cv6RyNF3aU6OptcMzwaiW9bPrtsmJvpM3.jiRtim3gm', 'adviser', 'active', '2025-12-01 05:05:38', NULL, '2025-04-18 12:18:54', '2025-11-30 21:05:38'),
+(4, 'SOCCS', 'Treasurer', 'treasurer.test@gmail.com', '$2y$10$4G4CH6xpxEpcF4MIPBSLf.n4b1IbulEMDRO8z9S41YbfHXhhgF4ri', 'treasurer', 'active', '2025-12-01 05:27:26', 3, '2025-11-30 10:30:17', '2025-11-30 21:27:26'),
+(5, 'CCS', 'Dean', 'dean.test@gmail.com', '$2y$10$QSqaMWLZBGpE01ohVv7Yp.pWPPOGZ7OhKLaNq6ebp64ZDonuZXyQ6', 'dean', 'active', '2025-12-01 05:37:59', 3, '2025-11-30 15:57:11', '2025-11-30 21:37:59'),
+(6, 'Event', 'Coordinator', 'event.test@gmail.com', '$2y$10$FPwqpLlHkwC4AdtZitIkIeLb3e5EpIdh4Sr6s2vP6S0rbRElnkome', 'event_coordinator', 'active', '2025-12-01 05:28:14', 3, '2025-11-30 16:00:59', '2025-11-30 21:28:14'),
+(7, 'Comelec', 'Officer', 'comelec.test@gmail.com', '$2y$10$NlMI06mXTblynXwyrjzsL.8vgXiw3kvdv6RqdG5uRPVwxvuwoJUzq', 'comelec', 'active', '2025-12-01 00:18:22', 3, '2025-11-30 16:03:18', '2025-11-30 16:18:22');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_activity_log`
+--
+
+CREATE TABLE `user_activity_log` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `action` varchar(100) NOT NULL,
+  `target_user_id` int(11) DEFAULT NULL,
+  `details` text DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_activity_log`
+--
+
+INSERT INTO `user_activity_log` (`id`, `user_id`, `action`, `target_user_id`, `details`, `ip_address`, `created_at`) VALUES
+(1, 0, 'update_user', 3, '{\"first_name\":\"SOCCS\",\"last_name\":\"Adviser\",\"email\":\"soccsadviser.test@gmail.com\",\"role\":{\"from\":\"adviser\",\"to\":\"adviser\"},\"status\":\"active\",\"password\":\"changed\"}', '::1', '2025-11-30 10:10:44'),
+(2, 3, 'create_user', 4, '{\"email\":\"treasurer.test@gmail.com\",\"role\":\"treasurer\"}', '::1', '2025-11-30 10:30:17'),
+(3, 3, 'update_user', 4, '{\"permissions\":\"updated\"}', '::1', '2025-11-30 10:41:49'),
+(4, 3, 'create_user', 5, '{\"email\":\"dean.test@gmail.com\",\"role\":\"dean\"}', '::1', '2025-11-30 15:57:11'),
+(5, 3, 'create_user', 6, '{\"email\":\"event.test@gmail.com\",\"role\":\"event_coordinator\"}', '::1', '2025-11-30 16:00:59'),
+(6, 3, 'create_user', 7, '{\"email\":\"comelec.test@gmail.com\",\"role\":\"comelec\"}', '::1', '2025-11-30 16:03:18'),
+(7, 3, 'update_user', 7, '{\"permissions\":\"updated\"}', '::1', '2025-11-30 16:06:03');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_permissions`
+--
+
+CREATE TABLE `user_permissions` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
+  `granted_by` int(11) DEFAULT NULL,
+  `granted_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_permissions`
+--
+
+INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`, `granted_by`, `granted_at`) VALUES
+(1, 3, 1, 3, '2025-11-30 10:07:45'),
+(2, 3, 20, 3, '2025-11-30 10:07:45'),
+(3, 3, 21, 3, '2025-11-30 10:07:45'),
+(4, 3, 22, 3, '2025-11-30 10:07:45'),
+(5, 3, 23, 3, '2025-11-30 10:07:45'),
+(6, 3, 24, 3, '2025-11-30 10:07:45'),
+(7, 3, 25, 3, '2025-11-30 10:07:45'),
+(8, 3, 12, 3, '2025-11-30 10:07:45'),
+(9, 3, 13, 3, '2025-11-30 10:07:45'),
+(10, 3, 14, 3, '2025-11-30 10:07:45'),
+(11, 3, 2, 3, '2025-11-30 10:07:45'),
+(12, 3, 3, 3, '2025-11-30 10:07:45'),
+(13, 3, 4, 3, '2025-11-30 10:07:45'),
+(14, 3, 5, 3, '2025-11-30 10:07:45'),
+(15, 3, 6, 3, '2025-11-30 10:07:45'),
+(16, 3, 7, 3, '2025-11-30 10:07:45'),
+(17, 3, 8, 3, '2025-11-30 10:07:45'),
+(18, 3, 15, 3, '2025-11-30 10:07:45'),
+(19, 3, 16, 3, '2025-11-30 10:07:45'),
+(20, 3, 17, 3, '2025-11-30 10:07:45'),
+(21, 3, 18, 3, '2025-11-30 10:07:45'),
+(22, 3, 19, 3, '2025-11-30 10:07:45'),
+(23, 3, 30, 3, '2025-11-30 10:07:45'),
+(24, 3, 31, 3, '2025-11-30 10:07:45'),
+(25, 3, 9, 3, '2025-11-30 10:07:45'),
+(26, 3, 10, 3, '2025-11-30 10:07:45'),
+(27, 3, 11, 3, '2025-11-30 10:07:45'),
+(28, 3, 26, 3, '2025-11-30 10:07:45'),
+(29, 3, 27, 3, '2025-11-30 10:07:45'),
+(30, 3, 28, 3, '2025-11-30 10:07:45'),
+(31, 3, 29, 3, '2025-11-30 10:07:45'),
+(47, 4, 1, 3, '2025-11-30 10:41:49'),
+(48, 4, 12, 3, '2025-11-30 10:41:49'),
+(49, 4, 5, 3, '2025-11-30 10:41:49'),
+(50, 4, 4, 3, '2025-11-30 10:41:49'),
+(51, 4, 3, 3, '2025-11-30 10:41:49'),
+(52, 4, 2, 3, '2025-11-30 10:41:49'),
+(53, 4, 8, 3, '2025-11-30 10:41:49'),
+(54, 4, 7, 3, '2025-11-30 10:41:49'),
+(55, 4, 19, 3, '2025-11-30 10:41:49'),
+(56, 4, 16, 3, '2025-11-30 10:41:49'),
+(57, 4, 15, 3, '2025-11-30 10:41:49'),
+(58, 5, 1, 3, '2025-11-30 15:57:11'),
+(59, 5, 2, 3, '2025-11-30 15:57:11'),
+(60, 5, 3, 3, '2025-11-30 15:57:11'),
+(61, 5, 6, 3, '2025-11-30 15:57:11'),
+(62, 5, 9, 3, '2025-11-30 15:57:11'),
+(63, 5, 12, 3, '2025-11-30 15:57:11'),
+(64, 5, 20, 3, '2025-11-30 15:57:11'),
+(65, 5, 24, 3, '2025-11-30 15:57:11'),
+(66, 5, 26, 3, '2025-11-30 15:57:11'),
+(67, 5, 27, 3, '2025-11-30 15:57:11'),
+(68, 5, 28, 3, '2025-11-30 15:57:11'),
+(69, 5, 29, 3, '2025-11-30 15:57:11'),
+(73, 6, 1, 3, '2025-11-30 16:00:59'),
+(74, 6, 2, 3, '2025-11-30 16:00:59'),
+(75, 6, 3, 3, '2025-11-30 16:00:59'),
+(76, 6, 6, 3, '2025-11-30 16:00:59'),
+(77, 6, 12, 3, '2025-11-30 16:00:59'),
+(78, 6, 13, 3, '2025-11-30 16:00:59'),
+(79, 6, 14, 3, '2025-11-30 16:00:59'),
+(80, 6, 18, 3, '2025-11-30 16:00:59'),
+(81, 6, 19, 3, '2025-11-30 16:00:59'),
+(95, 7, 1, 3, '2025-11-30 16:06:03'),
+(96, 7, 25, 3, '2025-11-30 16:06:03'),
+(97, 7, 23, 3, '2025-11-30 16:06:03'),
+(98, 7, 22, 3, '2025-11-30 16:06:03'),
+(99, 7, 21, 3, '2025-11-30 16:06:03'),
+(100, 7, 20, 3, '2025-11-30 16:06:03'),
+(101, 7, 24, 3, '2025-11-30 16:06:03'),
+(102, 7, 19, 3, '2025-11-30 16:06:03');
 
 -- --------------------------------------------------------
 
@@ -353,9 +684,44 @@ CREATE TABLE `votes` (
   `voted_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `voting_history`
+-- (See below for the actual view)
+--
+CREATE TABLE `voting_history` (
+`voter_id` varchar(20)
+,`election_id` int(11)
+,`election_title` varchar(255)
+,`vote_date` date
+,`positions_voted` bigint(21)
+,`total_votes` bigint(21)
+,`transaction_hash` varchar(255)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `voting_history`
+--
+DROP TABLE IF EXISTS `voting_history`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `voting_history`  AS SELECT DISTINCT `v`.`voter_id` AS `voter_id`, `e`.`id` AS `election_id`, `e`.`title` AS `election_title`, cast(min(`v`.`voted_at`) as date) AS `vote_date`, count(distinct `v`.`position_id`) AS `positions_voted`, count(`v`.`id`) AS `total_votes`, max(`e`.`transaction_hash`) AS `transaction_hash` FROM (`votes` `v` join `elections` `e` on(`v`.`election_id` = `e`.`id`)) GROUP BY `v`.`voter_id`, `e`.`id`, `e`.`title` ORDER BY cast(min(`v`.`voted_at`) as date) DESC ;
+
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_activity_type` (`activity_type`),
+  ADD KEY `idx_module` (`module`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Indexes for table `candidates`
@@ -403,12 +769,28 @@ ALTER TABLE `password_resets`
   ADD KEY `idx_password_resets_expires_at` (`expires_at`);
 
 --
+-- Indexes for table `permissions`
+--
+ALTER TABLE `permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD KEY `idx_module` (`module`);
+
+--
 -- Indexes for table `positions`
 --
 ALTER TABLE `positions`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `description` (`description`),
   ADD KEY `idx_description` (`description`);
+
+--
+-- Indexes for table `role_default_permissions`
+--
+ALTER TABLE `role_default_permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_role_permission` (`role`,`permission_id`),
+  ADD KEY `idx_role` (`role`);
 
 --
 -- Indexes for table `students`
@@ -438,6 +820,24 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `user_activity_log`
+--
+ALTER TABLE `user_activity_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user` (`user_id`),
+  ADD KEY `idx_action` (`action`),
+  ADD KEY `idx_created` (`created_at`);
+
+--
+-- Indexes for table `user_permissions`
+--
+ALTER TABLE `user_permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_user_permission` (`user_id`,`permission_id`),
+  ADD KEY `idx_user` (`user_id`),
+  ADD KEY `idx_permission` (`permission_id`);
+
+--
 -- Indexes for table `votes`
 --
 ALTER TABLE `votes`
@@ -446,11 +846,18 @@ ALTER TABLE `votes`
   ADD KEY `position_id` (`position_id`),
   ADD KEY `idx_election` (`election_id`),
   ADD KEY `idx_voter` (`voter_id`),
-  ADD KEY `idx_candidate` (`candidate_id`);
+  ADD KEY `idx_candidate` (`candidate_id`),
+  ADD KEY `idx_votes_voter_election` (`voter_id`,`election_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT for table `candidates`
@@ -462,7 +869,7 @@ ALTER TABLE `candidates`
 -- AUTO_INCREMENT for table `elections`
 --
 ALTER TABLE `elections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `events`
@@ -474,13 +881,19 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `funds`
 --
 ALTER TABLE `funds`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `permissions`
+--
+ALTER TABLE `permissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `positions`
@@ -489,26 +902,57 @@ ALTER TABLE `positions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
+-- AUTO_INCREMENT for table `role_default_permissions`
+--
+ALTER TABLE `role_default_permissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `user_activity_log`
+--
+ALTER TABLE `user_activity_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `user_permissions`
+--
+ALTER TABLE `user_permissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `votes`
 --
 ALTER TABLE `votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- Constraints for dumped tables
 --
 
 --
+-- Constraints for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD CONSTRAINT `fk_activity_logs_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `candidates`
 --
 ALTER TABLE `candidates`
   ADD CONSTRAINT `candidates_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `positions` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_permissions`
+--
+ALTER TABLE `user_permissions`
+  ADD CONSTRAINT `fk_user_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_user_permissions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `votes`
