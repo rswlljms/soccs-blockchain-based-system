@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2025 at 01:04 PM
+-- Generation Time: Nov 30, 2025 at 10:44 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,8 +44,30 @@ CREATE TABLE `candidates` (
 --
 
 INSERT INTO `candidates` (`id`, `firstname`, `lastname`, `partylist`, `position_id`, `platform`, `photo`, `created_at`, `updated_at`) VALUES
-(1, 'Leni', 'Robredo', 'Independent', 1, 'Leni Robredo\'s platform, primarily associated with her \"Angat Buhay\" program, centers on poverty alleviation through six key areas: food security and nutrition, health, education, rural development, women\'s empowerment, and housing and resettlement. Her broader political goals have focused on promoting good governance, transparency, accountability, and strengthening democratic institutions, often framed by her supporters as a \"pink revolution\" to uplift the nation, support farmers and businesses, and improve the economy and healthcare.', '../uploads/candidates/candidate_692a8e45683bb.png', '2025-11-29 06:10:13', '2025-11-29 06:10:13'),
-(2, 'Rodrigo', 'Duterte', 'Independent', 1, 'Duterte\'s platform was centered on his \"war on drugs,\" which he portrayed as a way to fight crime and insecurity, and included the promotion of a shift to a federal system of government. Other key components included a focus on infrastructure development through the \"Build! Build! Build!\" program and the use of information and communications technology (ICT) to improve governance. His platform was also supported by economic reforms, such as tax reform, to foster inclusive growth.', '../uploads/candidates/candidate_692aaa89cf0e5.jpg', '2025-11-29 08:10:49', '2025-11-29 08:10:49');
+(3, 'Ross Cedric', 'Nazareno', 'Nexus Partylist', 1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bcfe7e5086.png', '2025-11-30 05:02:31', '2025-11-30 05:02:31'),
+(4, 'Avegail', 'Sadiasa', 'Grid Partylist', 1, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd05062aac.png', '2025-11-30 05:04:16', '2025-11-30 05:04:16'),
+(5, 'Zaren', 'Gellido', 'Nexus Partylist', 2, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd09763c40.png', '2025-11-30 05:05:27', '2025-11-30 05:05:27'),
+(6, 'Jayvee', 'Aguila', 'Nexus Partylist', 4, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd0c6642c2.png', '2025-11-30 05:06:14', '2025-11-30 05:06:14'),
+(7, 'Jake', 'Jaqueza', 'Nexus Partylist', 5, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd0eff1499.png', '2025-11-30 05:06:55', '2025-11-30 05:06:55'),
+(8, 'Biann Chris', 'Evangelista', 'Nexus Partylist', 7, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd12b2cc9f.png', '2025-11-30 05:07:55', '2025-11-30 05:07:55'),
+(9, 'Amor', 'Valmonte', 'Nexus Partylist', 8, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd1590fd90.png', '2025-11-30 05:08:41', '2025-11-30 05:08:41'),
+(10, 'Nheil James', 'San Juan', 'Nexus Partylist', 8, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd18f0794f.png', '2025-11-30 05:09:35', '2025-11-30 05:09:35'),
+(11, 'Cheyenne Lei', 'De Ramos', 'Nexus Partylist', 6, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd1c980d80.png', '2025-11-30 05:10:33', '2025-11-30 05:10:33'),
+(12, 'Eliandre', 'Jeriel', 'Nexus Partylist', 6, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd1fe10f7e.png', '2025-11-30 05:11:26', '2025-11-30 05:11:26'),
+(13, 'Kenshin', 'Lim', 'Nexus Partylist', 9, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd21f48b17.png', '2025-11-30 05:11:59', '2025-11-30 05:11:59'),
+(14, 'Chlouie', 'Cabot', 'Nexus Partylist', 10, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd2484a2c0.png', '2025-11-30 05:12:40', '2025-11-30 05:12:40'),
+(15, 'Cel Rick', 'Almario', 'Nexus Partylist', 12, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd29e05613.png', '2025-11-30 05:14:06', '2025-11-30 05:14:06'),
+(16, 'Rashed', 'Dizon', 'Grid Partylist', 2, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd2ec6513d.png', '2025-11-30 05:15:24', '2025-11-30 05:15:24'),
+(22, 'Jillian', 'Gutierrez', 'Grid Partylist', 4, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd7f5a0445.png', '2025-11-30 05:36:53', '2025-11-30 05:36:53'),
+(23, 'Amaru Jay', 'Balmes', 'Grid Partylist', 5, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd8358f3b0.png', '2025-11-30 05:37:57', '2025-11-30 05:38:12'),
+(24, 'Jazaira', 'Alias', 'Grid Partylist', 6, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd869714c8.png', '2025-11-30 05:38:49', '2025-11-30 05:38:49'),
+(25, 'Moises', 'Maristela', 'Grid Partylist', 6, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd945bea16.png', '2025-11-30 05:42:29', '2025-11-30 05:42:29'),
+(26, 'Christine', 'Arroyo', 'Grid Partylist', 7, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd95d2510d.png', '2025-11-30 05:42:53', '2025-11-30 05:42:53'),
+(27, 'Imac', 'Uy', 'Grid Partylist', 7, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd96d57214.png', '2025-11-30 05:43:09', '2025-11-30 05:43:09'),
+(28, 'Mark', 'Trilles', 'Grid Partylist', 8, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd98d8273a.png', '2025-11-30 05:43:41', '2025-11-30 05:43:41'),
+(29, 'Rebecca', 'Cabanit', 'Grid Partylist', 10, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd9a3d30d2.png', '2025-11-30 05:44:03', '2025-11-30 05:44:03'),
+(30, 'Justine', 'Sandoval', 'Grid Partylist', 11, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd9b6e2e70.png', '2025-11-30 05:44:22', '2025-11-30 05:44:22'),
+(31, 'Justin', 'Peralta', 'Grid Partylis', 12, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', '../uploads/candidates/candidate_692bd9c9a2b4b.png', '2025-11-30 05:44:41', '2025-11-30 05:44:41');
 
 -- --------------------------------------------------------
 
@@ -63,13 +85,6 @@ CREATE TABLE `elections` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `elections`
---
-
-INSERT INTO `elections` (`id`, `title`, `description`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-(3, 'SOCCS Officer Election 2025', '', '2025-11-29 17:06:00', '2025-11-29 17:20:00', 'completed', '2025-11-29 09:06:46', '2025-11-29 09:08:32');
 
 -- --------------------------------------------------------
 
@@ -97,7 +112,7 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `title`, `description`, `date`, `end_date`, `is_multi_day`, `location`, `category`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
-(2, 'Research Colloquim', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'upcoming', 'admin', '2025-11-29 12:02:51', '2025-11-29 12:03:24');
+(2, 'Research Colloquim', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'upcoming', 'admin', '2025-11-29 12:02:51', '2025-11-29 13:40:55');
 
 -- --------------------------------------------------------
 
@@ -141,6 +156,30 @@ INSERT INTO `expenses` (`id`, `name`, `amount`, `category`, `description`, `supp
 (20, 'Test', 1234.00, 'Food', 'For Event', 'N/a', '681cb96868645_Subject.pdf', '2025-05-08', '0x8c043e9fefdfff05ce77d6899e942deee3cb6a50994003c512a17a74d7ba6911', '2025-05-08 14:02:16'),
 (21, 'Test2', 200.00, 'Food', 'For Event', 'N/a', NULL, '2025-05-09', '0x7f0e0e5cd20a3e82370981dc8212aacc6eb2a4230866754df14c0391bcabbb2a', '2025-05-08 15:39:37'),
 (22, 'Sample', 200.00, 'Transport', 'For Event', 'N/a', '685fb4a4c9b71_bb576c06c6ae2eaf03203401d9ee0a05.png', '2025-06-28', '0xaadc22e764f1d8970e4cbd7d3eed7a3dafec6bc5d24f183cb21baa1a1c94dd49', '2025-06-28 09:23:49');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `funds`
+--
+
+CREATE TABLE `funds` (
+  `id` int(11) NOT NULL,
+  `source` varchar(255) DEFAULT 'Manual Entry',
+  `amount` decimal(10,2) NOT NULL,
+  `description` text NOT NULL,
+  `date_received` date NOT NULL,
+  `transaction_hash` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `funds`
+--
+
+INSERT INTO `funds` (`id`, `source`, `amount`, `description`, `date_received`, `transaction_hash`, `created_at`) VALUES
+(1, 'Manual Entry', 10000.00, 'Initial Funding', '2025-04-22', NULL, '2025-11-30 08:18:50'),
+(2, 'Manual Entry', 5000.00, 'Sponsor Contribution', '2025-04-23', NULL, '2025-11-30 08:18:50');
 
 -- --------------------------------------------------------
 
@@ -315,13 +354,6 @@ CREATE TABLE `votes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `votes`
---
-
-INSERT INTO `votes` (`id`, `election_id`, `voter_id`, `candidate_id`, `position_id`, `vote_hash`, `voted_at`) VALUES
-(1, 3, '0122-1141', 1, 1, NULL, '2025-11-29 09:07:29');
-
---
 -- Indexes for dumped tables
 --
 
@@ -354,6 +386,14 @@ ALTER TABLE `events`
 --
 ALTER TABLE `expenses`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `funds`
+--
+ALTER TABLE `funds`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_date_received` (`date_received`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Indexes for table `password_resets`
@@ -402,7 +442,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `votes`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_vote_per_position` (`election_id`,`voter_id`,`position_id`),
+  ADD UNIQUE KEY `unique_vote_per_candidate` (`election_id`,`voter_id`,`candidate_id`),
   ADD KEY `position_id` (`position_id`),
   ADD KEY `idx_election` (`election_id`),
   ADD KEY `idx_voter` (`voter_id`),
@@ -416,25 +456,31 @@ ALTER TABLE `votes`
 -- AUTO_INCREMENT for table `candidates`
 --
 ALTER TABLE `candidates`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `elections`
 --
 ALTER TABLE `elections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `funds`
+--
+ALTER TABLE `funds`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `positions`
@@ -452,7 +498,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `votes`
 --
 ALTER TABLE `votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables

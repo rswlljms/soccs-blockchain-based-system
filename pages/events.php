@@ -1,4 +1,9 @@
-<?php include('../components/sidebar.php'); ?>
+<?php
+session_start();
+require_once '../includes/page_access.php';
+checkPageAccess(['add_events', 'manage_events']);
+include('../components/sidebar.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,58 +1,60 @@
-<?php include '../components/sidebar.php'; ?>
+<?php
+session_start();
+require_once '../includes/page_access.php';
+checkPageAccess(['view_funds', 'manage_funds', 'view_financial_records']);
+include '../components/sidebar.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Funds</title>
+  <title>Budget</title>
   <link rel="stylesheet" href="../assets/css/funds.css"> 
   <link rel="stylesheet" href="../assets/css/sidebar.css">
   <link rel="stylesheet" href="../assets/css/admin-table-styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    .modal{padding:0;overflow:hidden}
-    .modal-header{background:linear-gradient(135deg,#4B0082,#9933ff);padding:24px 32px;display:flex;justify-content:space-between;align-items:center;border-radius:16px 16px 0 0}
-    .modal-title{font-size:22px;font-weight:600;color:#fff;margin:0;letter-spacing:-.02em}
-    .modal-close{background:rgba(255,255,255,.2);border:none;font-size:18px;color:#fff;cursor:pointer;padding:8px;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:all .2s}
-    .modal-close:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
-    .form-body{padding:24px;max-height:calc(90vh - 120px);overflow-y:auto}
-    .modal-footer{padding:24px 32px;border-top:1px solid #e5e7eb;display:flex;justify-content:flex-end;gap:14px;background:#fafbfc;border-radius:0 0 16px 16px}
-  </style>
 </head>
 <body>
 
 <div class="main-content">
   <div class="dashboard-wrapper">
-    <h1 class="page-title">Add Funds</h1>
-
-    <!-- Fund Form -->
-    <form id="fund-form" class="fund-form" method="POST">
-      <div class="form-row">
-        <div class="input-group">
-          <i class="fas fa-money-bill-wave"></i>
-          <input type="number" name="amount" placeholder="Amount (₱)" required>
+    <div class="header-section">
+      <h1 class="page-title">Budget</h1>
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="card-info">
+            <h3>Total Budget</h3>
+            <p id="totalFunds">₱0.00</p>
+          </div>
         </div>
-        <div class="input-group">
-          <i class="fas fa-align-left"></i>
-          <input type="text" name="description" placeholder="Description" required>
+        <div class="summary-card">
+          <div class="card-icon">
+            <i class="fas fa-plus-circle"></i>
+          </div>
+          <div class="card-info">
+            <h3>Total Records</h3>
+            <p id="totalRecords">0</p>
+          </div>
         </div>
-        <div class="input-group">
-          <i class="fas fa-calendar-alt"></i>
-          <input type="date" name="date" required>
+        <div class="summary-card">
+          <div class="card-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="card-info">
+            <h3>This Month</h3>
+            <p id="monthlyTotal">₱0.00</p>
+          </div>
         </div>
       </div>
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">
-          <i class="fas fa-plus"></i> Add Funds
-        </button>
       </div>
-    </form>
 
-    <!-- Records Section -->
-    <div class="records-section">
-      <div class="section-header">
-        <h2>Funds Records</h2>
+    <!-- Filter Toolbar -->
+    <div class="funds-toolbar">
         <div class="filter-section">
           <label for="filter-date">Filter by Date:</label>
           <select id="filter-date">
@@ -63,6 +65,20 @@
             <option value="Year">This Year</option>
           </select>
         </div>
+      <div class="toolbar-actions">
+        <button type="button" class="btn-add-funds" id="openFundModal">
+          <i class="fas fa-plus"></i> Add Budget
+        </button>
+        <button class="btn-print" onclick="printFundsReport()">
+          <i class="fas fa-print"></i> Print Report
+        </button>
+      </div>
+    </div>
+
+    <!-- Records Section -->
+    <div class="records-section">
+      <div class="section-header">
+        <h2>Budget Records</h2>
       </div>
 
       <!-- Table Container -->
@@ -100,15 +116,67 @@
   </div>
 </div>
 
+<!-- Add Budget Modal -->
+<div class="modal-overlay" id="fundModalOverlay"></div>
+<div class="modal fund-modal" id="fundModal">
+  <div class="modal-header">
+    <h2 class="modal-title">Add New Budget</h2>
+    <button type="button" class="modal-close" id="closeFundModal">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <form id="fund-form" class="fund-form-modal" method="POST">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="fund-amount">
+          <i class="fas fa-money-bill-wave"></i> Amount
+        </label>
+        <div class="amount-input-wrapper">
+          <span class="currency-prefix">₱</span>
+          <input type="number" id="fund-amount" name="amount" step="0.01" min="0" placeholder="0.00" required>
+        </div>
+        <span class="error-message"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="fund-date">
+          <i class="fas fa-calendar-alt"></i> Date
+        </label>
+        <input type="date" id="fund-date" name="date" value="<?php echo date('Y-m-d'); ?>" required>
+        <span class="error-message"></span>
+      </div>
+
+      <div class="form-group form-group-full">
+        <label for="fund-description">
+          <i class="fas fa-align-left"></i> Description
+        </label>
+        <textarea id="fund-description" name="description" rows="3" placeholder="Enter description" required></textarea>
+        <span class="error-message"></span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" id="cancelFundForm">Cancel</button>
+      <button type="submit" class="btn-save">
+        <i class="fas fa-save"></i> Add Budget
+      </button>
+    </div>
+  </form>
+</div>
+
 <!-- Confirmation Modal -->
 <div class="modal-overlay" id="confirmOverlay"></div>
 <div class="modal confirm-modal" id="confirmModal">
   <div class="modal-header">
-    <h2 class="modal-title">Confirm Fund Addition</h2>
+    <h2 class="modal-title">Confirm Budget Addition</h2>
     <button type="button" class="modal-close" id="closeConfirm"><i class="fas fa-times"></i></button>
   </div>
   <div class="form-body">
-    <p style="text-align:center;color:#666;margin:0;">Are you sure you want to add these funds?</p>
+    <div class="modal-content">
+      <div class="modal-icon">
+        <i class="fas fa-question-circle"></i>
+      </div>
+      <p>Are you sure you want to add this budget?</p>
+    </div>
   </div>
   <div class="modal-footer">
     <button class="modal-btn modal-btn-secondary" id="cancelFund">Cancel</button>
@@ -123,8 +191,10 @@
     <h2 class="modal-title">Processing</h2>
   </div>
   <div class="form-body">
+    <div class="modal-content">
     <div class="spinner"></div>
-    <p style="text-align:center;color:#666;">Recording your funds...</p>
+      <p>Recording your budget...</p>
+    </div>
   </div>
 </div>
 
@@ -136,11 +206,16 @@
     <button type="button" class="modal-close" id="closeSuccess"><i class="fas fa-times"></i></button>
   </div>
   <div class="form-body">
-    <p style="text-align:center;color:#666;">Funds have been recorded successfully</p>
+    <div class="modal-content">
+      <div class="modal-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <p>Budget has been recorded successfully</p>
     <div class="transaction-details">
-      <p><strong>Method:</strong> Fund Addition</p>
+      <p><strong>Method:</strong> Budget Addition</p>
       <p><strong>Transaction Hash:</strong></p>
       <div class="transaction-hash" id="txHash"></div>
+      </div>
     </div>
   </div>
   <div class="modal-footer">
@@ -148,6 +223,60 @@
   </div>
 </div>
 
+<script>
+  function printFundsReport() {
+    const filterDate = document.getElementById('filter-date').value;
+    const params = new URLSearchParams();
+    
+    if (filterDate && filterDate !== 'All') {
+      params.append('date_filter', filterDate);
+    }
+    
+    window.open(`print-funds-report-pdf.php?${params.toString()}`, '_blank');
+  }
+
+  function updateSummaryCards(summary) {
+    if (summary) {
+      const totalFunds = parseFloat(summary.total_amount) || 0;
+      document.getElementById('totalFunds').textContent = `₱${totalFunds.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      document.getElementById('totalRecords').textContent = summary.total_count || 0;
+      const monthlyTotal = parseFloat(summary.monthly_total) || 0;
+      document.getElementById('monthlyTotal').textContent = `₱${monthlyTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    updateSummaryCards({
+      total_amount: 15000,
+      total_count: 2,
+      monthly_total: 15000
+    });
+
+    const fundModal = document.getElementById('fundModal');
+    const fundModalOverlay = document.getElementById('fundModalOverlay');
+    const openFundModal = document.getElementById('openFundModal');
+    const closeFundModal = document.getElementById('closeFundModal');
+    const cancelFundForm = document.getElementById('cancelFundForm');
+
+    function openModal() {
+      fundModal.classList.add('show');
+      fundModalOverlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      fundModal.classList.remove('show');
+      fundModalOverlay.classList.remove('show');
+      document.body.style.overflow = '';
+      document.getElementById('fund-form').reset();
+    }
+
+    openFundModal.addEventListener('click', openModal);
+    closeFundModal.addEventListener('click', closeModal);
+    cancelFundForm.addEventListener('click', closeModal);
+    fundModalOverlay.addEventListener('click', closeModal);
+  });
+</script>
 <script src="../assets/js/funds.js"></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 <?php
+session_start();
 require_once '../includes/expense_operations.php';
+require_once '../includes/activity_logger.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -67,6 +69,11 @@ try {
 
     if ($expenseOps->addExpense($expenseData)) {
         error_log("Expense saved successfully");
+        
+        if (isset($_SESSION['user_id'])) {
+            logExpenseActivity($_SESSION['user_id'], 'create', 'Created expense: ₱' . number_format($expenseData['amount'], 2) . ' - ' . $expenseData['name'] . ' (' . $expenseData['category'] . ')');
+        }
+        
         echo json_encode([
             'success' => true,
             'message' => 'Expense saved successfully',

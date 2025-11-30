@@ -1,4 +1,9 @@
-<?php include('../components/sidebar.php'); ?>
+<?php
+session_start();
+require_once '../includes/page_access.php';
+checkPageAccess(['view_expenses', 'manage_expenses', 'view_financial_records']);
+include('../components/sidebar.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,10 +59,12 @@
           <label for="filter-category">Filter by Category:</label>
           <select id="filter-category">
             <option value="All">All Categories</option>
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Supplies">Supplies</option>
-            <option value="Events">Events</option>
+            <option value="FOOD AND DRINKS">FOOD AND DRINKS</option>
+            <option value="TRANSPORT">TRANSPORT</option>
+            <option value="OFFICE SUPPLIES">OFFICE SUPPLIES</option>
+            <option value="EVENT EXPENSES">EVENT EXPENSES</option>
+            <option value="TOKEN/GIVEAWAY">TOKEN/GIVEAWAY</option>
+            <option value="CLEANING MATERIALS">CLEANING MATERIALS</option>
           </select>
         </div>
         <div class="toolbar-actions">
@@ -106,10 +113,12 @@
               </label>
               <select id="expense-category" name="category" required>
                 <option value="" disabled selected>Select category</option>
-                <option value="Food">Food</option>
-                <option value="Transport">Transport</option>
-                <option value="Supplies">Supplies</option>
-                <option value="Events">Events</option>
+                <option value="FOOD AND DRINKS">FOOD AND DRINKS</option>
+                <option value="TRANSPORT">TRANSPORT</option>
+                <option value="OFFICE SUPPLIES">OFFICE SUPPLIES</option>
+                <option value="EVENT EXPENSES">EVENT EXPENSES</option>
+                <option value="TOKEN/GIVEAWAY">TOKEN/GIVEAWAY</option>
+                <option value="CLEANING MATERIALS">CLEANING MATERIALS</option>
               </select>
               <span class="error-message"></span>
             </div>

@@ -4,7 +4,9 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+session_start();
 require_once '../includes/database.php';
+require_once '../includes/activity_logger.php';
 
 try {
     $database = new Database();
@@ -46,6 +48,16 @@ try {
     
     $updateStmt = $pdo->prepare($updateSql);
     $updateStmt->execute([$newStatus, $studentId]);
+    
+    if (isset($_SESSION['user_id'])) {
+        $getStudentQuery = "SELECT first_name, last_name FROM students WHERE id = ?";
+        $getStudentStmt = $pdo->prepare($getStudentQuery);
+        $getStudentStmt->execute([$studentId]);
+        $studentInfo = $getStudentStmt->fetch(PDO::FETCH_ASSOC);
+        $studentName = $studentInfo ? ($studentInfo['first_name'] . ' ' . $studentInfo['last_name']) : 'Student #' . $studentId;
+        
+        logMembershipActivity($_SESSION['user_id'], 'update_status', 'Updated membership status to ' . $newStatus . ' for student: ' . $studentId . ' (' . $studentName . ')');
+    }
     
     echo json_encode([
         'success' => true,

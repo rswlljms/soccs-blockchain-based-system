@@ -170,41 +170,50 @@
 /* Table Container */
 .table-container {
   background: white;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
 .styled-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  background: white;
+}
+
+.styled-table thead {
+  background: var(--secondary-color);
 }
 
 .styled-table th {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  color: var(--text-primary);
-  font-weight: 700;
-  padding: 20px 16px;
+  padding: 18px 20px;
   text-align: left;
-  border-bottom: 2px solid var(--border-color);
-  font-size: 13px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--secondary-color);
 }
 
 .styled-table td {
-  padding: 20px 16px;
+  padding: 18px 20px;
   border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: white;
   vertical-align: middle;
 }
 
-.styled-table tr:hover {
-  background: linear-gradient(135deg, #f8f9fa, #f1f3f4);
+.styled-table tbody tr:hover td {
+  background-color: rgba(153, 51, 255, 0.04);
+  transition: background-color 0.2s ease;
 }
 
-.styled-table tr:last-child td {
+.styled-table tbody tr:last-child td {
   border-bottom: none;
 }
 
@@ -234,54 +243,7 @@
   color: #374151;
 }
 
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 120px;
-}
-
-.btn-edit, .btn-archive {
-  padding: 10px 16px;
-  border-radius: var(--radius-sm);
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  transition: var(--transition);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.btn-edit {
-  background: linear-gradient(135deg, var(--primary-color), #7a29cc);
-  color: white;
-  margin-bottom: 8px;
-}
-
-.btn-edit:hover {
-  background: linear-gradient(135deg, var(--primary-hover), #6b21a8);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-archive {
-  background: linear-gradient(135deg, #6b7280, #4b5563);
-  color: white;
-  margin-bottom: 0;
-}
-
-.btn-archive:hover {
-  background: linear-gradient(135deg, #4b5563, #374151);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
+/* Action Buttons - Using standardized styles from admin-table-styles.css */
 
 .styled-table td:last-child {
   text-align: right;

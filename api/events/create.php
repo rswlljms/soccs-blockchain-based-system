@@ -4,7 +4,9 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+session_start();
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -56,6 +58,10 @@ try {
     
     if ($stmt->execute()) {
         $eventId = $conn->lastInsertId();
+        
+        if (isset($_SESSION['user_id'])) {
+            logEventActivity($_SESSION['user_id'], 'create', 'Created event: ' . $data['name'] . ' (' . $data['category'] . ')');
+        }
         
         echo json_encode([
             'success' => true,

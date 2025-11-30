@@ -42,6 +42,7 @@ try {
 
 // Fetch real election results from database
 $electionResults = [];
+$positionMaxVotes = [];
 
 if ($electionStatus !== 'no_election' && $electionId) {
     try {
@@ -73,6 +74,7 @@ if ($electionStatus !== 'no_election' && $electionId) {
             
             if (!empty($candidates)) {
                 $electionResults[$position['description']] = $candidates;
+                $positionMaxVotes[$position['description']] = (int)$position['max_votes'];
             }
         }
         
@@ -294,7 +296,13 @@ $voterTurnout = $totalEligibleVoters > 0 ? round(($totalVotesCast / $totalEligib
         <?php foreach ($electionResults as $position => $candidates): ?>
         <?php 
           $totalPositionVotes = calculateTotalVotes($candidates);
-          $winner = $candidates[0]; // First candidate (highest votes)
+          $maxWinners = $positionMaxVotes[$position] ?? 1;
+          $winners = [];
+          for ($i = 0; $i < min($maxWinners, count($candidates)); $i++) {
+              if ($candidates[$i]['votes'] > 0) {
+                  $winners[] = $candidates[$i]['name'];
+              }
+          }
         ?>
         
         <!-- Position Results Section -->
@@ -303,10 +311,10 @@ $voterTurnout = $totalEligibleVoters > 0 ? round(($totalVotesCast / $totalEligib
             <h3><?= htmlspecialchars($position) ?></h3>
             <div class="position-stats">
               <span class="total-votes"><?= number_format($totalPositionVotes) ?> total votes</span>
-              <?php if ($electionStatus === 'completed'): ?>
+              <?php if ($electionStatus === 'completed' && !empty($winners)): ?>
               <span class="winner-badge">
                 <i class="fas fa-crown"></i>
-                Winner: <?= htmlspecialchars($winner['name']) ?>
+                Winner<?= count($winners) > 1 ? 's' : '' ?>: <?= htmlspecialchars(implode(', ', $winners)) ?>
               </span>
               <?php elseif ($electionStatus === 'active'): ?>
               <span class="live-badge">
@@ -321,7 +329,7 @@ $voterTurnout = $totalEligibleVoters > 0 ? round(($totalVotesCast / $totalEligib
             <?php foreach ($candidates as $index => $candidate): ?>
             <?php 
               $percentage = $totalPositionVotes > 0 ? round(($candidate['votes'] / $totalPositionVotes) * 100, 1) : 0;
-              $isWinner = $index === 0 && $electionStatus === 'completed';
+              $isWinner = ($index < $maxWinners) && $candidate['votes'] > 0 && $electionStatus === 'completed';
             ?>
             
             <div class="candidate-result <?= $isWinner ? 'winner' : '' ?>">

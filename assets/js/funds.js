@@ -140,14 +140,12 @@ document.getElementById('fund-form').addEventListener('submit', async function (
             return;
         }
 
-        // Show confirmation modal
+        hideModal('fundModal');
         showModal('confirmModal');
 
-        // Handle confirmation button click
         const confirmBtn = document.getElementById('confirmFund');
         const handleConfirm = async () => {
             try {
-                // Remove the event listener to prevent multiple submissions
                 confirmBtn.removeEventListener('click', handleConfirm);
 
                 hideModal('confirmModal');
@@ -187,6 +185,7 @@ document.getElementById('fund-form').addEventListener('submit', async function (
 
                     if (dbResult.success) {
                         hideModal('loadingModal');
+                        hideModal('fundModal');
                         document.getElementById('txHash').textContent = blockchainResult.txHash;
                         showModal('successModal');
                         this.reset();
@@ -200,6 +199,7 @@ document.getElementById('fund-form').addEventListener('submit', async function (
             } catch (err) {
                 console.error('Error in confirmation handler:', err);
                 hideModal('loadingModal');
+                hideModal('confirmModal');
                 alert('Error: ' + err.message);
             }
         };
@@ -207,10 +207,9 @@ document.getElementById('fund-form').addEventListener('submit', async function (
         // Add event listener for confirmation
         confirmBtn.addEventListener('click', handleConfirm, { once: true });
 
-        // Handle cancel button click
         document.getElementById('cancelFund').onclick = () => {
             hideModal('confirmModal');
-            // Re-enable confirm button for future submissions
+            showModal('fundModal');
             confirmBtn.removeEventListener('click', handleConfirm);
         };
     } catch (err) {
@@ -219,13 +218,25 @@ document.getElementById('fund-form').addEventListener('submit', async function (
     }
 });
 
-// Modal handling functions
+function hideAllModals() {
+    const allModals = ['fundModal', 'confirmModal', 'loadingModal', 'successModal'];
+    allModals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        const overlay = document.getElementById(modalId.replace('Modal', 'Overlay'));
+        if (modal) modal.classList.remove('show');
+        if (overlay) overlay.classList.remove('show');
+    });
+}
+
 function showModal(modalId) {
+    hideAllModals();
     const modal = document.getElementById(modalId);
     const overlay = document.getElementById(modalId.replace('Modal', 'Overlay'));
     if (modal && overlay) {
-        modal.classList.add('show');
-        overlay.classList.add('show');
+        setTimeout(() => {
+            modal.classList.add('show');
+            overlay.classList.add('show');
+        }, 10);
     }
 }
 
@@ -238,8 +249,10 @@ function hideModal(modalId) {
     }
 }
 
-// Handle success modal close
-document.getElementById('successOk').onclick = () => hideModal('successModal');
+document.getElementById('successOk').onclick = () => {
+    hideModal('successModal');
+    hideModal('fundModal');
+};
 
 // Close (X) buttons for consistency
 document.addEventListener('DOMContentLoaded', () => {

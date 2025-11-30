@@ -1,4 +1,9 @@
-<?php include('../components/sidebar.php'); ?>
+<?php
+session_start();
+require_once '../includes/page_access.php';
+checkPageAccess(['view_election', 'manage_election_status']);
+include('../components/sidebar.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +64,7 @@
         <label for="electionTitle">
           <i class="fas fa-vote-yea"></i> Election Title *
         </label>
-        <input type="text" id="electionTitle" name="title" placeholder="e.g., SOCCS General Elections 2025" required>
+        <input type="text" id="electionTitle" name="title" placeholder="e.g., SOCCS Officer Election 2025" required>
       </div>
       
       <div class="form-group">
@@ -72,7 +77,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="electionStartDate">
-            <i class="fas fa-calendar-start"></i> Start Date & Time *
+            <i class="fas fa-calendar-alt"></i> Start Date & Time *
           </label>
           <input type="datetime-local" id="electionStartDate" name="start_date" required>
         </div>
@@ -94,6 +99,20 @@
     </div>
   </div>
 
+  <div class="confirm-overlay" id="confirmOverlay"></div>
+  <div class="confirm-modal" id="confirmModal">
+    <div class="confirm-icon" id="confirmIcon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h3 class="confirm-title" id="confirmTitle">Confirm Action</h3>
+    <p class="confirm-message" id="confirmMessage">Are you sure you want to proceed?</p>
+    <div class="confirm-details" id="confirmDetails"></div>
+    <div class="confirm-footer">
+      <button type="button" class="btn-confirm-cancel" onclick="closeConfirmModal()">Cancel</button>
+      <button type="button" class="btn-confirm-ok" id="confirmOkBtn">OK</button>
+    </div>
+  </div>
+
   <div class="notification-overlay" id="notificationOverlay"></div>
   <div class="notification-modal" id="notificationModal">
     <div class="notification-header">
@@ -107,6 +126,41 @@
       <button type="button" class="btn-notification-close" onclick="closeNotification()">
         Got it
       </button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="loadingOverlay"></div>
+  <div class="modal loading-modal" id="loadingModal">
+    <div class="modal-header">
+      <h2 class="modal-title">Processing</h2>
+    </div>
+    <div class="modal-content">
+      <div class="spinner"></div>
+      <p>Finalizing election and saving to blockchain...</p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="successOverlay"></div>
+  <div class="modal success-modal" id="successModal">
+    <div class="modal-header">
+      <h2 class="modal-title">Election Finalized!</h2>
+      <button type="button" class="modal-close" onclick="closeSuccessModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-content">
+      <div class="modal-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <p>Election has been finalized and saved to blockchain successfully.</p>
+      <div class="transaction-details">
+        <p><strong>Method:</strong> Election Finalization</p>
+        <p><strong>Transaction Hash:</strong></p>
+        <div class="transaction-hash" id="electionTxHash"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-save" onclick="closeSuccessModal()">OK</button>
     </div>
   </div>
 

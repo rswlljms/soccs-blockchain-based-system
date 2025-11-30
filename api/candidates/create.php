@@ -1,6 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -35,6 +37,14 @@ try {
     if (!$checkStmt->fetch()) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Position does not exist']);
+        exit;
+    }
+    
+    $dupStmt = $pdo->prepare("SELECT id FROM candidates WHERE LOWER(firstname) = LOWER(?) AND LOWER(lastname) = LOWER(?)");
+    $dupStmt->execute([$firstname, $lastname]);
+    if ($dupStmt->fetch()) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'A candidate with this name already exists']);
         exit;
     }
     
@@ -76,6 +86,11 @@ try {
     $stmt->execute([$firstname, $lastname, $partylist, $positionId, $platform, $photoPath]);
     
     $newId = $pdo->lastInsertId();
+    
+    if (isset($_SESSION['user_id'])) {
+        $candidateName = $firstname . ' ' . $lastname;
+        logCandidateActivity($_SESSION['user_id'], 'register', 'Registered candidate: ' . $candidateName . ' (' . $partylist . ')');
+    }
     
     echo json_encode([
         'success' => true,

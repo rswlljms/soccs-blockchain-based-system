@@ -1,6 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'PUT' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -43,6 +45,10 @@ try {
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => 'Position not found']);
         exit;
+    }
+    
+    if (isset($_SESSION['user_id'])) {
+        logPositionActivity($_SESSION['user_id'], 'update', 'Updated position: ' . $description . ' (ID: ' . $id . ', Max votes: ' . $maxVotes . ')');
     }
     
     echo json_encode([

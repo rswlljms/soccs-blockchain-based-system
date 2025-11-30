@@ -1,4 +1,9 @@
-<?php include('../components/sidebar.php'); ?>
+<?php
+session_start();
+require_once '../includes/page_access.php';
+checkPageAccess(['register_candidates']);
+include('../components/sidebar.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -164,31 +169,40 @@
 
     
     .table-container {
-      background: #fff;
+      background: white;
       padding: 0;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
       margin-bottom: 32px;
       overflow: hidden;
     }
     
-    table {
+    table,
+    .styled-table {
       width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 20px;
+      background: white;
+      font-size: 14px;
+    }
+    
+    table thead,
+    .styled-table thead {
+      background: var(--secondary-color);
     }
     
     th {
       text-align: left;
-      padding: 16px 20px;
-      color: #9333EA;
-      font-weight: 700;
-      border-bottom: 2px solid #ede9fe;
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-      background: linear-gradient(135deg, #faf5ff, #f3f0fa);
-      font-size: 13px;
+      padding: 18px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--secondary-color);
+      white-space: nowrap;
     }
 
     th:last-child {
@@ -197,17 +211,20 @@
     
     td {
       padding: 18px 20px;
-      color: #1f2937;
-      border-bottom: 1px solid #f3f0fa;
-      background: #fff;
-      font-weight: 500;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+      background: white;
+      font-size: 14px;
+      font-weight: 400;
     }
     
+    table tbody tr:hover td,
     tr:hover td {
-      background: linear-gradient(135deg, #faf5ff, #f8f4ff);
-      transition: background 0.15s cubic-bezier(.4,0,.2,1);
+      background-color: rgba(153, 51, 255, 0.04);
+      transition: background-color 0.2s ease;
     }
 
+    table tbody tr:last-child td,
     tr:last-child td {
       border-bottom: none;
     }
@@ -957,6 +974,171 @@
       line-height: 1.6;
       color: #374151;
     }
+
+    .confirm-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      background: white;
+      border-radius: 16px;
+      z-index: 2000;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .confirm-modal.show {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1999;
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .confirm-overlay.show {
+      display: block;
+      opacity: 1;
+    }
+
+    .confirm-header {
+      padding: 32px 32px 24px 32px;
+      text-align: center;
+    }
+
+    .confirm-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 40px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #d97706;
+    }
+
+    .confirm-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      color: var(--text-primary);
+    }
+
+    .confirm-message {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .confirm-message strong {
+      color: var(--text-primary);
+    }
+
+    .confirm-footer {
+      padding: 24px 32px 32px 32px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-confirm-cancel {
+      padding: 14px 32px;
+      background: white;
+      border: 2px solid var(--border-color);
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 15px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-confirm-cancel:hover {
+      border-color: #cbd5e1;
+      background: var(--secondary-color);
+    }
+
+    .btn-confirm-delete {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border: none;
+      color: white;
+      font-weight: 600;
+      font-size: 15px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-confirm-delete:hover {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .pagination.centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .page-btn {
+      background: white;
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: all 0.2s;
+      pointer-events: auto;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+    }
+
+    .page-btn:hover:not(.disabled) {
+      border-color: #9933ff;
+      color: #9933ff;
+      background-color: rgba(153, 51, 255, 0.05);
+    }
+
+    .page-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .page-btn:focus {
+      outline: none;
+    }
+
+    .page-indicator {
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding: 0 16px;
+    }
   </style>
 </head>
 
@@ -993,7 +1175,7 @@
             <th>Name</th>
             <th>Partylist</th>
             <th>Position</th>
-            <th>Platform</th>
+            <th style="text-align: center;">Platform</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -1003,6 +1185,12 @@
           </tr>
         </tbody>
       </table>
+      
+      <div class="pagination centered">
+        <button type="button" class="page-btn prev-btn" onclick="goToPage('prev')">&laquo; Prev</button>
+        <span class="page-indicator">Page 1 of 1</span>
+        <button type="button" class="page-btn next-btn" onclick="goToPage('next')">Next &raquo;</button>
+      </div>
     </div>
   </div>
 
@@ -1108,6 +1296,24 @@
     </div>
   </div>
 
+  <!-- Delete Confirmation Modal -->
+  <div class="confirm-overlay" id="confirmOverlay"></div>
+  <div class="confirm-modal" id="confirmModal">
+    <div class="confirm-header">
+      <div class="confirm-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h3 class="confirm-title">Delete Candidate</h3>
+      <p class="confirm-message">Are you sure you want to delete <strong id="confirmCandidateName"></strong>? This action cannot be undone.</p>
+    </div>
+    <div class="confirm-footer">
+      <button type="button" class="btn-confirm-cancel" onclick="closeConfirmModal()">Cancel</button>
+      <button type="button" class="btn-confirm-delete" id="confirmDeleteBtn">
+        <i class="fas fa-trash"></i> Delete
+      </button>
+    </div>
+  </div>
+
   <!-- Notification Modal -->
   <div class="notification-overlay-notif" id="notificationOverlayNotif"></div>
   <div class="notification-modal" id="notificationModal">
@@ -1129,6 +1335,9 @@
     let candidates = [];
     let positions = [];
     let editingCandidateId = null;
+    let pendingDeleteId = null;
+    let currentPage = 1;
+    const itemsPerPage = 5;
 
     function showNotification(type, title, message) {
       const modal = document.getElementById('notificationModal');
@@ -1203,6 +1412,8 @@
         
         if (result.success) {
           candidates = result.data;
+          sortCandidatesByPosition();
+          currentPage = 1;
           renderCandidatesTable();
         } else {
           console.error('Failed to load candidates:', result.error);
@@ -1210,6 +1421,19 @@
       } catch (error) {
         console.error('Error loading candidates:', error);
       }
+    }
+
+    function sortCandidatesByPosition() {
+      const positionOrder = {};
+      positions.forEach((pos, index) => {
+        positionOrder[pos.id] = index;
+      });
+      
+      candidates.sort((a, b) => {
+        const orderA = positionOrder[a.positionId] ?? 999;
+        const orderB = positionOrder[b.positionId] ?? 999;
+        return orderA - orderB;
+      });
     }
 
     function openCandidateModal(candidate = null) {
@@ -1286,10 +1510,16 @@
             <td colspan="6" class="empty-message">No candidates registered yet.</td>
           </tr>
         `;
+        updatePagination(1, 1);
         return;
       }
 
-      candidatesList.forEach(candidate => {
+      const totalPages = Math.ceil(candidatesList.length / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedCandidates = candidatesList.slice(startIndex, endIndex);
+
+      paginatedCandidates.forEach(candidate => {
         const fullName = `${candidate.firstname} ${candidate.lastname}`;
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -1299,34 +1529,99 @@
           <td>${fullName}</td>
           <td>${candidate.partylist}</td>
           <td>${candidate.position}</td>
-          <td>
-            <button class="btn-view" onclick="viewPlatform(${candidate.id})">
-              <i class="fas fa-eye"></i> View
-            </button>
+          <td style="text-align: center;">
+            <div class="action-buttons" style="justify-content: center;">
+              <button class="action-btn view" onclick="viewPlatform(${candidate.id})" title="View Platform">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
           </td>
           <td>
             <div class="action-buttons">
-              <button class="btn-approve" onclick="editCandidate(${candidate.id})">
-                <i class="fas fa-edit"></i> Edit
+              <button class="action-btn edit" onclick="editCandidate(${candidate.id})" title="Edit Candidate">
+                <i class="fas fa-edit"></i>
               </button>
-              <button class="btn-reject" onclick="deleteCandidate(${candidate.id})">
-                <i class="fas fa-trash"></i> Delete
+              <button class="action-btn delete" onclick="deleteCandidate(${candidate.id})" title="Delete Candidate">
+                <i class="fas fa-trash"></i>
               </button>
             </div>
           </td>
         `;
         tbody.appendChild(row);
       });
+
+      updatePagination(currentPage, totalPages);
+    }
+
+    function updatePagination(page, totalPages) {
+      const pageIndicator = document.querySelector('.page-indicator');
+      const prevBtn = document.querySelector('.prev-btn');
+      const nextBtn = document.querySelector('.next-btn');
+      
+      if (pageIndicator) {
+        pageIndicator.textContent = `Page ${page} of ${totalPages || 1}`;
+      }
+      
+      if (prevBtn) {
+        prevBtn.classList.toggle('disabled', page <= 1);
+      }
+      
+      if (nextBtn) {
+        nextBtn.classList.toggle('disabled', page >= totalPages);
+      }
+    }
+
+    function goToPage(direction) {
+      const selectedPosition = document.getElementById('filter-position').value;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      let filteredList = [...candidates];
+      
+      if (selectedPosition) {
+        filteredList = filteredList.filter(c => c.position === selectedPosition);
+      }
+      
+      if (searchTerm) {
+        filteredList = filteredList.filter(c => {
+          const fullName = `${c.firstname} ${c.lastname}`.toLowerCase();
+          return fullName.includes(searchTerm) || 
+                 c.position.toLowerCase().includes(searchTerm) ||
+                 c.platform.toLowerCase().includes(searchTerm);
+        });
+      }
+
+      const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+      
+      if (direction === 'prev' && currentPage > 1) {
+        currentPage--;
+      } else if (direction === 'next' && currentPage < totalPages) {
+        currentPage++;
+      }
+      
+      renderCandidatesTable(filteredList);
     }
 
     function filterCandidates() {
+      currentPage = 1;
       const selectedPosition = document.getElementById('filter-position').value;
-      if (selectedPosition === '') {
-        renderCandidatesTable(candidates);
-      } else {
-        const filteredCandidates = candidates.filter(candidate => candidate.position === selectedPosition);
-        renderCandidatesTable(filteredCandidates);
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      let filteredCandidates = [...candidates];
+      
+      if (selectedPosition) {
+        filteredCandidates = filteredCandidates.filter(c => c.position === selectedPosition);
       }
+      
+      if (searchTerm) {
+        filteredCandidates = filteredCandidates.filter(c => {
+          const fullName = `${c.firstname} ${c.lastname}`.toLowerCase();
+          return fullName.includes(searchTerm) || 
+                 c.position.toLowerCase().includes(searchTerm) ||
+                 c.platform.toLowerCase().includes(searchTerm);
+        });
+      }
+      
+      renderCandidatesTable(filteredCandidates);
     }
 
 
@@ -1337,40 +1632,83 @@
       }
     }
 
-    async function deleteCandidate(id) {
+    function openConfirmModal(id) {
       const candidate = candidates.find(c => c.id === id);
-      if (candidate) {
-        const fullName = `${candidate.firstname} ${candidate.lastname}`;
-        if (confirm(`Are you sure you want to delete ${fullName}?`)) {
-          try {
-            const response = await fetch('../api/candidates/delete.php', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              showNotification('success', 'Deleted!', `Candidate "${fullName}" has been deleted successfully.`);
-              loadCandidates();
-            } else {
-              showNotification('error', 'Delete Failed', result.error || 'Failed to delete candidate.');
-            }
-          } catch (error) {
-            console.error('Error deleting candidate:', error);
-            showNotification('error', 'Error', 'An unexpected error occurred while deleting the candidate.');
-          }
+      if (!candidate) return;
+
+      pendingDeleteId = id;
+      const fullName = `${candidate.firstname} ${candidate.lastname}`;
+      document.getElementById('confirmCandidateName').textContent = fullName;
+
+      document.getElementById('confirmOverlay').classList.add('show');
+      setTimeout(() => document.getElementById('confirmModal').classList.add('show'), 10);
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').classList.remove('show');
+      setTimeout(() => {
+        document.getElementById('confirmOverlay').classList.remove('show');
+        pendingDeleteId = null;
+      }, 300);
+    }
+
+    async function confirmDelete() {
+      if (!pendingDeleteId) return;
+      
+      const candidate = candidates.find(c => c.id === pendingDeleteId);
+      const fullName = candidate ? `${candidate.firstname} ${candidate.lastname}` : '';
+      
+      try {
+        const response = await fetch('../api/candidates/delete.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: pendingDeleteId })
+        });
+        
+        const result = await response.json();
+        closeConfirmModal();
+        
+        if (result.success) {
+          showNotification('success', 'Deleted!', `Candidate "${fullName}" has been deleted successfully.`);
+          loadCandidates();
+        } else {
+          showNotification('error', 'Delete Failed', result.error || 'Failed to delete candidate.');
         }
+      } catch (error) {
+        console.error('Error deleting candidate:', error);
+        closeConfirmModal();
+        showNotification('error', 'Error', 'An unexpected error occurred while deleting the candidate.');
       }
     }
 
-    // Handle form submission
+    function deleteCandidate(id) {
+      openConfirmModal(id);
+    }
+
+    function checkDuplicateName(firstname, lastname) {
+      const normalizedFirst = firstname.trim().toLowerCase();
+      const normalizedLast = lastname.trim().toLowerCase();
+      
+      return candidates.find(c => {
+        if (editingCandidateId && c.id === editingCandidateId) return false;
+        return c.firstname.toLowerCase() === normalizedFirst && 
+               c.lastname.toLowerCase() === normalizedLast;
+      });
+    }
+
     document.getElementById('candidateForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const formData = new FormData(this);
-      const candidateName = `${formData.get('firstname')} ${formData.get('lastname')}`;
+      const firstname = formData.get('firstname');
+      const lastname = formData.get('lastname');
+      const candidateName = `${firstname} ${lastname}`;
+      
+      const duplicate = checkDuplicateName(firstname, lastname);
+      if (duplicate) {
+        showNotification('error', 'Duplicate Name', `A candidate named "${duplicate.firstname} ${duplicate.lastname}" already exists.`);
+        return;
+      }
       
       formData.set('position_id', formData.get('position'));
       formData.delete('position');
@@ -1409,19 +1747,15 @@
 
     // Search functionality
     document.getElementById('searchInput').addEventListener('input', function(e) {
-      const searchTerm = e.target.value.toLowerCase();
-      const filteredCandidates = candidates.filter(candidate => {
-        const fullName = `${candidate.firstname} ${candidate.lastname}`.toLowerCase();
-        return fullName.includes(searchTerm) || 
-               candidate.position.toLowerCase().includes(searchTerm) ||
-               candidate.platform.toLowerCase().includes(searchTerm);
-      });
-      renderCandidatesTable(filteredCandidates);
+      currentPage = 1;
+      filterCandidates();
     });
 
     // Close modal when clicking overlay
     document.getElementById('candidateModalOverlay').addEventListener('click', closeCandidateModal);
     document.getElementById('platformModalOverlay').addEventListener('click', closePlatformModal);
+    document.getElementById('confirmOverlay').addEventListener('click', closeConfirmModal);
+    document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
 
     // Auto-capitalize partylist input (first letter of each word)
     document.getElementById('candidatePartylist').addEventListener('input', function(e) {

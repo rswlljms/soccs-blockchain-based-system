@@ -195,11 +195,11 @@ class EventsManager {
                     <td><span class="event-status ${event.status}">${this.capitalizeFirstLetter(event.status)}</span></td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn-edit" onclick="eventsManager.editEvent(${event.id})">
-                                <i class="fas fa-edit"></i> Edit
+                            <button class="action-btn edit" onclick="eventsManager.editEvent(${event.id})" title="Edit Event">
+                                <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn-archive" onclick="eventsManager.archiveEvent(${event.id})">
-                                <i class="fas fa-archive"></i> Archive
+                            <button class="action-btn archive" onclick="eventsManager.archiveEvent(${event.id})" title="Archive Event">
+                                <i class="fas fa-archive"></i>
                             </button>
                         </div>
                     </td>

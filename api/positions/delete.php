@@ -1,6 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'DELETE' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -34,6 +36,12 @@ try {
         exit;
     }
     
+    $getPositionQuery = "SELECT description FROM positions WHERE id = ?";
+    $getPositionStmt = $pdo->prepare($getPositionQuery);
+    $getPositionStmt->execute([$id]);
+    $position = $getPositionStmt->fetch(PDO::FETCH_ASSOC);
+    $positionName = $position['description'] ?? 'Position #' . $id;
+    
     $stmt = $pdo->prepare("DELETE FROM positions WHERE id = ?");
     $stmt->execute([$id]);
     
@@ -41,6 +49,10 @@ try {
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => 'Position not found']);
         exit;
+    }
+    
+    if (isset($_SESSION['user_id'])) {
+        logPositionActivity($_SESSION['user_id'], 'delete', 'Deleted position: ' . $positionName . ' (ID: ' . $id . ')');
     }
     
     echo json_encode(['success' => true]);

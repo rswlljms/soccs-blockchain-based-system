@@ -6,6 +6,13 @@ $database = new Database();
 $conn = $database->getConnection();
 
 try {
+    $updateQuery = "UPDATE elections 
+                    SET status = 'active' 
+                    WHERE status = 'upcoming' 
+                    AND NOW() >= start_date 
+                    AND NOW() <= end_date";
+    $conn->exec($updateQuery);
+    
     $query = "SELECT * FROM elections WHERE status = 'active' AND NOW() BETWEEN start_date AND end_date ORDER BY start_date DESC LIMIT 1";
     $stmt = $conn->prepare($query);
     $stmt->execute();

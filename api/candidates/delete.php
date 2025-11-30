@@ -1,6 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'DELETE' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -31,11 +33,21 @@ try {
         exit;
     }
     
+    $getCandidateQuery = "SELECT firstname, lastname FROM candidates WHERE id = ?";
+    $getCandidateStmt = $pdo->prepare($getCandidateQuery);
+    $getCandidateStmt->execute([$id]);
+    $candidateInfo = $getCandidateStmt->fetch(PDO::FETCH_ASSOC);
+    $candidateName = ($candidateInfo ? $candidateInfo['firstname'] . ' ' . $candidateInfo['lastname'] : 'Candidate #' . $id);
+    
     $deleteStmt = $pdo->prepare("DELETE FROM candidates WHERE id = ?");
     $deleteStmt->execute([$id]);
     
     if ($candidate['photo'] && file_exists('../../' . $candidate['photo'])) {
         unlink('../../' . $candidate['photo']);
+    }
+    
+    if (isset($_SESSION['user_id'])) {
+        logCandidateActivity($_SESSION['user_id'], 'delete', 'Deleted candidate: ' . $candidateName . ' (ID: ' . $id . ')');
     }
     
     echo json_encode(['success' => true]);

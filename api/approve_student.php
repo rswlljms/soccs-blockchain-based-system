@@ -4,8 +4,10 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+session_start();
 require_once '../includes/database.php';
 require_once '../includes/email_config.php';
+require_once '../includes/activity_logger.php';
 
 $response = ['success' => false, 'message' => 'Invalid request'];
 
@@ -88,6 +90,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $student['id']
                 );
                 
+                if (isset($_SESSION['user_id'])) {
+                    $studentName = $student['first_name'] . ' ' . ($student['middle_name'] ?? '') . ' ' . $student['last_name'];
+                    logStudentActivity($_SESSION['user_id'], 'approve', 'Approved student registration: ' . $student['id'] . ' (' . trim($studentName) . ')');
+                }
+                
                 $response = [
                     'success' => true,
                     'message' => 'Student approved successfully'
@@ -122,6 +129,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $student['id'],
                 $reason
             );
+            
+            if (isset($_SESSION['user_id'])) {
+                $studentName = $student['first_name'] . ' ' . ($student['middle_name'] ?? '') . ' ' . $student['last_name'];
+                logStudentActivity($_SESSION['user_id'], 'reject', 'Rejected student registration: ' . $student['id'] . ' (' . trim($studentName) . ') - Reason: ' . $reason);
+            }
             
             $response = [
                 'success' => true,

@@ -1,4 +1,9 @@
-<?php include('../components/sidebar.php'); ?>
+<?php
+session_start();
+require_once '../includes/page_access.php';
+checkPageAccess(['view_students', 'manage_students']);
+include('../components/sidebar.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -247,7 +252,7 @@
             }
         }
         
-        /* Modal styles */
+        /* Modal styles - Enhanced Modern Design */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -255,37 +260,132 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         .modal-overlay.show {
             display: block;
+            opacity: 1;
         }
         
         .modal {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.95);
             background: white;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             padding: 0;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             z-index: 1001;
             display: none;
+            opacity: 0;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
             overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .modal.show {
             display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
-        .modal-header { background: linear-gradient(135deg, #4B0082, #9933ff); padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; }
-        .modal-title { font-size: 22px; font-weight: 600; color: #fff; margin: 0; letter-spacing: -0.02em; }
-        .modal-close { background: rgba(255,255,255,0.2); border: none; font-size: 18px; color: #fff; cursor: pointer; padding: 8px; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
-        .modal-close:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
-        .modal-footer { padding: 20px 24px; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 12px; background: #fafbfc; border-radius: 0 0 12px 12px; }
-        .form-body { padding: 24px; max-height: calc(90vh - 120px); overflow-y: auto; }
+
+        .modal.large {
+            max-width: 800px;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #4B0082, #9933ff);
+            padding: 28px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            position: relative;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-header .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff !important;
+            margin: 0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            font-size: 18px;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: var(--secondary-color);
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+        
+        .form-body {
+            padding: 32px;
+            max-height: calc(90vh - 140px);
+            overflow-y: auto;
+        }
+
+        .form-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .form-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .form-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .form-body::-webkit-scrollbar-thumb:hover {
+            background: #9933ff;
+        }
         
         .modal-content {
             max-width: 500px;
@@ -298,7 +398,7 @@
             margin-bottom: 1rem;
         }
         
-        .modal-title {
+        .modal-content .modal-title {
             font-size: 24px;
             font-weight: 600;
             text-align: center;
@@ -319,28 +419,83 @@
         }
         
         .modal-btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 6px;
+            padding: 12px 24px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            background: #e2e8f0;
-            color: #333;
+            background: white;
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+            justify-content: center;
         }
         
         .modal-btn:hover {
-            background: #cbd5e0;
+            border-color: #cbd5e1;
+            background: var(--secondary-color);
+            transform: translateY(-1px);
         }
         
         .modal-btn-primary {
-            background: #9933ff;
+            background: linear-gradient(135deg, #4B0082, #9933ff);
             color: white;
+            border: none;
+            box-shadow: 0 2px 4px rgba(153, 51, 255, 0.2);
         }
         
         .modal-btn-primary:hover {
-            background: #7c2dcc;
+            background: linear-gradient(135deg, #5a00b3, #b366ff);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(153, 51, 255, 0.3);
+        }
+
+        .modal-icon-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            color: #9933ff;
+        }
+
+        .modal-icon.success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #10b981;
+        }
+
+        .modal-icon.warning {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #f59e0b;
+        }
+
+        .modal-icon.danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #ef4444;
+        }
+
+        .confirm-modal .form-body {
+            text-align: center;
+        }
+
+        .confirm-modal .form-body p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
         }
         
         /* Receipt display styles */
@@ -536,11 +691,20 @@
             <button type="button" class="modal-close" id="confirmClose"><i class="fas fa-times"></i></button>
         </div>
         <div class="form-body">
-            <p id="confirmMessage" style="text-align:center; color:#666; margin:0;">Are you sure you want to proceed?</p>
+            <div class="modal-icon-wrapper">
+                <div class="modal-icon warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+            <p id="confirmMessage">Are you sure you want to proceed?</p>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn" id="confirmCancel">Cancel</button>
-            <button class="modal-btn modal-btn-primary" id="confirmOk">Confirm</button>
+            <button class="modal-btn" id="confirmCancel">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button class="modal-btn modal-btn-primary" id="confirmOk">
+                <i class="fas fa-check"></i> Confirm
+            </button>
         </div>
     </div>
 
@@ -552,25 +716,39 @@
             <button type="button" class="modal-close" onclick="closeReceiptUploadModal()"><i class="fas fa-times"></i></button>
         </div>
         <form id="receiptUploadForm" class="form-body">
-            <p style="text-align:center; color:#666;">Upload a receipt for <strong id="receiptStudentName"></strong> to mark them as paid.</p>
+            <div class="modal-icon-wrapper">
+                <div class="modal-icon">
+                    <i class="fas fa-file-upload"></i>
+                </div>
+            </div>
+            <p style="text-align:center; color:var(--text-secondary); font-size:16px; line-height:1.6; margin-bottom:24px;">
+                Upload a receipt for <strong style="color:var(--text-primary);" id="receiptStudentName"></strong> to mark them as paid.
+            </p>
                 <input type="hidden" id="receiptStudentId">
                 
-                <div style="margin-bottom: 1rem;">
-                    <label for="receiptFile" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
-                        Select Receipt File:
+            <div style="margin-bottom: 20px;">
+                <label for="receiptFile" style="display: block; margin-bottom: 8px; font-weight: 600; font-size:14px; color: var(--text-primary);">
+                    Select Receipt File
                     </label>
                     <input type="file" id="receiptFile" name="receipt" accept="image/*,application/pdf" 
-                           style="width: 100%; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; background: white;">
-                    <small style="color: #666; font-size: 12px; margin-top: 0.25rem; display: block;">
+                       style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); background: white; font-size:14px; transition: all 0.2s; cursor: pointer;"
+                       onchange="this.style.borderColor='#9933ff'" 
+                       onfocus="this.style.borderColor='#9933ff'; this.style.boxShadow='0 0 0 4px rgba(153, 51, 255, 0.1)'" 
+                       onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none'">
+                <small style="color: var(--text-secondary); font-size: 12px; margin-top: 8px; display: block;">
                         Supported formats: JPG, PNG, GIF, PDF (Max: 5MB)
                     </small>
                 </div>
                 
-                <div id="receiptError" style="color: #dc3545; font-size: 14px; margin-bottom: 1rem; min-height: 20px;"></div>
+            <div id="receiptError" style="color: #ef4444; font-size: 14px; margin-bottom: 0; min-height: 20px; padding: 8px 12px; background: #fef2f2; border-radius: var(--radius-sm); display: none;"></div>
         </form>
         <div class="modal-footer">
-            <button type="button" class="modal-btn" onclick="closeReceiptUploadModal()">Cancel</button>
-            <button type="button" class="modal-btn modal-btn-primary" onclick="uploadReceipt()"><i class="fas fa-upload"></i> Upload Receipt</button>
+            <button type="button" class="modal-btn" onclick="closeReceiptUploadModal()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button type="button" class="modal-btn modal-btn-primary" onclick="uploadReceipt()">
+                <i class="fas fa-upload"></i> Upload Receipt
+            </button>
         </div>
     </div>
 
@@ -582,10 +760,17 @@
             <button type="button" class="modal-close" onclick="closeSuccessModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="form-body">
-            <p id="successMessage" style="text-align:center; color:#666;">Receipt uploaded successfully! Student marked as paid.</p>
+            <div class="modal-icon-wrapper">
+                <div class="modal-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+            <p id="successMessage" style="text-align:center; color:var(--text-secondary); font-size:16px; line-height:1.6; margin:0;">Receipt uploaded successfully! Student marked as paid.</p>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn modal-btn-primary" onclick="closeSuccessModal()"><i class="fas fa-check"></i> OK</button>
+            <button class="modal-btn modal-btn-primary" onclick="closeSuccessModal()">
+                <i class="fas fa-check"></i> OK
+            </button>
         </div>
     </div>
 

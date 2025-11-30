@@ -1,12 +1,9 @@
 <?php
 session_start();
-if (!isset($_SESSION['user'])) {
-  header("Location: ../templates/login.php");
-  exit;
-}
+require_once '../includes/page_access.php';
+checkPageAccess(['view_dashboard']);
+include('../components/sidebar.php');
 ?>
-
-<?php include('../components/sidebar.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +20,19 @@ if (!isset($_SESSION['user'])) {
   <div class="main-content">
     <div class="dashboard-wrapper">
       <div class="dashboard-header">
-        <h1 class="page-title">Dashboard</h1>
+        <div class="header-left">
+          <h1 class="page-title">Dashboard</h1>
+          <?php
+          $userName = $_SESSION['user_name'] ?? 'Admin';
+          ?>
+          <p class="welcome-text">Welcome back, <?= htmlspecialchars(trim($userName)) ?>!</p>
+        </div>
+        <div class="header-right">
+          <div class="datetime-display">
+            <span id="currentDay" class="day-text"></span>
+            <span id="currentTime" class="time-text"></span>
+          </div>
+        </div>
       </div>
 
       <div class="card-row">
@@ -88,37 +97,16 @@ if (!isset($_SESSION['user'])) {
         <div class="events-card">
           <div class="card-header">
             <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
-            <button class="btn-primary btn-sm">View All</button>
+            <?php if (hasAnyPermission(['add_events', 'manage_events'])): ?>
+            <a href="events.php" class="btn-primary btn-sm">View All</a>
+            <?php elseif (hasPermission('view_events')): ?>
+            <a href="event-calendar.php" class="btn-primary btn-sm">View All</a>
+            <?php endif; ?>
           </div>
-          <div class="events-list">
-            <div class="event-item">
-              <div class="event-date">
-                <span class="day">05</span>
-                <span class="month">MAY</span>
-              </div>
-              <div class="event-details">
-                <h4>CCS Days</h4>
-                <p><i class="fas fa-clock"></i> 8:00 AM - 5:00 PM</p>
-                <p><i class="fas fa-map-marker-alt"></i> CCS Building</p>
-              </div>
-              <div class="event-status">
-                <span class="badge upcoming">Upcoming</span>
-              </div>
-            </div>
-
-            <div class="event-item">
-              <div class="event-date">
-                <span class="day">07</span>
-                <span class="month">MAY</span>
-              </div>
-              <div class="event-details">
-                <h4>CSS Night</h4>
-                <p><i class="fas fa-clock"></i> 6:00 PM - 10:00 PM</p>
-                <p><i class="fas fa-map-marker-alt"></i> Main Auditorium</p>
-              </div>
-              <div class="event-status">
-                <span class="badge upcoming">Upcoming</span>
-              </div>
+          <div class="events-list" id="upcomingEventsList">
+            <div class="loading-events" style="text-align: center; padding: 40px 20px; color: #6b7280;">
+              <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 12px;"></i>
+              <p>Loading events...</p>
             </div>
           </div>
         </div>
@@ -129,5 +117,100 @@ if (!isset($_SESSION['user'])) {
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="../assets/js/admin-dashboard-chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUpcomingEvents();
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+    });
+
+    function updateDateTime() {
+      const now = new Date();
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayElement = document.getElementById('currentDay');
+      const timeElement = document.getElementById('currentTime');
+      
+      if (dayElement) {
+        dayElement.textContent = days[now.getDay()];
+      }
+      
+      if (timeElement) {
+        let hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const hoursStr = hours.toString().padStart(2, '0');
+        timeElement.textContent = `${hoursStr}:${minutes}:${seconds} ${ampm}`;
+      }
+    }
+
+    async function loadUpcomingEvents() {
+      try {
+        const response = await fetch('../api/get_student_events.php');
+        const result = await response.json();
+        
+        const eventsList = document.getElementById('upcomingEventsList');
+        
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+          eventsList.innerHTML = '';
+          
+          result.data.slice(0, 5).forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            
+            let dateDisplay = `
+              <div class="event-date">
+                <span class="day">${event.day}</span>
+                <span class="month">${event.month}</span>
+              </div>
+            `;
+            
+            if (event.is_multi_day && event.end_day) {
+              const startDay = parseInt(event.day);
+              const endDay = parseInt(event.end_day);
+              dateDisplay = `
+                <div class="event-date multi-day">
+                  <span class="day">${startDay}-${endDay}</span>
+                  <span class="month">${event.month}</span>
+                </div>
+              `;
+            }
+            
+            eventItem.innerHTML = `
+              ${dateDisplay}
+              <div class="event-info">
+                <h4>${event.title}</h4>
+                <p><i class="fas fa-clock"></i> ${event.formatted_time}</p>
+                <p><i class="fas fa-map-marker-alt"></i> ${event.location || 'TBA'}</p>
+                <span class="event-tag ${event.category || 'general'}">${capitalizeFirst(event.category || 'General')}</span>
+              </div>
+            `;
+            eventsList.appendChild(eventItem);
+          });
+        } else {
+          eventsList.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; color: #6b7280;">
+              <i class="fas fa-calendar-xmark" style="font-size: 32px; margin-bottom: 16px;"></i>
+              <p>No upcoming events</p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Error loading events:', error);
+        document.getElementById('upcomingEventsList').innerHTML = `
+          <div style="text-align: center; padding: 40px 20px; color: #ef4444;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 16px;"></i>
+            <p>Unable to load events</p>
+          </div>
+        `;
+      }
+    }
+
+    function capitalizeFirst(str) {
+      return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+    }
+  </script>
 </body>
 </html>

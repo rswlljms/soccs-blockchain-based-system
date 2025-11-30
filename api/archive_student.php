@@ -4,7 +4,9 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+session_start();
 require_once '../includes/database.php';
+require_once '../includes/activity_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -37,10 +39,24 @@ try {
         WHERE id = ?
     ");
     
+    $getStudentQuery = "SELECT first_name, last_name FROM students WHERE id = ?";
+    $getStudentStmt = $pdo->prepare($getStudentQuery);
+    $getStudentStmt->execute([$studentId]);
+    $student = $getStudentStmt->fetch(PDO::FETCH_ASSOC);
+    $studentName = $student ? ($student['first_name'] . ' ' . $student['last_name']) : 'Student #' . $studentId;
+    
     $stmt->execute([$isArchived, $studentId]);
     
     if ($stmt->rowCount() === 0) {
         throw new Exception('Student not found');
+    }
+    
+    if (isset($_SESSION['user_id'])) {
+        if ($action === 'archive') {
+            logStudentActivity($_SESSION['user_id'], 'archive', 'Archived student: ' . $studentId . ' (' . $studentName . ')');
+        } else {
+            logStudentActivity($_SESSION['user_id'], 'restore', 'Restored student: ' . $studentId . ' (' . $studentName . ')');
+        }
     }
     
     echo json_encode([

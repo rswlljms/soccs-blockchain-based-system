@@ -83,31 +83,40 @@ body {
 }
 
 .table-container {
-  background: #fff;
+  background: white;
   padding: 0;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 32px;
   overflow: hidden;
 }
 
-table {
+table,
+.styled-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  background: white;
+  font-size: 14px;
+}
+
+table thead,
+.styled-table thead {
+  background: var(--secondary-color);
 }
 
 th {
   text-align: left;
-  padding: 16px 20px;
-  color: #9333EA;
-  font-weight: 700;
-  border-bottom: 2px solid #ede9fe;
-  white-space: nowrap;
-  letter-spacing: 0.3px;
-  background: linear-gradient(135deg, #faf5ff, #f3f0fa);
-  font-size: 13px;
+  padding: 18px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--secondary-color);
+  white-space: nowrap;
 }
 
 th:last-child {
@@ -116,17 +125,20 @@ th:last-child {
 
 td {
   padding: 18px 20px;
-  color: #1f2937;
-  border-bottom: 1px solid #f3f0fa;
-  background: #fff;
-  font-weight: 500;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  background: white;
+  font-size: 14px;
+  font-weight: 400;
 }
 
+table tbody tr:hover td,
 tr:hover td {
-  background: linear-gradient(135deg, #faf5ff, #f8f4ff);
-  transition: background 0.15s cubic-bezier(.4,0,.2,1);
+  background-color: rgba(153, 51, 255, 0.04);
+  transition: background-color 0.2s ease;
 }
 
+table tbody tr:last-child td,
 tr:last-child td {
   border-bottom: none;
 }
@@ -174,92 +186,7 @@ tr:last-child td {
   50% { opacity: 0.7; }
 }
 
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.btn-action {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-}
-
-.btn-start {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-}
-
-.btn-start:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-}
-
-.btn-stop {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
-}
-
-.btn-stop:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
-}
-
-.btn-close {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-}
-
-.btn-close:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-}
-
-.btn-edit {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: white;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-}
-
-.btn-edit:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-}
-
-.btn-delete {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
-}
-
-.btn-delete:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
-}
-
-.btn-action:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
+/* Action Buttons - Using standardized styles from admin-table-styles.css */
 
 .pagination.centered {
   display: flex;
@@ -325,7 +252,7 @@ tr:last-child td {
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
@@ -375,6 +302,7 @@ tr:last-child td {
   padding: 32px;
   max-height: calc(90vh - 180px);
   overflow-y: auto;
+  overflow-x: visible;
 }
 
 .form-group {
@@ -418,6 +346,24 @@ tr:last-child td {
   outline: none;
   border-color: #9933ff;
   box-shadow: 0 0 0 4px rgba(153, 51, 255, 0.1);
+}
+
+.form-group input[type="datetime-local"] {
+  cursor: pointer;
+  position: relative;
+  color-scheme: light;
+}
+
+.form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 
 .form-group textarea {
@@ -595,9 +541,280 @@ tr:last-child td {
   background: #fafafa;
 }
 
+.confirm-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2001;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.confirm-overlay.show {
+  display: block;
+  opacity: 1;
+}
+
+.confirm-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: white;
+  border-radius: 20px;
+  z-index: 2002;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 40px 36px 32px 36px;
+  text-align: center;
+}
+
+.confirm-modal.show {
+  display: block;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.confirm-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 44px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+}
+
+.confirm-icon.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.confirm-icon.danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+}
+
+.confirm-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: var(--text-primary);
+}
+
+.confirm-message {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+.confirm-details {
+  background: linear-gradient(135deg, #faf5ff, #f3f0fa);
+  border-left: 4px solid #9933ff;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin: 0 0 28px 0;
+  text-align: left;
+}
+
+.confirm-details p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.confirm-details strong {
+  color: #9933ff;
+  font-weight: 600;
+}
+
+.confirm-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn-confirm-cancel {
+  padding: 14px 32px;
+  background: white;
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.btn-confirm-cancel:hover {
+  border-color: #cbd5e1;
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+.btn-confirm-ok {
+  padding: 14px 36px;
+  background: var(--primary-gradient);
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.btn-confirm-ok:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(153, 51, 255, 0.4);
+}
+
+.btn-confirm-ok.danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.btn-confirm-ok.danger:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.btn-confirm-ok.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.btn-confirm-ok.success:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.loading-modal {
+  width: 360px;
+  max-width: 90%;
+  padding: 32px;
+  text-align: center;
+}
+
+.loading-modal .spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-color);
+  border-top-color: #9933ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-modal .modal-content {
+  padding: 0;
+}
+
+.loading-modal p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 15px;
+}
+
+.success-modal {
+  max-width: 500px;
+}
+
+.success-modal .modal-content {
+  padding: 32px;
+  text-align: center;
+}
+
+.success-modal .modal-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 40px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.success-modal .modal-content p {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.transaction-details {
+  background: linear-gradient(135deg, #faf5ff, #f3f0fa);
+  border-left: 4px solid #9933ff;
+  padding: 16px 20px;
+  border-radius: 10px;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.transaction-details p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.transaction-details strong {
+  color: #9933ff;
+  font-weight: 600;
+}
+
+.transaction-hash {
+  word-break: break-all;
+  font-family: monospace;
+  padding: 12px;
+  background: white;
+  border-radius: var(--radius-sm);
+  margin-top: 8px;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
 @media (max-width: 768px) {
   .form-row {
     grid-template-columns: 1fr;
+  }
+  
+  .confirm-modal {
+    padding: 32px 24px 24px 24px;
+  }
+  
+  .confirm-footer {
+    flex-direction: column;
+  }
+  
+  .btn-confirm-cancel,
+  .btn-confirm-ok {
+    width: 100%;
   }
 }
 

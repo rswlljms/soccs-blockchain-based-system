@@ -28,6 +28,70 @@ function closeNotification() {
   setTimeout(() => overlay.classList.remove('show'), 300);
 }
 
+function showConfirmModal(type, title, message, details, onConfirm) {
+  const modal = document.getElementById('confirmModal');
+  const overlay = document.getElementById('confirmOverlay');
+  const icon = document.getElementById('confirmIcon');
+  const titleEl = document.getElementById('confirmTitle');
+  const messageEl = document.getElementById('confirmMessage');
+  const detailsEl = document.getElementById('confirmDetails');
+  const okBtn = document.getElementById('confirmOkBtn');
+
+  icon.className = `confirm-icon ${type}`;
+  if (type === 'success') {
+    icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+  } else if (type === 'danger') {
+    icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+  } else {
+    icon.innerHTML = '<i class="fas fa-info-circle"></i>';
+  }
+
+  titleEl.textContent = title;
+  messageEl.textContent = message;
+  detailsEl.innerHTML = details;
+
+  okBtn.className = `btn-confirm-ok ${type}`;
+  
+  okBtn.onclick = () => {
+    closeConfirmModal();
+    if (onConfirm) onConfirm();
+  };
+
+  overlay.classList.add('show');
+  setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function closeConfirmModal() {
+  const modal = document.getElementById('confirmModal');
+  const overlay = document.getElementById('confirmOverlay');
+  
+  modal.classList.remove('show');
+  setTimeout(() => overlay.classList.remove('show'), 300);
+}
+
+function showModal(modalId) {
+  const modal = document.getElementById(modalId);
+  const overlay = document.getElementById(modalId.replace('Modal', 'Overlay'));
+  if (modal && overlay) {
+    overlay.classList.add('show');
+    setTimeout(() => modal.classList.add('show'), 10);
+  }
+}
+
+function hideModal(modalId) {
+  const modal = document.getElementById(modalId);
+  const overlay = document.getElementById(modalId.replace('Modal', 'Overlay'));
+  if (modal) modal.classList.remove('show');
+  if (overlay) {
+    setTimeout(() => overlay.classList.remove('show'), 300);
+  }
+}
+
+function closeSuccessModal() {
+  hideModal('successModal');
+  loadElections();
+}
+
 async function loadElections() {
   try {
     const response = await fetch('../api/elections/read.php');
@@ -63,14 +127,15 @@ function getStatusBadge(election) {
   const endDate = new Date(election.end_date);
   
   let status = election.status;
+  let displayStatus = status;
   
   if (status === 'active' && now > endDate) {
-    status = 'completed';
+    displayStatus = 'completed';
   } else if (status === 'upcoming' && now >= startDate && now <= endDate) {
-    status = 'active';
+    displayStatus = 'active';
   }
   
-  return `<span class="status-badge ${status}">${status}</span>`;
+  return `<span class="status-badge ${displayStatus}">${displayStatus}</span>`;
 }
 
 function getActionButtons(election) {
@@ -82,38 +147,38 @@ function getActionButtons(election) {
   
   if (election.status === 'upcoming') {
     buttons += `
-      <button class="btn-action btn-start" onclick="startElection(${election.id})" title="Start Election">
-        <i class="fas fa-play"></i> Start
+      <button class="action-btn approve" onclick="startElection(${election.id})" title="Start Election">
+        <i class="fas fa-play"></i>
       </button>
-      <button class="btn-action btn-edit" onclick="editElection(${election.id})" title="Edit">
-        <i class="fas fa-edit"></i> Edit
+      <button class="action-btn edit" onclick="editElection(${election.id})" title="Edit">
+        <i class="fas fa-edit"></i>
       </button>
-      <button class="btn-action btn-delete" onclick="deleteElection(${election.id})" title="Delete">
-        <i class="fas fa-trash"></i> Delete
+      <button class="action-btn delete" onclick="deleteElection(${election.id})" title="Delete">
+        <i class="fas fa-trash"></i>
       </button>
     `;
   } else if (election.status === 'active') {
     buttons += `
-      <button class="btn-action btn-stop" onclick="stopElection(${election.id})" title="Stop Election Immediately">
-        <i class="fas fa-stop-circle"></i> Stop
+      <button class="action-btn reject" onclick="stopElection(${election.id})" title="Stop Election Immediately">
+        <i class="fas fa-stop-circle"></i>
       </button>
-      <button class="btn-action btn-close" onclick="closeElection(${election.id})" title="Close & Finalize Results">
-        <i class="fas fa-check-circle"></i> Close
+      <button class="action-btn approve" onclick="closeElection(${election.id})" title="Close & Finalize Results">
+        <i class="fas fa-check-circle"></i>
       </button>
     `;
   } else if (election.status === 'completed') {
     buttons += `
-      <button class="btn-action btn-edit" onclick="editElection(${election.id})" title="View Details">
-        <i class="fas fa-eye"></i> View
+      <button class="action-btn view" onclick="viewElectionResults(${election.id})" title="View & Print Results">
+        <i class="fas fa-print"></i>
       </button>
-      <button class="btn-action btn-delete" onclick="deleteElection(${election.id})" title="Delete">
-        <i class="fas fa-trash"></i> Delete
+      <button class="action-btn delete" onclick="deleteElection(${election.id})" title="Delete">
+        <i class="fas fa-trash"></i>
       </button>
     `;
   } else if (election.status === 'cancelled') {
     buttons += `
-      <button class="btn-action btn-delete" onclick="deleteElection(${election.id})" title="Delete">
-        <i class="fas fa-trash"></i> Delete
+      <button class="action-btn delete" onclick="deleteElection(${election.id})" title="Delete">
+        <i class="fas fa-trash"></i>
       </button>
     `;
   }
@@ -242,104 +307,180 @@ function editElection(id) {
   }
 }
 
+function viewElectionResults(id) {
+  window.open(`print-election-results-pdf.php?election_id=${id}`, '_blank');
+}
+
 async function startElection(id) {
   const election = elections.find(e => e.id === id);
-  if (election && confirm(`Are you sure you want to start "${election.title}"? Students will be able to vote.`)) {
-    try {
-      const response = await fetch('../api/elections/update_status.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: 'active' })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        showNotification('success', 'Election Started!', `"${election.title}" is now active. Students can cast their votes.`);
-        loadElections();
-      } else {
-        showNotification('error', 'Failed to Start', result.error || 'Could not start the election.');
+  if (!election) return;
+  
+  const details = `
+    <p><strong>Election:</strong> ${election.title}</p>
+    <p><strong>Action:</strong> Students will be able to vote immediately</p>
+  `;
+  
+  showConfirmModal(
+    'success',
+    'Start Election',
+    'Are you sure you want to start this election?',
+    details,
+    async () => {
+      try {
+        const response = await fetch('../api/elections/update_status.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status: 'active' })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification('success', 'Election Started!', `"${election.title}" is now active. Students can cast their votes.`);
+          loadElections();
+        } else {
+          showNotification('error', 'Failed to Start', result.error || 'Could not start the election.');
+        }
+      } catch (error) {
+        console.error('Error starting election:', error);
+        showNotification('error', 'Error', 'An unexpected error occurred.');
       }
-    } catch (error) {
-      console.error('Error starting election:', error);
-      showNotification('error', 'Error', 'An unexpected error occurred.');
     }
-  }
+  );
 }
 
 async function stopElection(id) {
   const election = elections.find(e => e.id === id);
-  if (election && confirm(`Are you sure you want to STOP "${election.title}"?\n\nThis will:\n- Immediately stop all voting\n- Mark the election as cancelled\n- Students will no longer be able to vote\n\nNote: Use "Close" instead if you want to finalize the results.`)) {
-    try {
-      const response = await fetch('../api/elections/update_status.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: 'cancelled' })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        showNotification('success', 'Election Stopped!', `"${election.title}" has been cancelled. Voting is now closed.`);
-        loadElections();
-      } else {
-        showNotification('error', 'Failed to Stop', result.error || 'Could not stop the election.');
+  if (!election) return;
+  
+  const details = `
+    <p><strong>Election:</strong> ${election.title}</p>
+    <p><strong>This will:</strong></p>
+    <p>- Immediately stop all voting</p>
+    <p>- Mark the election as cancelled</p>
+    <p>- Students will no longer be able to vote</p>
+    <p style="margin-top: 12px; color: #dc2626;"><strong>Note:</strong> Use "Close" instead if you want to finalize the results.</p>
+  `;
+  
+  showConfirmModal(
+    'danger',
+    'Stop Election',
+    'Are you sure you want to STOP this election?',
+    details,
+    async () => {
+      try {
+        const response = await fetch('../api/elections/update_status.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status: 'cancelled' })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification('success', 'Election Stopped!', `"${election.title}" has been cancelled. Voting is now closed.`);
+          loadElections();
+        } else {
+          showNotification('error', 'Failed to Stop', result.error || 'Could not stop the election.');
+        }
+      } catch (error) {
+        console.error('Error stopping election:', error);
+        showNotification('error', 'Error', 'An unexpected error occurred.');
       }
-    } catch (error) {
-      console.error('Error stopping election:', error);
-      showNotification('error', 'Error', 'An unexpected error occurred.');
     }
-  }
+  );
 }
 
 async function closeElection(id) {
   const election = elections.find(e => e.id === id);
-  if (election && confirm(`Are you sure you want to CLOSE "${election.title}"?\n\nThis will:\n- Stop all voting\n- Finalize and publish results\n- Mark the election as completed\n\nUse this when the election has ended successfully.`)) {
-    try {
-      const response = await fetch('../api/elections/update_status.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: 'completed' })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        showNotification('success', 'Election Closed!', `"${election.title}" has been completed. Results are now available.`);
-        loadElections();
-      } else {
-        showNotification('error', 'Failed to Close', result.error || 'Could not close the election.');
+  if (!election) return;
+  
+  const details = `
+    <p><strong>Election:</strong> ${election.title}</p>
+    <p><strong>This will:</strong></p>
+    <p>- Stop all voting</p>
+    <p>- Finalize and publish results</p>
+    <p>- Save to blockchain</p>
+    <p>- Mark the election as completed</p>
+    <p style="margin-top: 12px; color: #059669;"><strong>Note:</strong> Use this when the election has ended successfully.</p>
+  `;
+  
+  showConfirmModal(
+    'success',
+    'Close Election',
+    'Are you sure you want to CLOSE this election?',
+    details,
+    async () => {
+      try {
+        closeConfirmModal();
+        showModal('loadingModal');
+        
+        const response = await fetch('../api/elections/update_status.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status: 'completed' })
+        });
+        
+        const result = await response.json();
+        
+        hideModal('loadingModal');
+        
+        if (result.success) {
+          if (result.transaction_hash) {
+            document.getElementById('electionTxHash').textContent = result.transaction_hash;
+            showModal('successModal');
+          } else {
+            showNotification('success', 'Election Closed!', `"${election.title}" has been completed. Results are now available.`);
+            loadElections();
+          }
+        } else {
+          showNotification('error', 'Failed to Close', result.error || 'Could not close the election.');
+        }
+      } catch (error) {
+        console.error('Error closing election:', error);
+        hideModal('loadingModal');
+        showNotification('error', 'Error', 'An unexpected error occurred.');
       }
-    } catch (error) {
-      console.error('Error closing election:', error);
-      showNotification('error', 'Error', 'An unexpected error occurred.');
     }
-  }
+  );
 }
 
 async function deleteElection(id) {
   const election = elections.find(e => e.id === id);
-  if (election && confirm(`Are you sure you want to delete "${election.title}"? This action cannot be undone.`)) {
-    try {
-      const response = await fetch('../api/elections/delete.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        showNotification('success', 'Deleted!', `Election "${election.title}" has been deleted.`);
-        loadElections();
-      } else {
-        showNotification('error', 'Delete Failed', result.error || 'Could not delete the election.');
+  if (!election) return;
+  
+  const details = `
+    <p><strong>Election:</strong> ${election.title}</p>
+    <p style="margin-top: 12px; color: #dc2626;"><strong>Warning:</strong> This action cannot be undone.</p>
+  `;
+  
+  showConfirmModal(
+    'danger',
+    'Delete Election',
+    'Are you sure you want to delete this election?',
+    details,
+    async () => {
+      try {
+        const response = await fetch('../api/elections/delete.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showNotification('success', 'Deleted!', `Election "${election.title}" has been deleted.`);
+          loadElections();
+        } else {
+          showNotification('error', 'Delete Failed', result.error || 'Could not delete the election.');
+        }
+      } catch (error) {
+        console.error('Error deleting election:', error);
+        showNotification('error', 'Error', 'An unexpected error occurred.');
       }
-    } catch (error) {
-      console.error('Error deleting election:', error);
-      showNotification('error', 'Error', 'An unexpected error occurred.');
     }
-  }
+  );
 }
 
 document.getElementById('electionForm').addEventListener('submit', async function(e) {

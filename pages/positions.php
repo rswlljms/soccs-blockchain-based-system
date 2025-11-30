@@ -1,4 +1,9 @@
-<?php include('../components/sidebar.php'); ?>
+<?php
+session_start();
+require_once '../includes/page_access.php';
+checkPageAccess(['manage_positions']);
+include('../components/sidebar.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -144,31 +149,40 @@
     }
     
     .table-container {
-      background: #fff;
+      background: white;
       padding: 0;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
       margin-bottom: 32px;
       overflow: hidden;
     }
     
-    table {
+    table,
+    .styled-table {
       width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 20px;
+      background: white;
+      font-size: 14px;
+    }
+    
+    table thead,
+    .styled-table thead {
+      background: var(--secondary-color);
     }
     
     th {
       text-align: left;
-      padding: 16px 20px;
-      color: #9333EA;
-      font-weight: 700;
-      border-bottom: 2px solid #ede9fe;
-      white-space: nowrap;
-      letter-spacing: 0.3px;
-      background: linear-gradient(135deg, #faf5ff, #f3f0fa);
-      font-size: 13px;
+      padding: 18px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--secondary-color);
+      white-space: nowrap;
       position: relative;
     }
 
@@ -178,17 +192,20 @@
     
     td {
       padding: 18px 20px;
-      color: #1f2937;
-      border-bottom: 1px solid #f3f0fa;
-      background: #fff;
-      font-weight: 500;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+      background: white;
+      font-size: 14px;
+      font-weight: 400;
     }
     
+    table tbody tr:hover td,
     tr:hover td {
-      background: linear-gradient(135deg, #faf5ff, #f8f4ff);
-      transition: background 0.15s cubic-bezier(.4,0,.2,1);
+      background-color: rgba(153, 51, 255, 0.04);
+      transition: background-color 0.2s ease;
     }
 
+    table tbody tr:last-child td,
     tr:last-child td {
       border-bottom: none;
     }
@@ -825,11 +842,11 @@
           <td>${position.maxVotes}</td>
           <td>
             <div class="action-buttons">
-              <button class="btn-approve" onclick="editPosition(${position.id})">
-                <i class="fas fa-edit"></i> Edit
+              <button class="action-btn edit" onclick="editPosition(${position.id})" title="Edit Position">
+                <i class="fas fa-edit"></i>
               </button>
-              <button class="btn-reject" onclick="deletePosition(${position.id})">
-                <i class="fas fa-trash"></i> Delete
+              <button class="action-btn delete" onclick="deletePosition(${position.id})" title="Delete Position">
+                <i class="fas fa-trash"></i>
               </button>
             </div>
           </td>

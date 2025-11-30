@@ -1,127 +1,147 @@
 // Student Voting JavaScript Functionality
 document.addEventListener('DOMContentLoaded', function() {
     initializeVotingPage();
-    // Mobile menu is already initialized by student-dashboard.js
 });
 
-// Initialize voting page functionality
 function initializeVotingPage() {
     updateSubmitButtonState();
     addKeyboardNavigation();
     preloadModalContent();
-    setupRadioButtonBehavior();
+    setupInputBehavior();
 }
 
-// Handle candidate click to ensure proper radio behavior
-function handleCandidateClick(radioElement) {
-    // Force the radio button to be checked
-    radioElement.checked = true;
+function handleCandidateClick(inputElement) {
+    const maxVotes = parseInt(inputElement.dataset.maxVotes) || 1;
     
-    // Trigger the selection function
-    selectCandidate(radioElement);
+    if (inputElement.type === 'checkbox') {
+        const position = inputElement.dataset.position;
+        const checkedCount = document.querySelectorAll(`input[data-position="${position}"]:checked`).length;
+        
+        if (inputElement.checked && checkedCount > maxVotes) {
+            inputElement.checked = false;
+            showNotification(`You can only select up to ${maxVotes} candidate${maxVotes > 1 ? 's' : ''} for this position`, 'warning');
+            return;
+        }
+    } else {
+        inputElement.checked = true;
+    }
+    
+    selectCandidate(inputElement);
 }
 
-// Setup proper radio button behavior
-function setupRadioButtonBehavior() {
-    // Add click listeners to all radio buttons to ensure proper behavior
+function setupInputBehavior() {
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('click', function(e) {
-            // Ensure this radio is selected and others in same group are not
             const name = this.name;
             document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
-                if (r !== this) {
-                    r.checked = false;
-                }
+                if (r !== this) r.checked = false;
             });
             this.checked = true;
         });
     });
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+            const maxVotes = parseInt(this.dataset.maxVotes) || 1;
+            const position = this.dataset.position;
+            const checkedCount = document.querySelectorAll(`input[data-position="${position}"]:checked`).length;
+            
+            if (this.checked && checkedCount > maxVotes) {
+                this.checked = false;
+                e.preventDefault();
+                showNotification(`You can only select up to ${maxVotes} candidate${maxVotes > 1 ? 's' : ''} for this position`, 'warning');
+            }
+        });
+    });
 }
 
-// Handle candidate selection
-function selectCandidate(radioElement) {
-    const candidateCard = radioElement.closest('.candidate-card');
-    const positionSection = radioElement.closest('.position-section');
+function selectCandidate(inputElement) {
+    const candidateCard = inputElement.closest('.candidate-card');
+    const positionSection = inputElement.closest('.position-section');
+    const isCheckbox = inputElement.type === 'checkbox';
+    const maxVotes = parseInt(positionSection.dataset.maxVotes) || 1;
     
-    // Remove selected class from all cards in this position
-    positionSection.querySelectorAll('.candidate-card').forEach(card => {
-        card.classList.remove('selected');
-        // Remove any existing selection feedback
-        const existingFeedback = card.querySelector('.selection-feedback');
-        if (existingFeedback) {
-            existingFeedback.remove();
+    if (isCheckbox) {
+        positionSection.querySelectorAll('.candidate-card').forEach(card => {
+            const input = card.querySelector('input[type="checkbox"]');
+            if (input && input.checked) {
+                card.classList.add('selected');
+                showPermanentSelectionFeedback(card);
+            } else {
+                card.classList.remove('selected');
+                const existingFeedback = card.querySelector('.selection-feedback');
+                if (existingFeedback) existingFeedback.remove();
+            }
+        });
+        
+        // Check if max votes reached and add/remove class
+        const checkedCount = positionSection.querySelectorAll('input[type="checkbox"]:checked').length;
+        if (checkedCount >= maxVotes) {
+            positionSection.classList.add('max-reached');
+        } else {
+            positionSection.classList.remove('max-reached');
         }
-    });
-    
-    // Only proceed if this radio button is actually checked
-    if (radioElement.checked) {
-        // Add selected class to current card
-        candidateCard.classList.add('selected');
+    } else {
+        positionSection.querySelectorAll('.candidate-card').forEach(card => {
+            card.classList.remove('selected');
+            const existingFeedback = card.querySelector('.selection-feedback');
+            if (existingFeedback) existingFeedback.remove();
+        });
         
-        // Add selection animation
-        candidateCard.style.transform = 'scale(1.02)';
-        setTimeout(() => {
-            candidateCard.style.transform = '';
-        }, 200);
-        
-        // Show permanent selection feedback
-        showPermanentSelectionFeedback(candidateCard);
+        if (inputElement.checked) {
+            candidateCard.classList.add('selected');
+            candidateCard.style.transform = 'scale(1.02)';
+            setTimeout(() => { candidateCard.style.transform = ''; }, 200);
+            showPermanentSelectionFeedback(candidateCard);
+            // For radio buttons, max is always 1 and always reached when selected
+            positionSection.classList.add('max-reached');
+        } else {
+            positionSection.classList.remove('max-reached');
+        }
     }
     
-    // Update submit button state
     updateSubmitButtonState();
 }
 
-// Reset position selection
 function resetPosition(positionName) {
-    const positionSection = document.querySelector(`input[name="${positionName}"]`).closest('.position-section');
+    const inputs = document.querySelectorAll(`input[name="${positionName}"], input[name="${positionName}[]"]`);
+    if (inputs.length === 0) return;
     
-    // Clear all selections in this position
-    positionSection.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.checked = false;
+    const positionSection = inputs[0].closest('.position-section');
+    
+    positionSection.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+        input.checked = false;
     });
     
-    // Remove selected visual state and feedback
     positionSection.querySelectorAll('.candidate-card').forEach(card => {
         card.classList.remove('selected');
-        // Remove any existing selection feedback
         const existingFeedback = card.querySelector('.selection-feedback');
-        if (existingFeedback) {
-            existingFeedback.remove();
-        }
+        if (existingFeedback) existingFeedback.remove();
     });
     
-    // Update submit button state
-    updateSubmitButtonState();
+    positionSection.classList.remove('max-reached');
     
-    // Show reset feedback
+    updateSubmitButtonState();
     showNotification('Position selection reset', 'info');
 }
 
-// Update submit button state based on selections
 function updateSubmitButtonState() {
     const submitBtn = document.getElementById('submitVoteBtn');
+    if (!submitBtn) return;
+    
     const allPositions = document.querySelectorAll('.position-section');
     let hasSelections = false;
     
     allPositions.forEach(section => {
-        const radioButtons = section.querySelectorAll('input[type="radio"]');
-        const hasSelection = Array.from(radioButtons).some(radio => radio.checked);
-        if (hasSelection) {
-            hasSelections = true;
-        }
+        const inputs = section.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+        const hasSelection = Array.from(inputs).some(input => input.checked);
+        if (hasSelection) hasSelections = true;
     });
     
     submitBtn.disabled = !hasSelections;
-    
-    if (hasSelections) {
-        submitBtn.classList.add('ready');
-    } else {
-        submitBtn.classList.remove('ready');
-    }
+    submitBtn.classList.toggle('ready', hasSelections);
 }
 
-// Preview vote before submission
 function previewVote() {
     const selectedVotes = getSelectedVotes();
     const allPositions = getAllPositions();
@@ -131,41 +151,46 @@ function previewVote() {
         return;
     }
     
-    // Populate preview content
     const previewContent = document.getElementById('votePreviewContent');
     previewContent.innerHTML = '';
     
-    // Show selected votes
-    Object.entries(selectedVotes).forEach(([position, candidate]) => {
+    Object.entries(selectedVotes).forEach(([position, candidates]) => {
         const previewItem = document.createElement('div');
         previewItem.className = 'vote-preview-item';
-        previewItem.innerHTML = `
-            <div>
-                <h4>${position.replace('_', ' ').toUpperCase()}</h4>
-                <p>${candidate.name}</p>
-            </div>
-            <div class="candidate-preview-photo">
-                <img src="${candidate.photo}" alt="${candidate.name}" 
-                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
-                     onerror="this.src='../assets/img/logo.png'">
-            </div>
-        `;
+        
+        if (Array.isArray(candidates)) {
+            const candidateNames = candidates.map(c => c.name).join(', ');
+            previewItem.innerHTML = `
+                <div>
+                    <h4>${position.replace(/_/g, ' ').toUpperCase()}</h4>
+                    <p>${candidateNames}</p>
+                </div>
+                <div class="candidate-preview-photos">
+                    ${candidates.map(c => `<img src="${c.photo}" alt="${c.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-left: -8px; border: 2px solid white;" onerror="this.src='../assets/img/logo.png'">`).join('')}
+                </div>
+            `;
+        } else {
+            previewItem.innerHTML = `
+                <div>
+                    <h4>${position.replace(/_/g, ' ').toUpperCase()}</h4>
+                    <p>${candidates.name}</p>
+                </div>
+                <div class="candidate-preview-photo">
+                    <img src="${candidates.photo}" alt="${candidates.name}" 
+                         style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
+                         onerror="this.src='../assets/img/logo.png'">
+                </div>
+            `;
+        }
         previewContent.appendChild(previewItem);
     });
     
-    // Show unvoted positions with disclaimer
     const unvotedPositions = allPositions.filter(pos => !selectedVotes.hasOwnProperty(pos));
     
     if (unvotedPositions.length > 0) {
         const disclaimerSection = document.createElement('div');
         disclaimerSection.className = 'unvoted-positions-disclaimer';
-        disclaimerSection.style.cssText = `
-            margin-top: 20px;
-            padding: 15px;
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            border-radius: 6px;
-        `;
+        disclaimerSection.style.cssText = `margin-top: 20px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 6px;`;
         
         let disclaimerHTML = `
             <div style="display: flex; align-items: start; gap: 12px; margin-bottom: 12px;">
@@ -178,7 +203,7 @@ function previewVote() {
         `;
         
         unvotedPositions.forEach(position => {
-            disclaimerHTML += `<li style="margin: 4px 0;"><strong>${position.replace('_', ' ').toUpperCase()}</strong></li>`;
+            disclaimerHTML += `<li style="margin: 4px 0;"><strong>${position.replace(/_/g, ' ').toUpperCase()}</strong></li>`;
         });
         
         disclaimerHTML += `
@@ -194,11 +219,9 @@ function previewVote() {
         previewContent.appendChild(disclaimerSection);
     }
     
-    // Show preview modal
     const modal = document.getElementById('previewModal');
     modal.style.display = 'flex';
     
-    // Add modal animation
     const modalContent = modal.querySelector('.modal');
     modalContent.style.transform = 'scale(0.9)';
     modalContent.style.opacity = '0';
@@ -210,7 +233,6 @@ function previewVote() {
     }, 50);
 }
 
-// Close preview modal
 function closePreviewModal() {
     const modal = document.getElementById('previewModal');
     const modalContent = modal.querySelector('.modal');
@@ -226,39 +248,42 @@ function closePreviewModal() {
     }, 300);
 }
 
-// Confirm and submit vote
+let isSubmitting = false;
+
 function confirmVote() {
-    closePreviewModal();
+    if (isSubmitting) return;
     
-    // Show loading state
+    closePreviewModal();
+    submitVoteToBlockchain();
+}
+
+async function submitVoteToBlockchain() {
+    if (isSubmitting) return;
+    
     const submitBtn = document.getElementById('submitVoteBtn');
-    const originalText = submitBtn.innerHTML;
+    if (!submitBtn) return;
+    
+    isSubmitting = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
     submitBtn.disabled = true;
     
-    // Simulate blockchain submission (replace with actual API call)
-    setTimeout(() => {
-        submitVoteToBlockchain();
-    }, 2000);
-}
-
-// Submit vote to blockchain and database
-async function submitVoteToBlockchain() {
     const selectedVotes = getSelectedVotes();
     
     try {
-        // Prepare vote data for API
         const voteData = {};
-        Object.entries(selectedVotes).forEach(([position, candidate]) => {
-            voteData[position] = candidate.id;
+        Object.entries(selectedVotes).forEach(([position, candidates]) => {
+            if (Array.isArray(candidates)) {
+                candidates.forEach((candidate, index) => {
+                    voteData[`${position}_${index}`] = candidate.id;
+                });
+            } else {
+                voteData[position] = candidates.id;
+            }
         });
         
-        // Submit to API
         const response = await fetch('../api/submit_vote.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(voteData)
         });
         
@@ -268,16 +293,13 @@ async function submitVoteToBlockchain() {
             throw new Error(result.error || 'Failed to submit vote');
         }
         
-        // Show success modal with actual transaction data
         const successData = {
             votes: selectedVotes,
             timestamp: result.data.timestamp,
-            transactionHash: result.data.transaction_hash
+            transactionHash: result.data.transaction_hash || 'Processing...'
         };
         
         showSuccessModal(successData);
-        
-        // Reset form
         document.getElementById('votingForm').reset();
         updateSubmitButtonState();
         
@@ -285,139 +307,130 @@ async function submitVoteToBlockchain() {
         console.error('Vote submission error:', error);
         showNotification('Failed to submit vote: ' + error.message, 'error');
         
-        // Re-enable submit button
-        const submitBtn = document.getElementById('submitVoteBtn');
         submitBtn.innerHTML = '<i class="fas fa-vote-yea"></i> Cast Vote';
         submitBtn.disabled = false;
+        isSubmitting = false;
+    } finally {
+        setTimeout(() => {
+            isSubmitting = false;
+        }, 1000);
     }
 }
 
-// Show success modal
 function showSuccessModal(voteData) {
-    // Update transaction hash
     document.getElementById('transactionHash').textContent = voteData.transactionHash;
     
-    // Populate vote summary
     const summaryContent = document.getElementById('voteSummaryContent');
     summaryContent.innerHTML = '';
     
-    Object.entries(voteData.votes).forEach(([position, candidate]) => {
+    Object.entries(voteData.votes).forEach(([position, candidates]) => {
         const summaryItem = document.createElement('div');
         summaryItem.className = 'vote-preview-item';
-        summaryItem.innerHTML = `
-            <div>
-                <h4>${position.replace('_', ' ').toUpperCase()}</h4>
-                <p>${candidate.name}</p>
-            </div>
-            <div style="color: #10b981;">
-                <i class="fas fa-check-circle"></i>
-            </div>
-        `;
+        
+        if (Array.isArray(candidates)) {
+            const candidateNames = candidates.map(c => c.name).join(', ');
+            summaryItem.innerHTML = `
+                <div>
+                    <h4>${position.replace(/_/g, ' ').toUpperCase()}</h4>
+                    <p>${candidateNames}</p>
+                </div>
+                <div style="color: #10b981;"><i class="fas fa-check-circle"></i></div>
+            `;
+        } else {
+            summaryItem.innerHTML = `
+                <div>
+                    <h4>${position.replace(/_/g, ' ').toUpperCase()}</h4>
+                    <p>${candidates.name}</p>
+                </div>
+                <div style="color: #10b981;"><i class="fas fa-check-circle"></i></div>
+            `;
+        }
         summaryContent.appendChild(summaryItem);
     });
     
-    // Show success modal
     const modal = document.getElementById('successModal');
     modal.style.display = 'flex';
     
-    // Add celebration animation
-    setTimeout(() => {
-        createCelebrationEffect();
-    }, 500);
+    setTimeout(() => { createCelebrationEffect(); }, 500);
 }
 
-// Get selected votes
 function getSelectedVotes() {
     const selectedVotes = {};
-    const allRadios = document.querySelectorAll('input[type="radio"]:checked');
+    const positions = new Set();
     
-    allRadios.forEach(radio => {
-        const position = radio.name;
-        const candidateCard = radio.closest('.candidate-card');
-        const candidateName = candidateCard.querySelector('h4').textContent;
-        const candidatePhoto = candidateCard.querySelector('img').src;
-        const candidateId = radio.value;
+    document.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked').forEach(input => {
+        const positionKey = input.dataset.position || input.name.replace('[]', '');
+        positions.add(positionKey);
+    });
+    
+    positions.forEach(position => {
+        const checkedInputs = document.querySelectorAll(`input[data-position="${position}"]:checked`);
         
-        selectedVotes[position] = {
-            id: candidateId,
-            name: candidateName,
-            photo: candidatePhoto
-        };
+        if (checkedInputs.length === 0) return;
+        
+        if (checkedInputs.length === 1) {
+            const input = checkedInputs[0];
+            const candidateCard = input.closest('.candidate-card');
+            selectedVotes[position] = {
+                id: input.value,
+                name: candidateCard.querySelector('h4').textContent,
+                photo: candidateCard.querySelector('img').src
+            };
+        } else {
+            selectedVotes[position] = [];
+            checkedInputs.forEach(input => {
+                const candidateCard = input.closest('.candidate-card');
+                selectedVotes[position].push({
+                    id: input.value,
+                    name: candidateCard.querySelector('h4').textContent,
+                    photo: candidateCard.querySelector('img').src
+                });
+            });
+        }
     });
     
     return selectedVotes;
 }
 
-// Get all available positions
 function getAllPositions() {
     const positions = new Set();
-    const allRadios = document.querySelectorAll('input[type="radio"]');
-    
-    allRadios.forEach(radio => {
-        positions.add(radio.name);
+    document.querySelectorAll('.position-section').forEach(section => {
+        const position = section.dataset.position;
+        if (position) positions.add(position);
     });
-    
     return Array.from(positions);
 }
 
-// Generate mock transaction hash
-function generateTransactionHash() {
-    const chars = '0123456789abcdef';
-    let hash = '0x';
-    for (let i = 0; i < 64; i++) {
-        hash += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return hash;
-}
-
-// Show permanent selection feedback
 function showPermanentSelectionFeedback(candidateCard) {
-    // Remove any existing feedback first
     const existingFeedback = candidateCard.querySelector('.selection-feedback');
-    if (existingFeedback) {
-        existingFeedback.remove();
-    }
+    if (existingFeedback) existingFeedback.remove();
     
     const feedback = document.createElement('div');
     feedback.className = 'selection-feedback';
     feedback.innerHTML = '<i class="fas fa-check"></i>';
     feedback.style.cssText = `
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #10b981;
-        color: white;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        z-index: 10;
+        position: absolute; top: 10px; right: 10px;
+        background: #10b981; color: white;
+        width: 30px; height: 30px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; z-index: 10;
         animation: selectionPop 0.4s ease-out;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     `;
     
     candidateCard.style.position = 'relative';
     candidateCard.appendChild(feedback);
-    
-    // Don't remove it automatically - it stays until another candidate is selected
 }
 
-// Platform modal functions
 function viewPlatform(candidateId, name, partylist, position, platform) {
-    // Populate platform modal content
     document.getElementById('platformCandidateName').textContent = name;
     document.getElementById('platformCandidatePosition').textContent = position;
     document.getElementById('platformCandidatePartylist').textContent = partylist;
     document.getElementById('platformCandidateText').textContent = platform;
     
-    // Show platform modal
     const modal = document.getElementById('platformModal');
     modal.style.display = 'flex';
     
-    // Add modal animation
     const modalContent = modal.querySelector('.modal');
     modalContent.style.transform = 'scale(0.9)';
     modalContent.style.opacity = '0';
@@ -444,7 +457,6 @@ function closePlatformModal() {
     }, 300);
 }
 
-// Navigation functions
 function goToDashboard() {
     window.location.href = '../pages/student-dashboard.php';
 }
@@ -453,30 +465,19 @@ function viewVotingHistory() {
     window.location.href = '../pages/student-voting-history.php';
 }
 
-// Create celebration effect
 function createCelebrationEffect() {
     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
-    const confettiCount = 50;
-    
-    for (let i = 0; i < confettiCount; i++) {
-        setTimeout(() => {
-            createConfetti(colors[Math.floor(Math.random() * colors.length)]);
-        }, i * 50);
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => createConfetti(colors[Math.floor(Math.random() * colors.length)]), i * 50);
     }
 }
 
 function createConfetti(color) {
     const confetti = document.createElement('div');
     confetti.style.cssText = `
-        position: fixed;
-        width: 10px;
-        height: 10px;
-        background: ${color};
-        left: ${Math.random() * 100}vw;
-        top: -10px;
-        z-index: 10000;
-        pointer-events: none;
-        border-radius: 50%;
+        position: fixed; width: 10px; height: 10px;
+        background: ${color}; left: ${Math.random() * 100}vw;
+        top: -10px; z-index: 10000; pointer-events: none; border-radius: 50%;
     `;
     
     document.body.appendChild(confetti);
@@ -484,97 +485,60 @@ function createConfetti(color) {
     const fallAnimation = confetti.animate([
         { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
         { transform: `translateY(${window.innerHeight + 10}px) rotate(360deg)`, opacity: 0 }
-    ], {
-        duration: Math.random() * 3000 + 2000,
-        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-    });
+    ], { duration: Math.random() * 3000 + 2000, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' });
     
     fallAnimation.onfinish = () => confetti.remove();
 }
 
-// Keyboard navigation
 function addKeyboardNavigation() {
     document.addEventListener('keydown', function(e) {
-        // Close modals with Escape
         if (e.key === 'Escape') {
             const previewModal = document.getElementById('previewModal');
             const successModal = document.getElementById('successModal');
             const platformModal = document.getElementById('platformModal');
             
-            if (previewModal.style.display === 'flex') {
-                closePreviewModal();
-            } else if (successModal.style.display === 'flex') {
-                successModal.style.display = 'none';
-            } else if (platformModal.style.display === 'flex') {
-                closePlatformModal();
-            }
+            if (previewModal && previewModal.style.display === 'flex') closePreviewModal();
+            else if (successModal && successModal.style.display === 'flex') successModal.style.display = 'none';
+            else if (platformModal && platformModal.style.display === 'flex') closePlatformModal();
         }
         
-        // Submit with Ctrl+Enter
         if (e.ctrlKey && e.key === 'Enter') {
             const submitBtn = document.getElementById('submitVoteBtn');
-            if (!submitBtn.disabled) {
-                previewVote();
-            }
-        }
-        
-        // Navigate candidates with arrow keys
-        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-            navigateCandidates(e.key === 'ArrowDown' ? 1 : -1);
-            e.preventDefault();
+            if (submitBtn && !submitBtn.disabled) previewVote();
         }
     });
 }
 
-function navigateCandidates(direction) {
-    const allCards = document.querySelectorAll('.candidate-card');
-    const focusedCard = document.querySelector('.candidate-card:focus-within') || 
-                       document.querySelector('.candidate-card.selected');
-    
-    if (!focusedCard) {
-        allCards[0]?.querySelector('input[type="radio"]').focus();
-        return;
-    }
-    
-    const currentIndex = Array.from(allCards).indexOf(focusedCard);
-    const nextIndex = currentIndex + direction;
-    
-    if (nextIndex >= 0 && nextIndex < allCards.length) {
-        allCards[nextIndex].querySelector('input[type="radio"]').focus();
-    }
+const votingForm = document.getElementById('votingForm');
+if (votingForm) {
+    votingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        previewVote();
+    });
 }
 
-// Handle form submission
-document.getElementById('votingForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    previewVote();
-});
-
-// Notification system (reuse from dashboard)
 function showNotification(message, type = 'info') {
-    // Remove existing notifications
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
 
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
+    
+    const icons = { 'info': 'fa-info-circle', 'success': 'fa-check-circle', 'warning': 'fa-exclamation-triangle', 'error': 'fa-times-circle' };
+    
     notification.innerHTML = `
-        <i class="fas ${getNotificationIcon(type)}"></i>
+        <i class="fas ${icons[type] || icons.info}"></i>
         <span>${message}</span>
-        <button class="notification-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-times"></i>
-        </button>
+        <button class="notification-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
     `;
 
     document.body.appendChild(notification);
 
-    // Show notification
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
         notification.style.opacity = '1';
     }, 100);
 
-    // Auto-remove after 5 seconds
     setTimeout(() => {
         if (notification.parentElement) {
             notification.style.opacity = '0';
@@ -584,63 +548,13 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-function getNotificationIcon(type) {
-    const icons = {
-        'info': 'fa-info-circle',
-        'success': 'fa-check-circle',
-        'warning': 'fa-exclamation-triangle',
-        'error': 'fa-times-circle'
-    };
-    return icons[type] || icons.info;
-}
-
-// Preload modal content for better performance
 function preloadModalContent() {
     const previewModal = document.getElementById('previewModal');
     const successModal = document.getElementById('successModal');
-    
-    // Preload modal styles
-    if (previewModal) {
-        previewModal.style.display = 'none';
-    }
-    if (successModal) {
-        successModal.style.display = 'none';
-    }
+    if (previewModal) previewModal.style.display = 'none';
+    if (successModal) successModal.style.display = 'none';
 }
 
-// Add loading states
-function showLoadingState(element, loadingText = 'Loading...') {
-    const originalContent = element.innerHTML;
-    element.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingText}`;
-    element.disabled = true;
-    
-    return () => {
-        element.innerHTML = originalContent;
-        element.disabled = false;
-    };
-}
-
-// Intersection Observer for animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animationPlayState = 'running';
-        }
-    });
-}, observerOptions);
-
-// Observe position sections for animations
-document.querySelectorAll('.position-section').forEach(section => {
-    section.style.animationPlayState = 'paused';
-    observer.observe(section);
-});
-
-// Additional CSS animations
 const additionalStyles = document.createElement('style');
 additionalStyles.textContent = `
     @keyframes selectionPop {
@@ -650,21 +564,12 @@ additionalStyles.textContent = `
     }
     
     .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: white;
-        border-radius: 8px;
-        padding: 16px 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        z-index: 1001;
-        transform: translateX(100%);
-        opacity: 0;
-        transition: all 0.3s ease-out;
-        max-width: 300px;
+        position: fixed; top: 20px; right: 20px;
+        background: white; border-radius: 8px;
+        padding: 16px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex; align-items: center; gap: 12px;
+        z-index: 1001; transform: translateX(100%);
+        opacity: 0; transition: all 0.3s ease-out; max-width: 300px;
     }
     
     .notification.notification-info { border-left: 4px solid #3b82f6; }
@@ -673,21 +578,12 @@ additionalStyles.textContent = `
     .notification.notification-error { border-left: 4px solid #ef4444; }
     
     .notification-close {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 4px;
-        color: #6b7280;
-        margin-left: auto;
+        background: none; border: none; cursor: pointer;
+        padding: 4px; color: #6b7280; margin-left: auto;
     }
+    .notification-close:hover { color: #374151; }
     
-    .notification-close:hover {
-        color: #374151;
-    }
-    
-    .btn-submit.ready {
-        animation: readyPulse 2s infinite;
-    }
+    .btn-submit.ready { animation: readyPulse 2s infinite; }
     
     @keyframes readyPulse {
         0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }

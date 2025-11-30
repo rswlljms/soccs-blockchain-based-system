@@ -75,7 +75,10 @@ if ($hasActiveElection) {
             
             // Only add position if it has candidates
             if (!empty($positionCandidates)) {
-                $candidates[$position['description']] = $positionCandidates;
+                $candidates[$position['description']] = [
+                    'max_votes' => (int)$position['max_votes'],
+                    'candidates' => $positionCandidates
+                ];
             }
         }
         
@@ -309,13 +312,18 @@ if ($hasActiveElection) {
       <div class="voting-container">
         <form id="votingForm" method="POST" action="../api/submit_vote.php">
           
-          <?php foreach ($candidates as $position => $positionCandidates): ?>
+          <?php foreach ($candidates as $position => $positionData): 
+            $maxVotes = $positionData['max_votes'];
+            $positionCandidates = $positionData['candidates'];
+            $inputType = $maxVotes > 1 ? 'checkbox' : 'radio';
+            $positionKey = strtolower(str_replace(' ', '_', $position));
+          ?>
           <!-- Position Section -->
-          <div class="position-section">
+          <div class="position-section" data-position="<?= $positionKey ?>" data-max-votes="<?= $maxVotes ?>">
             <div class="position-header">
               <h3><?= htmlspecialchars($position) ?></h3>
-              <p>Select only one candidate</p>
-              <button type="button" class="reset-btn" onclick="resetPosition('<?= strtolower(str_replace(' ', '_', $position)) ?>')">
+              <p><?= $maxVotes > 1 ? "Select up to {$maxVotes} candidates" : "Select only one candidate" ?></p>
+              <button type="button" class="reset-btn" onclick="resetPosition('<?= $positionKey ?>')">
                 <i class="fas fa-redo"></i> Reset
               </button>
             </div>
@@ -324,10 +332,12 @@ if ($hasActiveElection) {
               <?php foreach ($positionCandidates as $candidate): ?>
               <div class="candidate-card">
                 <div class="candidate-radio">
-                  <input type="radio" 
+                  <input type="<?= $inputType ?>" 
                          id="candidate_<?= $candidate['id'] ?>" 
-                         name="<?= strtolower(str_replace(' ', '_', $position)) ?>" 
+                         name="<?= $positionKey ?><?= $maxVotes > 1 ? '[]' : '' ?>" 
                          value="<?= $candidate['id'] ?>"
+                         data-position="<?= $positionKey ?>"
+                         data-max-votes="<?= $maxVotes ?>"
                          onchange="selectCandidate(this)"
                          onclick="handleCandidateClick(this)">
                   <label for="candidate_<?= $candidate['id'] ?>" class="radio-label">

@@ -56,12 +56,19 @@ body {
   margin-bottom: 24px;
 }
 
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .page-title {
   font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
   position: relative;
   padding-bottom: 8px;
+  margin: 0;
 }
 
 .page-title::after {
@@ -73,6 +80,41 @@ body {
   height: 4px;
   background: var(--primary-gradient);
   border-radius: 2px;
+}
+
+.welcome-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.datetime-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.day-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.time-text {
+  font-size: 18px;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
 }
 
 /* === CARDS === */
@@ -420,35 +462,97 @@ body {
   border-radius: var(--radius-md);
   background: var(--secondary-color);
   transition: var(--transition);
-  min-height: 100px;
 }
 
 .event-item:hover {
-  background: #f3f4f6;
+  background: #e5e7eb;
 }
 
 .event-date {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 60px;
-  padding: 8px;
-  background: white;
+  justify-content: center;
+  background: var(--primary-gradient);
+  color: white;
+  padding: 10px;
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
+  min-width: 60px;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.event-date.multi-day {
+  background: var(--primary-gradient);
+  min-width: 65px;
+  width: 65px;
+}
+
+.event-date.multi-day .day {
+  font-size: 16px;
+  letter-spacing: -0.5px;
 }
 
 .event-date .day {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: white;
+  line-height: 1.2;
 }
 
 .event-date .month {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
 }
+
+.event-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-info h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.event-info p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.event-info p i {
+  font-size: 12px;
+  color: #9933ff;
+  width: 14px;
+}
+
+.event-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+}
+
+.event-tag.academic { background: #dbeafe; color: #1e40af; }
+.event-tag.social { background: #d1fae5; color: #065f46; }
+.event-tag.general { background: #f3e8ff; color: #6b21a8; }
+.event-tag.sports { background: #fef3c7; color: #92400e; }
+.event-tag.competition { background: #ffedd5; color: #c2410c; }
+.event-tag.workshop { background: #e9d5ff; color: #7c3aed; }
 
 .event-details {
   flex-grow: 1;
@@ -470,6 +574,10 @@ body {
   margin-bottom: 2px;
 }
 
+.event-status {
+  flex-shrink: 0;
+}
+
 .badge {
   padding: 4px 8px;
   border-radius: 20px;
@@ -482,6 +590,21 @@ body {
   color: var(--warning-color);
 }
 
+.badge.ongoing {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.badge.completed {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.badge.cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+}
+
 .btn-primary {
   background: var(--primary-gradient);
   color: white;
@@ -491,10 +614,15 @@ body {
   cursor: pointer;
   font-weight: 500;
   transition: var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-primary:hover {
   background: var(--primary-hover);
+  color: white;
 }
 
 .btn-sm {
@@ -527,6 +655,14 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+
+  .header-right {
+    align-self: flex-end;
+  }
+
+  .datetime-display {
+    align-items: flex-end;
   }
 
   .card-row {

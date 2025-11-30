@@ -155,23 +155,47 @@ body {
 /* === STUDENTS TABLE === */
 .styled-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 0;
   background: white;
-  border-radius: 10px;
-  overflow: hidden;
+  border: none;
+  outline: none;
+}
+
+.styled-table thead {
+  background: var(--secondary-color);
 }
 
 .styled-table th,
 .styled-table td {
-  padding: 14px 16px;
+  padding: 18px 20px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .styled-table th {
-  background-color: #f9f9f9;
+  background-color: var(--secondary-color);
   font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.styled-table td {
+  background: white;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.styled-table tbody tr:hover td {
+  background-color: rgba(153, 51, 255, 0.04);
+  transition: background-color 0.2s ease;
+}
+
+.styled-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .styled-table th:last-child {
@@ -335,14 +359,14 @@ body {
   flex-wrap: wrap;
 }
 
-/* Table Styles */
+/* Table Styles - Using standardized styles from admin-table-styles.css */
 .table-container {
   background: white;
-  padding: 1.5rem;
   border-radius: var(--radius-md);
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: none;
+  outline: none;
 }
 
 .styled-table {
@@ -602,25 +626,13 @@ body {
   line-height: 1.2;
 }
 
-.styled-table button.btn-primary {
-  margin: 0;
-  padding: 8px 18px;
-  font-size: 14px;
-  vertical-align: middle;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Action buttons now use standardized styles from admin-table-styles.css */
 
 /* Inline action buttons */
+/* Action buttons now use standardized styles from admin-table-styles.css */
 .row-actions {
-  display: inline-flex;
+  display: flex;
   gap: 8px;
   align-items: center;
-}
-
-.row-actions .btn-secondary {
-  padding: 8px 14px;
-  height: 40px;
+  justify-content: flex-end;
 }

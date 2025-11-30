@@ -152,20 +152,23 @@ body {
   border-width: 3px;
 }
 
-/* Make unselected cards in same position slightly faded when one is selected */
-.position-section:has(.candidate-card.selected) .candidate-card:not(.selected) {
-  opacity: 0.7;
+/* Only fade unselected cards when max votes is reached */
+.position-section.max-reached .candidate-card:not(.selected) {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.position-section:has(.candidate-card.selected) .candidate-card:not(.selected):hover {
-  opacity: 1;
+.position-section.max-reached .candidate-card:not(.selected):hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .candidate-radio {
   position: relative;
 }
 
-.candidate-radio input[type="radio"] {
+.candidate-radio input[type="radio"],
+.candidate-radio input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   cursor: pointer;

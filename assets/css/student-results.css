@@ -277,18 +277,11 @@ body {
 }
 
 .candidate-result.winner {
-  background: var(--winner-bg);
-  border-left: 4px solid var(--winner-color);
-}
-
-.candidate-result.winner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--winner-color);
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-radius: 12px;
+  margin: 8px 0;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
 }
 
 /* === CANDIDATE INFO === */
@@ -317,7 +310,12 @@ body {
 
 .candidate-result.winner .candidate-photo .photo-circle {
   border-color: var(--winner-color);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+}
+
+.candidate-result.winner:hover {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
 }
 
 .candidate-photo img {
@@ -328,20 +326,26 @@ body {
 
 .winner-crown {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  background: #ffd700;
-  color: #b8860b;
-  width: 28px;
-  height: 28px;
+  top: -6px;
+  left: -6px;
+  background: linear-gradient(135deg, #ffd700, #ffb700);
+  color: #8b6914;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 12px;
   border: 2px solid white;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 2px 8px rgba(255, 183, 0, 0.4);
   z-index: 10;
+  animation: crownPulse 2s ease-in-out infinite;
+}
+
+@keyframes crownPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .candidate-details h4 {
@@ -361,8 +365,10 @@ body {
 }
 
 .candidate-result.winner .candidate-party {
-  background: var(--winner-color);
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
 }
 
 /* === VOTE COUNT === */

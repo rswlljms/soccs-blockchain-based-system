@@ -1,11 +1,9 @@
 <?php
 session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: ../templates/login.php");
-    exit;
-}
+require_once '../includes/page_access.php';
+checkPageAccess(['verify_students']);
+include('../components/sidebar.php');
 ?>
-<?php include('../components/sidebar.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,14 +12,55 @@ if (!isset($_SESSION['user'])) {
     <link rel="stylesheet" href="../assets/css/sidebar.css">
     <link rel="stylesheet" href="../assets/css/students.css">
     <link rel="stylesheet" href="../assets/css/admin-table-styles.css">
+    <link rel="stylesheet" href="../assets/css/user-management.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4B0082, #9933ff);
+            --primary-hover: linear-gradient(135deg, #3a0066, #7a29cc);
+            --secondary-color: #f8f9fa;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --transition: all 0.2s ease-in-out;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            width: calc(100% - 280px);
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .header-section {
+            margin-bottom: 24px;
+        }
+
         .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
             position: relative;
             padding-bottom: 12px;
         }
+
         .page-title::after {
             content: '';
             position: absolute;
@@ -29,153 +68,147 @@ if (!isset($_SESSION['user'])) {
             left: 0;
             width: 60px;
             height: 4px;
-            background: linear-gradient(to right, #9933ff, #6610f2);
+            background: var(--primary-gradient);
             border-radius: 2px;
         }
+
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin: 24px 0;
+            gap: 20px;
+            margin-bottom: 24px;
         }
+
         .stat-card {
-            background: linear-gradient(135deg, #9933ff 0%, #4B0082 100%);
-            color: white;
-            padding: 1.5rem;
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(153, 51, 255, 0.1);
+        }
+
+        .stat-card .card-icon {
+            width: 56px;
+            height: 56px;
             border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
         }
-        .stat-card.approved {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+
+        .stat-card:nth-child(1) .card-icon {
+            background: linear-gradient(135deg, #f3e9ff 0%, #e9d5ff 100%);
         }
-        .stat-card.rejected {
-            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        .stat-card:nth-child(1) .card-icon i { color: #9933ff; }
+
+        .stat-card.approved .card-icon {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
         }
-        .stat-number {
-            font-size: 2.5rem;
+        .stat-card.approved .card-icon i { color: #10b981; }
+
+        .stat-card.rejected .card-icon {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        }
+        .stat-card.rejected .card-icon i { color: #ef4444; }
+
+        .stat-card .card-info {
+            flex: 1;
+        }
+
+        .stat-card .card-info h3 {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .card-info p {
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            margin: 0;
         }
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.95;
-        }
+
         .filters-container {
             display: flex;
-            gap: 12px;
-            margin: 24px 0;
+            gap: 16px;
+            margin: 0 0 24px 0;
             flex-wrap: wrap;
             align-items: center;
+            background: white;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
         }
+
         .filters-container select {
-            height: 42px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 8px 32px 8px 12px;
+            height: 44px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 36px 12px 18px;
             background-color: white;
-            min-width: 160px;
+            min-width: 180px;
+            font-size: 14px;
+            font-family: 'Work Sans', sans-serif;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
-            background-size: 16px;
+            background-size: 12px 12px;
         }
-        .table-container {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+        .filters-container select:hover {
+            border-color: #9933ff;
         }
-        .table-header {
-            background: linear-gradient(135deg, #9933ff 0%, #6610f2 100%);
-            color: white;
-            padding: 1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #495057;
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        .table td {
-            padding: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .table tbody tr:hover {
-            background: #f8f9fa;
+
+        .filters-container select:focus {
+            outline: none;
+            border-color: #9933ff;
+            box-shadow: 0 0 0 4px rgba(153, 51, 255, 0.1);
         }
         .status-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .status-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
         }
         .status-approved {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
         }
         .status-rejected {
-            background: #f8d7da;
-            color: #721c24;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
         }
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        .btn-approve {
-            background: #28a745;
-            color: white;
-        }
-        .btn-approve:hover {
-            background: #218838;
-        }
-        .btn-reject {
-            background: #dc3545;
-            color: white;
-        }
-        .btn-reject:hover {
-            background: #c82333;
-        }
-        .btn-view {
-            background: #17a2b8;
-            color: white;
-        }
-        .btn-view:hover {
-            background: #138496;
-        }
+        /* Action Buttons - Using standardized styles from admin-table-styles.css */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -183,71 +216,130 @@ if (!isset($_SESSION['user'])) {
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
+
+        .modal-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
         .modal {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.95);
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
+            border-radius: var(--radius-md);
+            padding: 0;
             max-width: 500px;
             width: 90%;
             z-index: 1001;
+            display: none;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
+
+        .modal.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            padding: 28px 32px;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
         }
+
         .modal-title {
-            font-size: 1.5rem;
+            font-size: 24px;
             font-weight: 600;
-            color: #2c3e50;
+            color: white;
+            margin: 0;
+            letter-spacing: -0.02em;
         }
+
         .close-btn {
-            background: none;
+            background: rgba(255, 255, 255, 0.2);
             border: none;
-            font-size: 1.5rem;
+            font-size: 18px;
             cursor: pointer;
-            color: #6c757d;
+            color: white;
+            padding: 8px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
         }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        .modal-body {
+            padding: 32px;
+            max-height: calc(90vh - 140px);
+            overflow-y: auto;
+        }
+
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
         }
         .form-label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #495057;
+            font-size: 14px;
+            color: var(--text-primary);
         }
         .form-control {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 0.9rem;
+            padding: 14px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: 'Work Sans', sans-serif;
+            color: var(--text-primary);
+            background: white;
+            transition: var(--transition);
         }
         .form-control:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #9933ff;
+            box-shadow: 0 0 0 4px rgba(153, 51, 255, 0.1);
         }
         .modal-actions {
             display: flex;
-            gap: 1rem;
+            gap: 12px;
             justify-content: flex-end;
-            margin-top: 1.5rem;
+            margin-top: 24px;
         }
         .btn-cancel {
-            background: #6c757d;
-            color: white;
+            background: white;
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 14px 32px;
+            min-width: 120px;
         }
         .btn-cancel:hover {
-            background: #5a6268;
+            border-color: #cbd5e1;
+            background: var(--secondary-color);
+            transform: translateY(-1px);
         }
         .loading {
             text-align: center;
@@ -359,22 +451,43 @@ if (!isset($_SESSION['user'])) {
             }
         }
         
+        @media (min-width: 769px) {
+            .main-content {
+                margin-left: 280px !important;
+                width: calc(100% - 280px) !important;
+            }
+        }
+        
         @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px 16px;
+            }
+
+            .content-wrapper {
+                padding: 0;
+            }
+
             .filters-container {
                 flex-direction: column;
+                align-items: stretch;
             }
             .filters-container select {
+                width: 100%;
                 min-width: 100%;
             }
-            .table {
-                font-size: 0.8rem;
+            .stats-cards {
+                grid-template-columns: 1fr;
             }
-            .table th,
-            .table td {
-                padding: 0.5rem;
+            .table-container {
+                overflow-x: auto;
+            }
+            .styled-table {
+                min-width: 800px;
             }
             .action-buttons {
-                flex-direction: column;
+                flex-wrap: wrap;
             }
             .toast-container {
                 right: 10px;
@@ -398,16 +511,31 @@ if (!isset($_SESSION['user'])) {
 
             <div class="stats-cards">
                 <div class="stat-card">
-                    <div class="stat-number" id="pendingCount">0</div>
-                    <div class="stat-label">Pending Approvals</div>
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Pending Approvals</h3>
+                        <p id="pendingCount">0</p>
+                    </div>
                         </div>
                 <div class="stat-card approved">
-                    <div class="stat-number" id="approvedCount">0</div>
-                    <div class="stat-label">Approved</div>
+                    <div class="card-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Approved</h3>
+                        <p id="approvedCount">0</p>
+                    </div>
                         </div>
                 <div class="stat-card rejected">
-                    <div class="stat-number" id="rejectedCount">0</div>
-                    <div class="stat-label">Rejected</div>
+                    <div class="card-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3>Rejected</h3>
+                        <p id="rejectedCount">0</p>
+                    </div>
                 </div>
             </div>
 
@@ -433,14 +561,28 @@ if (!isset($_SESSION['user'])) {
             </div>
 
             <div class="table-container">
-                <div class="table-header">
-                    <i class="fas fa-list"></i> Student Registration Requests
-                </div>
-                <div id="registrationsTable">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Year</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registrationsTable">
+                        <tr>
+                            <td colspan="7">
                     <div class="loading">
                         <i class="fas fa-spinner fa-spin"></i> Loading registrations...
                     </div>
-                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -452,8 +594,8 @@ if (!isset($_SESSION['user'])) {
             <h3 class="modal-title">Approve Registration</h3>
             <button class="close-btn" onclick="closeModal('approvalModal')">&times;</button>
         </div>
-        <div style="padding: 1rem;">
-            <p style="margin-bottom: 1.5rem; color: #495057;">Are you sure you want to approve this student registration?</p>
+        <div class="modal-body">
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Are you sure you want to approve this student registration?</p>
             <div class="modal-actions">
                 <button type="button" class="btn btn-cancel" onclick="closeModal('approvalModal')">Cancel</button>
                 <button type="button" class="btn btn-approve" onclick="confirmApproval()">Approve</button>
@@ -468,6 +610,7 @@ if (!isset($_SESSION['user'])) {
             <h3 class="modal-title">Reject Registration</h3>
             <button class="close-btn" onclick="closeModal('rejectionModal')">&times;</button>
         </div>
+        <div class="modal-body">
         <form id="rejectionForm">
             <div class="form-group">
                 <label class="form-label">Reason for Rejection</label>
@@ -478,6 +621,7 @@ if (!isset($_SESSION['user'])) {
                 <button type="submit" class="btn btn-reject">Reject Registration</button>
             </div>
         </form>
+        </div>
     </div>
 
     <!-- View Details Modal -->
@@ -487,7 +631,7 @@ if (!isset($_SESSION['user'])) {
             <h3 class="modal-title">Registration Details</h3>
             <button class="close-btn" onclick="closeModal('viewModal')">&times;</button>
         </div>
-        <div id="viewContent" style="padding: 1rem;">
+        <div class="modal-body" id="viewContent">
             <!-- Content will be loaded here -->
         </div>
             </div>
@@ -540,29 +684,19 @@ if (!isset($_SESSION['user'])) {
             
             if (registrations.length === 0) {
                 container.innerHTML = `
+                    <tr>
+                        <td colspan="7">
                     <div class="no-data">
                         <i class="fas fa-inbox"></i>
                         <p>No registrations found</p>
                     </div>
+                        </td>
+                    </tr>
                 `;
                 return;
             }
 
-            const tableHTML = `
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Name</th>
-                            <th>Course</th>
-                            <th>Year</th>
-                            <th>Status</th>
-                            <th>Registered</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${registrations.map(reg => `
+            const tableHTML = registrations.map(reg => `
                             <tr>
                                 <td><strong>${reg.id}</strong></td>
                                 <td>${reg.first_name} ${reg.middle_name} ${reg.last_name}</td>
@@ -572,39 +706,34 @@ if (!isset($_SESSION['user'])) {
                                 <td>${new Date(reg.created_at).toLocaleDateString()}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-view" data-action="view" data-id="${reg.id}">
-                                            <i class="fas fa-eye"></i> View
+                            <button class="action-btn view" data-action="view" data-id="${reg.id}" title="View Details">
+                                <i class="fas fa-eye"></i>
                                         </button>
                                         ${reg.approval_status === 'pending' ? `
-                                            <button class="btn btn-approve" data-action="approve" data-id="${reg.id}">
-                                                <i class="fas fa-check"></i> Approve
+                                <button class="action-btn approve" data-action="approve" data-id="${reg.id}" title="Approve">
+                                    <i class="fas fa-check"></i>
                                             </button>
-                                            <button class="btn btn-reject" data-action="reject" data-id="${reg.id}">
-                                                <i class="fas fa-times"></i> Reject
+                                <button class="action-btn reject" data-action="reject" data-id="${reg.id}" title="Reject">
+                                    <i class="fas fa-times"></i>
                                             </button>
                                         ` : reg.approval_status === 'rejected' ? `
-                                            <button class="btn btn-approve" data-action="approve" data-id="${reg.id}">
-                                                <i class="fas fa-check"></i> Approve
+                                <button class="action-btn approve" data-action="approve" data-id="${reg.id}" title="Approve">
+                                    <i class="fas fa-check"></i>
                                             </button>
                                         ` : ''}
                                     </div>
                                 </td>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+            `).join('');
             
             container.innerHTML = tableHTML;
             
             // Attach event listeners to buttons
-            container.querySelectorAll('.btn').forEach(btn => {
+            container.querySelectorAll('.action-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     const action = this.getAttribute('data-action');
                     const studentId = this.getAttribute('data-id');
-                    
-                    console.log('Button clicked:', action, studentId);
                     
                     if (action === 'view') {
                         viewDetails(studentId);
@@ -806,11 +935,11 @@ if (!isset($_SESSION['user'])) {
             const modal = document.getElementById(modalId);
             const overlay = document.getElementById(modalId.replace('Modal', 'Overlay'));
             if (modal) {
-                modal.style.display = 'block';
-                console.log('Modal opened:', modalId);
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
             }
             if (overlay) {
-                overlay.style.display = 'block';
+                overlay.classList.add('show');
             }
         }
 
@@ -818,10 +947,11 @@ if (!isset($_SESSION['user'])) {
             const modal = document.getElementById(modalId);
             const overlay = document.getElementById(modalId.replace('Modal', 'Overlay'));
             if (modal) {
-                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
             }
             if (overlay) {
-                overlay.style.display = 'none';
+                overlay.classList.remove('show');
             }
         }
 

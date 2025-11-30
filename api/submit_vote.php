@@ -51,34 +51,68 @@ try {
     
     $electionId = $election['id'];
     
-    // Check if student already voted in this election
-    $stmt = $db->prepare("SELECT COUNT(*) as vote_count FROM votes WHERE election_id = ? AND voter_id = ?");
+    // Check if student already voted in this election (has at least one vote recorded)
+    $stmt = $db->prepare("SELECT COUNT(DISTINCT position_id) as positions_voted FROM votes WHERE election_id = ? AND voter_id = ?");
     $stmt->execute([$electionId, $studentId]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if ($result['vote_count'] > 0) {
+    // Get total positions count
+    $totalPositionsStmt = $db->prepare("SELECT COUNT(*) as total FROM positions");
+    $totalPositionsStmt->execute();
+    $totalPositions = $totalPositionsStmt->fetch(PDO::FETCH_ASSOC)['total'];
+    
+    // If student has voted for all positions, they have completed voting
+    if ($result['positions_voted'] > 0) {
         throw new Exception('You have already voted in this election');
     }
 
     $votes = [];
+    $positionVoteCounts = [];
     $db->beginTransaction();
+    
+    $posStmt = $db->prepare("SELECT id, max_votes FROM positions");
+    $posStmt->execute();
+    $positionsMaxVotes = [];
+    while ($row = $posStmt->fetch(PDO::FETCH_ASSOC)) {
+        $positionsMaxVotes[$row['id']] = (int)$row['max_votes'];
+    }
     
     foreach ($data as $key => $candidateId) {
         if (empty($candidateId)) continue;
         
-        // Get position info from candidate
         $stmt = $db->prepare("SELECT position_id FROM candidates WHERE id = ?");
         $stmt->execute([$candidateId]);
         $candidate = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($candidate) {
-            // Insert vote (note: using voted_at instead of created_at)
-            $stmt = $db->prepare("INSERT INTO votes (election_id, voter_id, candidate_id, position_id, voted_at) VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([$electionId, $studentId, $candidateId, $candidate['position_id']]);
+            $positionId = $candidate['position_id'];
+            
+            if (!isset($positionVoteCounts[$positionId])) {
+                $positionVoteCounts[$positionId] = 0;
+            }
+            $positionVoteCounts[$positionId]++;
+            
+            $maxVotes = $positionsMaxVotes[$positionId] ?? 1;
+            if ($positionVoteCounts[$positionId] > $maxVotes) {
+                $db->rollBack();
+                throw new Exception("Maximum votes exceeded for this position (max: {$maxVotes})");
+            }
+            
+            $checkStmt = $db->prepare("SELECT id FROM votes WHERE election_id = ? AND voter_id = ? AND candidate_id = ?");
+            $checkStmt->execute([$electionId, $studentId, $candidateId]);
+            if ($checkStmt->fetch()) {
+                continue;
+            }
+            
+            $stmt = $db->prepare("INSERT INTO votes (election_id, voter_id, candidate_id, position_id, vote_hash, voted_at) VALUES (?, ?, ?, ?, NULL, NOW())");
+            $stmt->execute([$electionId, $studentId, $candidateId, $positionId]);
+            
+            $voteId = $db->lastInsertId();
             
             $votes[] = [
+                'vote_id' => $voteId,
                 'candidate_id' => $candidateId,
-                'position_id' => $candidate['position_id']
+                'position_id' => $positionId
             ];
         }
     }
@@ -90,15 +124,56 @@ try {
 
     $db->commit();
     
-    // Generate mock blockchain hash for future integration
-    $transactionHash = '0x' . bin2hex(random_bytes(32));
+    $blockchainUrl = 'http://localhost:3001/add-vote';
+    $voteHashes = [];
+    
+    foreach ($votes as $vote) {
+        $stmt = $db->prepare("SELECT position_id FROM candidates WHERE id = ?");
+        $stmt->execute([$vote['candidate_id']]);
+        $candidate = $stmt->fetch(PDO::FETCH_ASSOC);
+        $positionId = $candidate['position_id'];
+        
+        $voteData = [
+            'electionId' => (int)$electionId,
+            'voterId' => $studentId,
+            'candidateId' => (int)$vote['candidate_id'],
+            'positionId' => (int)$positionId,
+            'method' => 'VOTE'
+        ];
+        
+        $ch = curl_init($blockchainUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($voteData));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
+        
+        $blockchainResponse = @curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($httpCode === 200 && $blockchainResponse) {
+            $blockchainResult = json_decode($blockchainResponse, true);
+            if (isset($blockchainResult['status']) && $blockchainResult['status'] === 'success') {
+                $voteHash = $blockchainResult['txHash'];
+                $updateStmt = $db->prepare("UPDATE votes SET vote_hash = ? WHERE id = ?");
+                $updateStmt->execute([$voteHash, $vote['vote_id']]);
+                $voteHashes[] = $voteHash;
+            }
+        }
+    }
+    
+    $transactionHash = !empty($voteHashes) ? $voteHashes[0] : null;
 
     echo json_encode([
         'success' => true,
         'message' => 'Vote successfully recorded',
         'data' => [
             'student_id' => $studentId,
+            'election_id' => $electionId,
             'votes' => $votes,
+            'transaction_hashes' => $voteHashes,
             'transaction_hash' => $transactionHash,
             'timestamp' => date('Y-m-d H:i:s')
         ]

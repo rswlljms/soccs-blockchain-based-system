@@ -1,10 +1,12 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 require_once '../includes/database.php';
+require_once '../includes/activity_logger.php';
 
 try {
     $database = new Database();
@@ -73,6 +75,11 @@ try {
     
     $updateStmt = $pdo->prepare($updateSql);
     $updateStmt->execute([$fileName, $studentId]);
+    
+    if (isset($_SESSION['user_id'])) {
+        $studentName = $student['first_name'] . ' ' . $student['last_name'];
+        logMembershipActivity($_SESSION['user_id'], 'upload_receipt', 'Uploaded membership receipt for student: ' . $studentId . ' (' . $studentName . ')');
+    }
     
     echo json_encode([
         'success' => true,

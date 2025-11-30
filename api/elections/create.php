@@ -1,6 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -47,10 +49,16 @@ try {
     $stmt->bindParam(':end_date', $end_date);
     
     if ($stmt->execute()) {
+        $electionId = $conn->lastInsertId();
+        
+        if (isset($_SESSION['user_id'])) {
+            logElectionActivity($_SESSION['user_id'], 'create', 'Created election: ' . $title . ' (ID: ' . $electionId . ')');
+        }
+        
         echo json_encode([
             'success' => true,
             'message' => 'Election created successfully',
-            'id' => $conn->lastInsertId()
+            'id' => $electionId
         ]);
     } else {
         echo json_encode([

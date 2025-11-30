@@ -72,17 +72,28 @@ function renderStudentsTable(students) {
         const row = document.createElement('tr');
         
         const actionButton = student.is_archived 
-            ? `<button class=\"btn-primary\" onclick=\"restoreStudent('${student.id}')\">\n                 <i class=\"fas fa-undo\"></i> Restore\n               </button>`
-            : `<button class=\"btn-primary\" onclick=\"archiveStudent('${student.id}')\">\n                 <i class=\"fas fa-box-archive\"></i> Archive\n               </button>`;
+            ? `<button class="action-btn restore" onclick="restoreStudent('${student.id}')" title="Restore Student">
+                 <i class="fas fa-undo"></i>
+               </button>`
+            : `<button class="action-btn archive" onclick="archiveStudent('${student.id}')" title="Archive Student">
+                 <i class="fas fa-box-archive"></i>
+               </button>`;
 
-        const profileButton = `<button class=\"btn-secondary\" style=\"margin-left:8px;\" onclick=\"viewStudentProfile('${student.id}')\">\n            <i class=\"fas fa-id-card\"></i> View Profile\n        </button>`;
+        const profileButton = `<button class="action-btn view" onclick="viewStudentProfile('${student.id}')" title="View Profile">
+            <i class="fas fa-id-card"></i>
+        </button>`;
 
         row.innerHTML = `
             <td>${student.full_name}</td>
             <td>${student.course}</td>
             <td>${student.year_level}${getYearSuffix(student.year_level)} Year</td>
             <td>${student.section}</td>
-            <td><div class="row-actions">${actionButton} ${profileButton}</div></td>
+            <td>
+                <div class="action-buttons">
+                    ${actionButton}
+                    ${profileButton}
+                </div>
+            </td>
         `;
         tbody.appendChild(row);
     });

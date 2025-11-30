@@ -227,8 +227,9 @@ async function loadUpcomingEvents() {
                     ${dateDisplay}
                     <div class="event-info">
                         <h4>${event.title}</h4>
-                        <p>${event.location} • ${event.formatted_time}</p>
-                        <span class="event-tag ${event.category}">${capitalizeFirst(event.category)}</span>
+                        <p><i class="fas fa-clock"></i> ${event.formatted_time}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> ${event.location || 'TBA'}</p>
+                        <span class="event-tag ${event.category}">${capitalizeFirst(event.category).toUpperCase()}</span>
                     </div>
                 `;
                 eventsList.appendChild(eventItem);

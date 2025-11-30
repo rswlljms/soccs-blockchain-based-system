@@ -13,6 +13,7 @@ try {
     $status = isset($_GET['status']) ? $_GET['status'] : 'all';
     $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
     $dateFilter = isset($_GET['date']) ? $_GET['date'] : '';
+    $categoryFilter = isset($_GET['category']) ? $_GET['category'] : 'all';
     
     $query = "SELECT 
                 id,
@@ -34,6 +35,11 @@ try {
     if ($status !== 'all') {
         $query .= " AND status = :status";
         $params[':status'] = $status;
+    }
+    
+    if ($categoryFilter !== 'all') {
+        $query .= " AND category = :category";
+        $params[':category'] = $categoryFilter;
     }
     
     if ($searchTerm !== '') {

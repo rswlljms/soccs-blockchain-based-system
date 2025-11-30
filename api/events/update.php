@@ -4,7 +4,9 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, PUT');
 header('Access-Control-Allow-Headers: Content-Type');
 
+session_start();
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'PUT') {
     http_response_code(405);
@@ -81,6 +83,17 @@ try {
     $stmt = $conn->prepare($query);
     
     if ($stmt->execute($params)) {
+        if (isset($_SESSION['user_id'])) {
+            $getEventQuery = "SELECT title FROM events WHERE id = :id";
+            $getEventStmt = $conn->prepare($getEventQuery);
+            $getEventStmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
+            $getEventStmt->execute();
+            $event = $getEventStmt->fetch(PDO::FETCH_ASSOC);
+            $eventTitle = $event['title'] ?? 'Event #' . $data['id'];
+            
+            logEventActivity($_SESSION['user_id'], 'update', 'Updated event: ' . $eventTitle);
+        }
+        
         echo json_encode([
             'success' => true,
             'message' => 'Event updated successfully'

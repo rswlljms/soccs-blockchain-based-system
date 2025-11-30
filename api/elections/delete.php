@@ -1,6 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -41,11 +43,17 @@ try {
         exit;
     }
     
+    $electionTitle = $election['title'] ?? 'Election #' . $id;
+    
     $query = "DELETE FROM elections WHERE id = :id";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':id', $id);
     
     if ($stmt->execute()) {
+        if (isset($_SESSION['user_id'])) {
+            logElectionActivity($_SESSION['user_id'], 'delete', 'Deleted election: ' . $electionTitle . ' (ID: ' . $id . ')');
+        }
+        
         echo json_encode([
             'success' => true,
             'message' => 'Election deleted successfully'

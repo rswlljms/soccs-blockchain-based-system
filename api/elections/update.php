@@ -1,6 +1,8 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
+require_once '../../includes/activity_logger.php';
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -53,6 +55,10 @@ try {
     $stmt->bindParam(':end_date', $end_date);
     
     if ($stmt->execute()) {
+        if (isset($_SESSION['user_id'])) {
+            logElectionActivity($_SESSION['user_id'], 'update', 'Updated election: ' . $title . ' (ID: ' . $id . ')');
+        }
+        
         echo json_encode([
             'success' => true,
             'message' => 'Election updated successfully'
