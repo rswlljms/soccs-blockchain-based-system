@@ -33,13 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['student'] = [
                     'id' => $student['id'],
                     'firstName' => $student['first_name'],
-                    'middleName' => $student['middle_name'],
+                    'middleName' => $student['middle_name'] ?? '',
                     'lastName' => $student['last_name'],
                     'email' => $student['email'],
                     'yearLevel' => $student['year_level'],
                     'section' => $student['section'],
-                    'course' => $student['course'],
-                    'age' => $student['age'],
+                    'course' => $student['course'] ?? 'BSIT',
+                    'age' => $student['age'] ?? null,
                     'gender' => $student['gender']
                 ];
                 

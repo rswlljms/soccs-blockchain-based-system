@@ -2,6 +2,7 @@
 session_start();
 require_once '../includes/page_access.php';
 checkPageAccess(['view_election', 'manage_election_status']);
+require_once '../includes/auth_check.php';
 include('../components/sidebar.php');
 ?>
 <!DOCTYPE html>
@@ -21,11 +22,13 @@ include('../components/sidebar.php');
   <div class="main-content">
     <h1 class="page-title">Election Management</h1>
     
+    <?php if (hasPermission('manage_election_status')): ?>
     <div class="header-controls">
       <button class="btn-new" onclick="openElectionModal()">
         <i class="fas fa-plus"></i> New Election
       </button>
     </div>
+    <?php endif; ?>
     
     <div class="table-container">
       <table class="styled-table">

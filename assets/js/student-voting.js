@@ -406,24 +406,8 @@ function getAllPositions() {
 }
 
 function showPermanentSelectionFeedback(candidateCard) {
-    const existingFeedback = candidateCard.querySelector('.selection-feedback');
-    if (existingFeedback) existingFeedback.remove();
-    
-    const feedback = document.createElement('div');
-    feedback.className = 'selection-feedback';
-    feedback.innerHTML = '<i class="fas fa-check"></i>';
-    feedback.style.cssText = `
-        position: absolute; top: 10px; right: 10px;
-        background: #10b981; color: white;
-        width: 30px; height: 30px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 14px; z-index: 10;
-        animation: selectionPop 0.4s ease-out;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    `;
-    
-    candidateCard.style.position = 'relative';
-    candidateCard.appendChild(feedback);
+    // Disabled - CSS .check-indicator handles this now
+    // No need to create duplicate checkmark
 }
 
 function viewPlatform(candidateId, name, partylist, position, platform) {

@@ -1,5 +1,8 @@
 <?php
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 require_once '../../includes/database.php';
 
 $database = new Database();
@@ -14,8 +17,7 @@ try {
     $conn->exec($updateQuery);
     
     $query = "SELECT * FROM elections 
-              WHERE (status = 'active' AND NOW() BETWEEN start_date AND end_date) 
-                 OR (status = 'upcoming' AND start_date > NOW())
+              WHERE status IN ('active', 'upcoming')
               ORDER BY 
                 CASE 
                   WHEN status = 'active' THEN 1 
@@ -30,12 +32,12 @@ try {
     
     if ($election) {
         $statsQuery = "SELECT 
-            (SELECT COUNT(*) FROM positions WHERE election_id = :election_id) as total_positions,
-            (SELECT COUNT(*) FROM candidates WHERE election_id = :election_id) as total_candidates,
+            (SELECT COUNT(*) FROM positions) as total_positions,
+            (SELECT COUNT(*) FROM candidates) as total_candidates,
             (SELECT COUNT(*) FROM students WHERE is_active = 1) as eligible_voters";
         
         $statsStmt = $conn->prepare($statsQuery);
-        $statsStmt->execute(['election_id' => $election['id']]);
+        $statsStmt->execute();
         $stats = $statsStmt->fetch(PDO::FETCH_ASSOC);
         
         $election['stats'] = $stats;

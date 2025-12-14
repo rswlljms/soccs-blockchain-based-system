@@ -324,6 +324,18 @@
   to { transform: rotate(360deg); }
 }
 
+/* Remove focus/active outline and background */
+.btn-save-basic:focus,
+.btn-save-basic:focus-visible {
+  outline: none !important;
+  box-shadow: 0 3px 10px rgba(139, 92, 246, 0.3) !important;
+}
+
+.btn-save-basic:active:not(:disabled) {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3) !important;
+}
+
 /* Force button styling with higher specificity */
 .form-actions .btn-save-basic,
 button.btn-save-basic,

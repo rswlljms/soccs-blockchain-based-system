@@ -29,12 +29,16 @@ try{
     }
 
     $hash=password_hash($password,PASSWORD_DEFAULT);
-    // Try to update students, if not found update registrations
-    $upd=$pdo->prepare("UPDATE students SET password=? WHERE email=?");
+    // Try users first, then students, then registrations
+    $upd=$pdo->prepare("UPDATE users SET password=? WHERE email=?");
     $upd->execute([$hash,$email]);
     if($upd->rowCount()===0){
-        $upd2=$pdo->prepare("UPDATE student_registrations SET password=? WHERE email=?");
+        $upd2=$pdo->prepare("UPDATE students SET password=? WHERE email=?");
         $upd2->execute([$hash,$email]);
+        if($upd2->rowCount()===0){
+            $upd3=$pdo->prepare("UPDATE student_registrations SET password=? WHERE email=?");
+            $upd3->execute([$hash,$email]);
+        }
     }
     $pdo->prepare("DELETE FROM password_resets WHERE email=?")->execute([$email]);
     echo json_encode(['status'=>'success']);

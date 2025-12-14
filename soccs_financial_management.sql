@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2025 at 10:43 PM
+-- Generation Time: Dec 14, 2025 at 01:56 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -66,7 +66,9 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `activity_descrip
 (54, 3, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:05:38'),
 (55, 4, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:27:26'),
 (56, 6, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:28:14'),
-(57, 5, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:37:59');
+(57, 5, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:37:59'),
+(58, 3, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:49:27'),
+(59, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-09 05:15:58');
 
 -- --------------------------------------------------------
 
@@ -229,7 +231,8 @@ CREATE TABLE `password_resets` (
 --
 
 INSERT INTO `password_resets` (`email`, `otp`, `expires_at`) VALUES
-('roswelljamesvitaliz@gmail.com', '731054', '2025-11-03 17:23:51');
+('liyaaanping@gmail.com', '392488', '2025-12-09 13:24:09'),
+('roswelljamesvitaliz@gmail.com', '504565', '2025-12-09 13:23:21');
 
 -- --------------------------------------------------------
 
@@ -542,7 +545,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password`, `role`, `status`, `last_login`, `created_by`, `created_at`, `updated_at`) VALUES
-(3, 'SOCCS', 'Adviser', 'soccsadviser.test@gmail.com', '$2y$10$R731fPWbB7cv6RyNF3aU6OptcMzwaiW9bPrtsmJvpM3.jiRtim3gm', 'adviser', 'active', '2025-12-01 05:05:38', NULL, '2025-04-18 12:18:54', '2025-11-30 21:05:38'),
+(3, 'SOCCS', 'Adviser', 'soccsadviser.test@gmail.com', '$2y$10$R731fPWbB7cv6RyNF3aU6OptcMzwaiW9bPrtsmJvpM3.jiRtim3gm', 'adviser', 'active', '2025-12-09 13:15:58', NULL, '2025-04-18 12:18:54', '2025-12-09 05:15:58'),
 (4, 'SOCCS', 'Treasurer', 'treasurer.test@gmail.com', '$2y$10$4G4CH6xpxEpcF4MIPBSLf.n4b1IbulEMDRO8z9S41YbfHXhhgF4ri', 'treasurer', 'active', '2025-12-01 05:27:26', 3, '2025-11-30 10:30:17', '2025-11-30 21:27:26'),
 (5, 'CCS', 'Dean', 'dean.test@gmail.com', '$2y$10$QSqaMWLZBGpE01ohVv7Yp.pWPPOGZ7OhKLaNq6ebp64ZDonuZXyQ6', 'dean', 'active', '2025-12-01 05:37:59', 3, '2025-11-30 15:57:11', '2025-11-30 21:37:59'),
 (6, 'Event', 'Coordinator', 'event.test@gmail.com', '$2y$10$FPwqpLlHkwC4AdtZitIkIeLb3e5EpIdh4Sr6s2vP6S0rbRElnkome', 'event_coordinator', 'active', '2025-12-01 05:28:14', 3, '2025-11-30 16:00:59', '2025-11-30 21:28:14'),
@@ -857,7 +860,7 @@ ALTER TABLE `votes`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `candidates`

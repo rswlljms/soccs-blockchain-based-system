@@ -606,7 +606,7 @@
 
       <div class="register-section">
         <p>Don't have an account?</p>
-        <a href="../pages/student-registration.php" class="register-btn">
+        <a href="../pages/student-registration-step1.php" class="register-btn">
           <i class="fas fa-user-plus"></i>
           Register
         </a>

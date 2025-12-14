@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Asia/Manila');
+
 class Database {
     private $host = "localhost";
     private $username = "root";
@@ -14,6 +16,7 @@ class Database {
                 $this->password
             );
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn->exec("SET time_zone = '+08:00'");
             return $this->conn;
         } catch(PDOException $e) {
             error_log("Connection Error: " . $e->getMessage());

@@ -2,6 +2,7 @@
 session_start();
 require_once '../includes/page_access.php';
 checkPageAccess(['view_election', 'view_election_results']);
+require_once '../includes/auth_check.php';
 include('../components/sidebar.php');
 require_once '../includes/database.php';
 
@@ -96,7 +97,7 @@ if ($electionStatus !== 'no_election' && $electionId) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Election Overview - Admin</title>
+  <title>Election Overview</title>
   <link rel="stylesheet" href="../assets/css/sidebar.css">
   <link rel="stylesheet" href="../assets/css/admin-election-overview.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -118,9 +119,11 @@ if ($electionStatus !== 'no_election' && $electionId) {
         </div>
         <h2>No Election Data Available</h2>
         <p>There are currently no active or completed elections to display.</p>
+        <?php if (hasPermission('manage_election_status')): ?>
         <a href="elections.php" class="btn-create-election">
           <i class="fas fa-plus"></i> Create New Election
         </a>
+        <?php endif; ?>
       </div>
     <?php else: ?>
       <div class="election-header">

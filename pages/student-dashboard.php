@@ -1,20 +1,48 @@
 <?php
 session_start();
+require_once '../includes/database.php';
 
-// For now, we'll simulate a student session - in production this would be handled by proper authentication
-// Always set demo student to ensure consistent display during development
-$_SESSION['student'] = [
-  'id' => '0122-1141', 
-  'firstName' => 'Roswell James',
-  'middleName' => 'Democrito',
-  'lastName' => 'Vitaliz',
-  'yearLevel' => '4',
-  'section' => 'A',
-  'course' => 'BSIT',
-  'email' => 'roswelljamesvitaliz@gmail.com'
-];
+if (!isset($_SESSION['student'])) {
+    header('Location: ../templates/login.php');
+    exit;
+}
 
-$student = $_SESSION['student'];
+try {
+    $database = new Database();
+    $conn = $database->getConnection();
+    
+    $studentId = $_SESSION['student']['id'];
+    
+    $query = "SELECT * FROM students WHERE id = ? AND is_active = 1";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$studentId]);
+    $studentData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$studentData) {
+        session_destroy();
+        header('Location: ../templates/login.php');
+        exit;
+    }
+    
+    $student = [
+        'id' => $studentData['id'],
+        'firstName' => $studentData['first_name'],
+        'middleName' => $studentData['middle_name'] ?? '',
+        'lastName' => $studentData['last_name'],
+        'email' => $studentData['email'],
+        'yearLevel' => $studentData['year_level'],
+        'section' => $studentData['section'],
+        'course' => $studentData['course'] ?? 'BSIT',
+        'profileImage' => $studentData['profile_image'] ?? null
+    ];
+    
+    $_SESSION['student'] = array_merge($_SESSION['student'], $student);
+    
+} catch (Exception $e) {
+    error_log('Dashboard load error: ' . $e->getMessage());
+    $student = $_SESSION['student'];
+    $student['profileImage'] = null;
+}
 ?>
 
 <?php include('../components/student-sidebar.php'); ?>
@@ -56,7 +84,11 @@ $student = $_SESSION['student'];
       <div class="profile-overview">
         <div class="profile-card">
           <div class="profile-avatar">
-            <i class="fas fa-user-graduate"></i>
+            <?php if (!empty($student['profileImage']) && file_exists('../' . $student['profileImage'])): ?>
+              <img src="../<?= htmlspecialchars($student['profileImage']) ?>" alt="Profile" class="profile-avatar-image">
+            <?php else: ?>
+              <i class="fas fa-user-graduate"></i>
+            <?php endif; ?>
           </div>
           <div class="profile-info">
             <h3><?= htmlspecialchars($student['firstName'] . ' ' . $student['middleName'] . ' ' . $student['lastName']) ?></h3>

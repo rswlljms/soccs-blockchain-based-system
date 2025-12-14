@@ -3,6 +3,15 @@ session_start();
 header('Content-Type: application/json');
 require_once '../../includes/database.php';
 require_once '../../includes/activity_logger.php';
+require_once '../../includes/auth_check.php';
+
+if (!hasPermission('manage_election_status')) {
+    echo json_encode([
+        'success' => false,
+        'error' => 'Access denied. You do not have permission to update elections.'
+    ]);
+    exit;
+}
 
 $database = new Database();
 $conn = $database->getConnection();

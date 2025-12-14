@@ -1,7 +1,7 @@
 /* Student Results Page Styles */
 :root {
-  --results-primary: #4a90e2;
-  --results-secondary: #5ba7f7;
+  --results-primary: #4B0082;
+  --results-secondary: #6a1ba3;
   --winner-color: #10b981;
   --winner-bg: #f0f9ff;
   --results-bg: linear-gradient(135deg, #f7f8fc 0%, #eef1f7 100%);

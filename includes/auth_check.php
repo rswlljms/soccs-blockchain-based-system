@@ -75,6 +75,10 @@ function getCurrentUserRole() {
     return $_SESSION['user_role'] ?? null;
 }
 
+function isComelec() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'comelec';
+}
+
 function refreshUserPermissions() {
     if (isset($_SESSION['user_id'])) {
         $_SESSION['user_permissions'] = getUserPermissions($_SESSION['user_id']);

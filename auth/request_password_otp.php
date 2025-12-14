@@ -18,9 +18,9 @@ try{
     $db=new Database();
     $pdo=$db->getConnection();
 
-    // verify email exists in registrations or students
-    $stmt=$pdo->prepare("SELECT email FROM students WHERE email=? UNION SELECT email FROM student_registrations WHERE email=? LIMIT 1");
-    $stmt->execute([$email,$email]);
+    // verify email exists in users, students, or registrations
+    $stmt=$pdo->prepare("SELECT email FROM users WHERE email=? UNION SELECT email FROM students WHERE email=? UNION SELECT email FROM student_registrations WHERE email=? LIMIT 1");
+    $stmt->execute([$email,$email,$email]);
     if(!$stmt->fetch()){ echo json_encode(['status'=>'error','message'=>'Email not found']); exit; }
 
     $otp=random_int(100000,999999);

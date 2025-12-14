@@ -1,0 +1,21 @@
+# Temporary Upload Storage
+
+This directory stores temporarily uploaded documents during the registration process.
+
+## Purpose
+Files uploaded in Step 1 of registration are stored here temporarily before being moved to permanent storage in Step 2.
+
+## Cleanup
+Files older than 2 hours are automatically deleted by the cleanup script.
+
+## Manual Cleanup
+```bash
+php ../../includes/cleanup_temp_uploads.php
+```
+
+## File Naming
+- Student ID: `temp_{uniqid}_studentid.{ext}`
+- COR: `temp_{uniqid}_cor.{ext}`
+
+## Security
+Do NOT delete this directory. Empty directory is kept for Git tracking.

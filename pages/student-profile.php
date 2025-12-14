@@ -1,19 +1,50 @@
 <?php
 session_start();
+require_once '../includes/database.php';
 
-// For now, we'll simulate a student session - in production this would be handled by proper authentication
-$_SESSION['student'] = [
-  'id' => '0122-1141', 
-  'firstName' => 'Roswell James',
-  'middleName' => 'Democrito',
-  'lastName' => 'Vitaliz',
-  'yearLevel' => '4',
-  'section' => 'A',
-  'course' => 'BSIT',
-  'email' => 'roswelljamesvitaliz@gmail.com'
-];
+if (!isset($_SESSION['student'])) {
+    header('Location: ../templates/login.php');
+    exit;
+}
 
-$student = $_SESSION['student'];
+try {
+    $database = new Database();
+    $conn = $database->getConnection();
+    
+    $studentId = $_SESSION['student']['id'];
+    
+    $query = "SELECT * FROM students WHERE id = ? AND is_active = 1";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$studentId]);
+    $studentData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$studentData) {
+        session_destroy();
+        header('Location: ../templates/login.php');
+        exit;
+    }
+    
+    $student = [
+        'id' => $studentData['id'],
+        'firstName' => $studentData['first_name'],
+        'middleName' => $studentData['middle_name'] ?? '',
+        'lastName' => $studentData['last_name'],
+        'email' => $studentData['email'],
+        'yearLevel' => $studentData['year_level'],
+        'section' => $studentData['section'],
+        'course' => $studentData['course'] ?? 'BSIT',
+        'dateOfBirth' => $studentData['date_of_birth'] ?? '',
+        'phoneNumber' => $studentData['phone_number'] ?? '',
+        'address' => $studentData['address'] ?? '',
+        'profileImage' => $studentData['profile_image'] ?? null
+    ];
+    
+    $_SESSION['student'] = array_merge($_SESSION['student'], $student);
+    
+} catch (Exception $e) {
+    error_log('Profile load error: ' . $e->getMessage());
+    $student = $_SESSION['student'];
+}
 ?>
 
 <?php include('../components/student-sidebar.php'); ?>
@@ -57,7 +88,7 @@ $student = $_SESSION['student'];
         <div class="profile-summary-content">
           <div class="profile-image-section">
             <div class="profile-image-container">
-              <img src="../assets/img/logo.png" alt="Profile Image" class="profile-image" id="profileImage">
+              <img src="<?= !empty($student['profileImage']) ? '../' . htmlspecialchars($student['profileImage']) : '../assets/img/logo.png' ?>" alt="Profile Image" class="profile-image" id="profileImage">
               <button class="profile-image-upload" id="profileImageUpload">
                 <i class="fas fa-camera"></i>
               </button>
@@ -71,15 +102,18 @@ $student = $_SESSION['student'];
             <div class="student-info-grid">
               <div class="info-item">
                 <i class="fas fa-calendar"></i>
-                <span>Date of Birth: 02/21/2001</span>
+                <span>Date of Birth: <?= !empty($student['dateOfBirth']) ? date('m/d/Y', strtotime($student['dateOfBirth'])) : 'N/A' ?></span>
               </div>
               <div class="info-item">
                 <i class="fas fa-graduation-cap"></i>
-                <span>Course: Bachelor of Science in Information Technology</span>
+                <span>Course: <?php 
+                  $courseMap = ['BSIT' => 'Bachelor of Science in Information Technology', 'BSCS' => 'Bachelor of Science in Computer Science'];
+                  echo htmlspecialchars($courseMap[$student['course']] ?? $student['course']);
+                ?></span>
               </div>
               <div class="info-item">
                 <i class="fas fa-phone"></i>
-                <span>Phone: 09212729043</span>
+                <span>Phone: <?= !empty($student['phoneNumber']) ? htmlspecialchars($student['phoneNumber']) : 'N/A' ?></span>
               </div>
               <div class="info-item">
                 <i class="fas fa-envelope"></i>
@@ -87,7 +121,7 @@ $student = $_SESSION['student'];
               </div>
               <div class="info-item">
                 <i class="fas fa-home"></i>
-                <span>Address: Narra Layugan Pagsanjan, Laguna 4008</span>
+                <span>Address: <?= !empty($student['address']) ? htmlspecialchars($student['address']) : 'N/A' ?></span>
               </div>
             </div>
           </div>
@@ -121,11 +155,11 @@ $student = $_SESSION['student'];
               <div class="form-row">
                 <div class="form-group">
                   <label for="dateOfBirth">Date of Birth <span class="required">*</span></label>
-                  <input type="date" id="dateOfBirth" name="dateOfBirth" value="2001-02-21" required>
+                  <input type="date" id="dateOfBirth" name="dateOfBirth" value="<?= htmlspecialchars($student['dateOfBirth']) ?>" required>
                 </div>
                 <div class="form-group">
-                  <label for="phone">Phone Number <span class="required">*</span></label>
-                  <input type="tel" id="phone" name="phone" value="09212729043" required>
+                  <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                  <input type="tel" id="phoneNumber" name="phoneNumber" value="<?= htmlspecialchars($student['phoneNumber']) ?>" required>
                 </div>
                 <div class="form-group">
                   <label for="email">Email Address <span class="required">*</span></label>
@@ -136,7 +170,7 @@ $student = $_SESSION['student'];
               <div class="form-row">
                 <div class="form-group full-width">
                   <label for="address">Address <span class="required">*</span></label>
-                  <textarea id="address" name="address" rows="3" required>Narra Layugan Pagsanjan, Laguna 4008</textarea>
+                  <textarea id="address" name="address" rows="3" required><?= htmlspecialchars($student['address']) ?></textarea>
                 </div>
               </div>
               
@@ -211,7 +245,7 @@ $student = $_SESSION['student'];
       document.getElementById('profileImageFile').click();
     });
 
-    document.getElementById('profileImageFile').addEventListener('change', function(e) {
+    document.getElementById('profileImageFile').addEventListener('change', async function(e) {
       const file = e.target.files[0];
       if (file) {
         if (file.type.startsWith('image/')) {
@@ -221,6 +255,25 @@ $student = $_SESSION['student'];
             profileImage.src = e.target.result;
           };
           reader.readAsDataURL(file);
+          
+          const formData = new FormData();
+          formData.append('profileImage', file);
+          
+          try {
+            const response = await fetch('../api/upload_student_profile_image.php', {
+              method: 'POST',
+              body: formData
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+              console.log('Profile image uploaded successfully');
+            } else {
+              console.error('Upload failed:', result.message);
+            }
+          } catch (error) {
+            console.error('Upload error:', error);
+          }
         } else {
           alert('Please select a valid image file.');
         }
@@ -228,46 +281,78 @@ $student = $_SESSION['student'];
     });
 
     // Basic Details Form
-    document.getElementById('basicDetailsForm').addEventListener('submit', function(e) {
+    document.getElementById('basicDetailsForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const submitBtn = document.querySelector('.btn-save-basic');
       const originalText = submitBtn.innerHTML;
+      const form = this;
       
-      // Add loading state
       submitBtn.classList.add('loading');
-      submitBtn.innerHTML = '<i class="fas fa-spinner"></i> Saving...';
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
       submitBtn.disabled = true;
       
-      // Simulate API call delay
-      setTimeout(() => {
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData);
+      try {
+        const formData = new FormData(form);
         
-        // Update profile summary with new data
-        document.querySelector('.student-name').textContent = 
-          data.firstName + ' ' + (data.middleName || '') + ' ' + data.lastName;
+        console.log('Sending update request...');
         
-        // Update other fields in the summary
-        const infoItems = document.querySelectorAll('.info-item');
-        infoItems[1].querySelector('span').textContent = 'Date of Birth: ' + data.dateOfBirth;
-        infoItems[3].querySelector('span').textContent = 'Phone: ' + data.phone;
-        infoItems[4].querySelector('span').textContent = 'Email: ' + data.email;
-        infoItems[5].querySelector('span').textContent = 'Address: ' + data.address;
+        const response = await fetch('../api/update_student_profile.php', {
+          method: 'POST',
+          body: formData
+        });
         
-        // Success animation
-        submitBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-        submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+        console.log('Response status:', response.status);
         
-        // Reset after 2 seconds
-        setTimeout(() => {
-          submitBtn.classList.remove('loading');
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
-          submitBtn.style.background = '';
-        }, 2000);
+        if (!response.ok) {
+          throw new Error('Network response was not ok: ' + response.status);
+        }
         
-      }, 1500);
+        const text = await response.text();
+        console.log('Response text:', text);
+        
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError);
+          throw new Error('Invalid JSON response');
+        }
+        
+        console.log('Parsed result:', result);
+        
+        if (result.success) {
+          const data = result.data;
+          
+          document.querySelector('.student-name').textContent = 
+            data.firstName + ' ' + (data.middleName ? data.middleName + ' ' : '') + data.lastName;
+          
+          const infoItems = document.querySelectorAll('.info-item span');
+          if (infoItems[0]) infoItems[0].textContent = 'Date of Birth: ' + (data.dateOfBirth ? new Date(data.dateOfBirth).toLocaleDateString('en-US') : 'N/A');
+          if (infoItems[2]) infoItems[2].textContent = 'Phone: ' + (data.phoneNumber || 'N/A');
+          if (infoItems[3]) infoItems[3].textContent = 'Email: ' + data.email;
+          if (infoItems[4]) infoItems[4].textContent = 'Address: ' + (data.address || 'N/A');
+          
+          submitBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+          submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+          
+          setTimeout(() => {
+            submitBtn.classList.remove('loading');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            submitBtn.style.background = '';
+          }, 2000);
+        } else {
+          throw new Error(result.message || 'Failed to update profile');
+        }
+      } catch (error) {
+        console.error('Update error:', error);
+        alert('Error: ' + error.message);
+        submitBtn.classList.remove('loading');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        submitBtn.style.background = '';
+      }
     });
 
     // Academic Details Form

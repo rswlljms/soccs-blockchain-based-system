@@ -182,6 +182,16 @@ $student = $_SESSION['student'];
       padding: 0.5rem;
       border-radius: 4px;
       border: 1px solid #e5e7eb;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .blockchain-hash-value:hover {
+      color: #667eea;
+      border-color: #667eea;
+      background: #f0f4ff;
     }
 
     .no-results {
@@ -269,7 +279,7 @@ $student = $_SESSION['student'];
     <div class="dashboard-wrapper">
       <div class="transparency-header">
         <h1><i class="fas fa-shield-alt"></i> Financial Transparency </h1>
-        <p>All SOCCS Organization financial transactions are recorded and verified on the blockchain</p>
+        <p>All SOCCS financial transactions are recorded and verified on the blockchain</p>
         <div class="blockchain-verified-badge">
           <i class="fas fa-check-circle"></i>
           <span>Blockchain Verified</span>
@@ -367,7 +377,9 @@ $student = $_SESSION['student'];
                 <i class="fas fa-shield-alt"></i>
                 Transaction Hash
               </div>
-              <div class="blockchain-hash-value">${expense.transaction_hash}</div>
+              <a href="https://sepolia.etherscan.io/tx/${expense.transaction_hash}" target="_blank" rel="noopener noreferrer" class="blockchain-hash-value">
+                ${expense.transaction_hash}
+              </a>
             </div>
             ` : ''}
           `;

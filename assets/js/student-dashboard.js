@@ -66,20 +66,26 @@ async function loadActiveElection() {
             const now = new Date();
             const startDate = new Date(election.start_date);
             const endDate = new Date(election.end_date);
-            const isUpcoming = election.status === 'upcoming' || now < startDate;
             
-            if (isUpcoming) {
-                statusBadge.className = 'election-status upcoming';
-                statusText.textContent = 'Election Not Started';
-            } else {
+            const isActive = election.status === 'active';
+            const isUpcoming = election.status === 'upcoming' || (!isActive && now < startDate);
+            const hasEnded = now > endDate;
+            
+            if (isActive && !hasEnded) {
                 statusBadge.className = 'election-status live';
                 statusText.textContent = 'Election Live';
+            } else if (isUpcoming) {
+                statusBadge.className = 'election-status upcoming';
+                statusText.textContent = 'Election Not Started';
+            } else if (hasEnded) {
+                statusBadge.className = 'election-status no-active';
+                statusText.textContent = 'Election Ended';
             }
             
             let contentHTML = `
                 <div class="election-info">
                     <h4>${election.title}</h4>
-                    <p class="election-date"><i class="fas fa-calendar"></i> ${formatElectionDate(isUpcoming ? election.start_date : election.end_date)}</p>
+                    <p class="election-date"><i class="fas fa-calendar"></i> ${formatElectionDate(isActive && !hasEnded ? election.end_date : election.start_date)}</p>
                     <p class="time-remaining">
                         <i class="fas fa-clock"></i> 
                         <span id="countdown">Calculating...</span>
@@ -102,17 +108,7 @@ async function loadActiveElection() {
                 </div>
             `;
             
-            if (isUpcoming) {
-                contentHTML += `
-                    <div class="voting-actions">
-                        <button class="btn-vote" disabled style="opacity: 0.6; cursor: not-allowed;">
-                            <i class="fas fa-clock"></i>
-                            Voting Not Available Yet
-                        </button>
-                    </div>
-                `;
-                initializeCountdown(startDate, true);
-            } else {
+            if (isActive && !hasEnded) {
                 contentHTML += `
                     <div class="voting-actions">
                         <button class="btn-vote" onclick="goToVoting()">
@@ -121,10 +117,33 @@ async function loadActiveElection() {
                         </button>
                     </div>
                 `;
-                initializeCountdown(endDate, false);
+            } else if (isUpcoming) {
+                contentHTML += `
+                    <div class="voting-actions">
+                        <button class="btn-vote" disabled style="opacity: 0.6; cursor: not-allowed;">
+                            <i class="fas fa-clock"></i>
+                            Voting Not Available Yet
+                        </button>
+                    </div>
+                `;
+            } else if (hasEnded) {
+                contentHTML += `
+                    <div class="voting-actions">
+                        <button class="btn-vote" disabled style="opacity: 0.6; cursor: not-allowed;">
+                            <i class="fas fa-check-circle"></i>
+                            Election Has Ended
+                        </button>
+                    </div>
+                `;
             }
             
             electionContent.innerHTML = contentHTML;
+            
+            if (isActive && !hasEnded) {
+                initializeCountdown(endDate, false);
+            } else if (isUpcoming) {
+                initializeCountdown(startDate, true);
+            }
             
         } else {
             statusBadge.className = 'election-status no-active';

@@ -782,61 +782,144 @@ include('../components/sidebar.php');
                         const fileExt = reg.cor_file.split('.').pop().toLowerCase();
                         if (fileExt === 'pdf') {
                             corDisplay = `
-                                <div style="margin-top: 1rem;">
-                                    <strong>Certificate of Registration (COR):</strong><br>
-                                    <embed src="../${reg.cor_file}" type="application/pdf" width="100%" height="500px" style="border-radius: 8px; margin-top: 0.5rem;">
-                                    <br>
-                                    <a href="../${reg.cor_file}" target="_blank" class="btn btn-view" style="margin-top: 0.5rem;">
+                                <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-file-pdf" style="color: white; font-size: 18px;"></i>
+                                        </div>
+                                        <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Certificate of Registration (COR)</h4>
+                                    </div>
+                                    <div style="border-radius: 10px; overflow: hidden; border: 2px solid #e5e7eb;">
+                                        <embed src="../${reg.cor_file}" type="application/pdf" width="100%" height="500px" style="display: block;">
+                                    </div>
+                                    <a href="../${reg.cor_file}" target="_blank" class="btn btn-view" style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #4B0082, #9933ff); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.3s ease;">
                                         <i class="fas fa-external-link-alt"></i> Open in New Tab
                                     </a>
-            </div>
+                                </div>
                             `;
                         } else {
                             corDisplay = `
-                                <div style="margin-top: 1rem;">
-                                    <strong>Certificate of Registration (COR):</strong><br>
-                                    <img src="../${reg.cor_file}" style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 0.5rem;" alt="COR">
-        </div>
+                                <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-file-alt" style="color: white; font-size: 18px;"></i>
+                                        </div>
+                                        <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Certificate of Registration (COR)</h4>
+                                    </div>
+                                    <div style="position: relative; border-radius: 10px; overflow: hidden; border: 2px solid #e5e7eb; cursor: pointer; transition: all 0.3s ease;" 
+                                         onclick="window.open('../${reg.cor_file}', '_blank')" 
+                                         onmouseover="this.style.borderColor='#9933ff'; this.style.boxShadow='0 4px 12px rgba(153, 51, 255, 0.2)'" 
+                                         onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
+                                        <img src="../${reg.cor_file}" style="width: 100%; height: auto; display: block;" alt="COR">
+                                        <div style="position: absolute; top: 10px; right: 10px; background: rgba(75, 0, 130, 0.9); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>Click to enlarge</span>
+                                        </div>
+                                    </div>
+                                </div>
                             `;
                         }
                     }
                     
                     const content = `
-                        <div style="display: grid; gap: 1rem;">
-                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px;">
-                                <h4 style="margin: 0 0 0.5rem 0; color: #2c3e50;">Personal Information</h4>
-                                <div><strong>Student ID:</strong> ${reg.id}</div>
-                                <div><strong>Name:</strong> ${reg.first_name} ${reg.middle_name} ${reg.last_name}</div>
-                                <div><strong>Email:</strong> ${reg.email}</div>
-                                <div><strong>Age:</strong> ${reg.age}</div>
-                                <div><strong>Gender:</strong> ${reg.gender}</div>
-    </div>
+                        <div style="display: grid; gap: 1.5rem;">
+                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-user" style="color: white; font-size: 18px;"></i>
+                                    </div>
+                                    <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Personal Information</h4>
+                                </div>
+                                <div style="display: grid; gap: 1rem; padding-left: 0.5rem;">
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Student ID:</span>
+                                        <span style="color: #1f2937; font-weight: 600; font-size: 15px;">${reg.id}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Name:</span>
+                                        <span style="color: #1f2937; font-weight: 600; font-size: 15px;">${reg.first_name} ${reg.middle_name} ${reg.last_name}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Email:</span>
+                                        <span style="color: #1f2937; font-size: 14px;">${reg.email}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Gender:</span>
+                                        <span style="color: #1f2937; font-size: 14px; text-transform: capitalize;">${reg.gender}</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px;">
-                                <h4 style="margin: 0 0 0.5rem 0; color: #2c3e50;">Academic Information</h4>
-                                <div><strong>Course:</strong> ${reg.course}</div>
-                                <div><strong>Year Level:</strong> ${reg.year_level}</div>
-                                <div><strong>Section:</strong> ${reg.section}</div>
-            </div>
+                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-graduation-cap" style="color: white; font-size: 18px;"></i>
+                                    </div>
+                                    <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Academic Information</h4>
+                                </div>
+                                <div style="display: grid; gap: 1rem; padding-left: 0.5rem;">
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Course:</span>
+                                        <span style="color: #1f2937; font-weight: 600; font-size: 15px;">${reg.course}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Year Level:</span>
+                                        <span style="color: #1f2937; font-size: 14px;">${reg.year_level}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Section:</span>
+                                        <span style="color: #1f2937; font-size: 14px;">${reg.section}</span>
+                                    </div>
+                                </div>
+                            </div>
                             
-                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px;">
-                                <h4 style="margin: 0 0 0.5rem 0; color: #2c3e50;">Registration Status</h4>
-                                <div><strong>Status:</strong> <span class="status-badge status-${reg.approval_status}">${reg.approval_status}</span></div>
-                                <div><strong>Registered:</strong> ${new Date(reg.created_at).toLocaleString()}</div>
-                                ${reg.rejection_reason ? `<div><strong>Rejection Reason:</strong> ${reg.rejection_reason}</div>` : ''}
-    </div>
+                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-info-circle" style="color: white; font-size: 18px;"></i>
+                                    </div>
+                                    <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Registration Status</h4>
+                                </div>
+                                <div style="display: grid; gap: 1rem; padding-left: 0.5rem;">
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Status:</span>
+                                        <span class="status-badge status-${reg.approval_status}">${reg.approval_status}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Registered:</span>
+                                        <span style="color: #1f2937; font-size: 14px;">${new Date(reg.created_at).toLocaleString()}</span>
+                                    </div>
+                                    ${reg.rejection_reason ? `
+                                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                        <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Reason:</span>
+                                        <span style="color: #ef4444; font-size: 14px;">${reg.rejection_reason}</span>
+                                    </div>` : ''}
+                                </div>
+                            </div>
 
-                            <div style="margin-top: 1rem;">
-                                <strong>Student ID Image:</strong><br>
-                                <img src="../${reg.student_id_image}" 
+                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-id-card" style="color: white; font-size: 18px;"></i>
+                                    </div>
+                                    <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Student ID Image</h4>
+                                </div>
+                                <div style="position: relative; border-radius: 10px; overflow: hidden; border: 2px solid #e5e7eb; cursor: pointer; transition: all 0.3s ease;" 
                                      onclick="window.open('../${reg.student_id_image}', '_blank')" 
-                                     style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 0.5rem; cursor: pointer;" 
-                                     alt="Student ID" 
-                                     title="Click to view full size">
-    </div>
+                                     onmouseover="this.style.borderColor='#9933ff'; this.style.boxShadow='0 4px 12px rgba(153, 51, 255, 0.2)'" 
+                                     onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
+                                    <img src="../${reg.student_id_image}" 
+                                         style="width: 100%; height: auto; display: block;" 
+                                         alt="Student ID">
+                                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(75, 0, 130, 0.9); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        <span>Click to enlarge</span>
+                                    </div>
+                                </div>
+                            </div>
 
                             ${corDisplay}
-    </div>
+                        </div>
                     `;
                     
                     document.getElementById('viewContent').innerHTML = content;

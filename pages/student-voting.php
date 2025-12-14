@@ -299,13 +299,15 @@ if ($hasActiveElection) {
         </style>
         
         <?php else: ?>
-      <!-- Election Title -->
-      <div class="election-title">
-        <h2><?= htmlspecialchars($activeElection['title']) ?></h2>
-        <p style="color: #6b7280; font-size: 14px; margin-top: 8px;">
-          <i class="fas fa-calendar"></i> 
-          Ends: <?= date('F d, Y g:i A', strtotime($activeElection['end_date'])) ?>
-        </p>
+      <!-- Election Header -->
+      <div class="election-header-container">
+        <div class="election-header-content">
+          <h2 class="election-title-main"><?= htmlspecialchars($activeElection['title']) ?></h2>
+          <p class="election-date">
+            <i class="fas fa-calendar"></i> 
+            Ends: <?= date('F d, Y g:i A', strtotime($activeElection['end_date'])) ?>
+          </p>
+        </div>
       </div>
 
       <!-- Voting Form Container -->
@@ -331,6 +333,7 @@ if ($hasActiveElection) {
             <div class="candidates-grid">
               <?php foreach ($positionCandidates as $candidate): ?>
               <div class="candidate-card">
+                <div class="check-indicator">✓</div>
                 <div class="candidate-radio">
                   <input type="<?= $inputType ?>" 
                          id="candidate_<?= $candidate['id'] ?>" 

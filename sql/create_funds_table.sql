@@ -18,3 +18,9 @@ INSERT INTO `funds` (`source`, `amount`, `description`, `date_received`) VALUES
 ('Manual Entry', 5000.00, 'Sponsor Contribution', '2025-04-23');
 
 
+
+
+
+
+
+
