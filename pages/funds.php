@@ -273,6 +273,7 @@ include '../components/sidebar.php';
     }
   });
 </script>
+<script src="../assets/js/config.js"></script>
 <script src="../assets/js/funds.js"></script>
 </body>
 </html>

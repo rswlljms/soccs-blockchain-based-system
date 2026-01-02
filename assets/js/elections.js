@@ -494,8 +494,24 @@ document.getElementById('electionForm').addEventListener('submit', async functio
     end_date: formData.get('end_date')
   };
 
+  if (!data.start_date || !data.end_date) {
+    showNotification('error', 'Missing Required Fields', 'Please fill in both start date and end date.');
+    return;
+  }
+
   const startDate = new Date(data.start_date);
   const endDate = new Date(data.end_date);
+  const now = new Date();
+  
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    showNotification('error', 'Invalid Date Format', 'Please enter valid dates for start and end dates.');
+    return;
+  }
+  
+  if (startDate < now) {
+    showNotification('error', 'Invalid Start Date', 'The election start date cannot be in the past. Please select a current or future date.');
+    return;
+  }
   
   if (endDate <= startDate) {
     showNotification('error', 'Invalid Dates', 'End date must be after start date.');

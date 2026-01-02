@@ -267,7 +267,10 @@ label .required {
 
 input[type="text"],
 input[type="email"],
-input[type="number"] {
+input[type="number"],
+input[type="date"],
+input[type="tel"],
+textarea {
     width: 100%;
     padding: 0.625rem 0.75rem;
     font-size: 0.875rem;
@@ -276,6 +279,12 @@ input[type="number"] {
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
 input[readonly] {
@@ -283,14 +292,16 @@ input[readonly] {
     cursor: not-allowed;
 }
 
-input:focus {
+input:focus,
+textarea:focus {
     outline: none;
     background-color: white;
     border-color: #9333ea;
     box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
 }
 
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
     color: #9ca3af;
 }
 
@@ -489,6 +500,10 @@ select option {
     color: #ef4444;
 }
 
+.modal-icon.warning {
+    color: #f59e0b;
+}
+
 @keyframes scaleIn {
     0% { transform: scale(0); }
     50% { transform: scale(1.1); }
@@ -524,6 +539,28 @@ select option {
 .modal-btn:hover {
     box-shadow: 0 8px 20px rgba(147, 51, 234, 0.3);
     transform: translateY(-2px);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.modal-btn-cancel {
+    background: #6b7280;
+    color: white;
+}
+
+.modal-btn-cancel:hover {
+    background: #4b5563;
+    box-shadow: 0 8px 20px rgba(107, 114, 128, 0.3);
+}
+
+.modal-btn-primary {
+    background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+    color: white;
 }
 
 @keyframes spin {

@@ -2,7 +2,8 @@
   const state = {
     students: [],
     page: 1,
-    perPage: 10
+    perPage: 10,
+    currentUser: null
   };
 
   function formatCurrency(amount) {
@@ -17,6 +18,19 @@
       section: document.getElementById('section').value.trim(),
       status: document.getElementById('status').value
     };
+  }
+
+  async function loadCurrentUser() {
+    try {
+      const response = await fetch('../api/get_current_user.php');
+      if (!response.ok) throw new Error('Failed to load user');
+      const result = await response.json();
+      if (result.success && result.user) {
+        state.currentUser = result.user;
+      }
+    } catch (err) {
+      console.error('Failed to load current user:', err);
+    }
   }
 
   async function loadStudents() {
@@ -85,7 +99,10 @@
           <span class="status-badge ${status === 'paid' ? 'status-paid' : 'status-unpaid'}">${status.toUpperCase()}</span>
         </td>
         <td>
-          ${student.receipt_file ? `<a class="receipt-link" href="../uploads/membership-receipts/${student.receipt_file}" target="_blank">View</a>` : '<span style="color:#6b7280">None</span>'}
+          ${student.membership_control_number ? `<strong>${student.membership_control_number}</strong>` : '<span style="color:#6b7280">-</span>'}
+        </td>
+        <td>
+          ${status === 'paid' && student.membership_control_number ? `<button class="btn-print-receipt" data-student-id="${student.id}"><i class="fas fa-print"></i> Print</button>` : '<span style="color:#6b7280">-</span>'}
         </td>
         <td>
           <div class="actions">
@@ -137,22 +154,28 @@
 
     // Mark unpaid handlers
     document.querySelectorAll('.mark-unpaid').forEach(btn => {
-      btn.addEventListener('click', async () => {
+      btn.addEventListener('click', () => {
         const studentId = btn.getAttribute('data-student-id');
         if (!studentId) return;
-        if (!confirm('Mark this student as unpaid?')) return;
-        try {
-          const res = await fetch('../api/toggle_membership_status.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ student_id: studentId, action: 'set_unpaid' })
-          });
-          const result = await res.json();
-          if (!res.ok || !result.success) throw new Error(result.error || 'Update failed');
-          await loadStudents();
-        } catch (err) {
-          alert(err.message || 'Failed to update status');
-        }
+        
+        // Find student data
+        const student = state.students.find(s => s.id == studentId);
+        if (!student) return;
+        
+        openConfirmUnpaidModal(studentId, student);
+      });
+    });
+
+    // Print receipt handlers
+    document.querySelectorAll('.btn-print-receipt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const studentId = btn.getAttribute('data-student-id');
+        if (!studentId) return;
+        
+        const student = state.students.find(s => s.id == studentId);
+        if (!student) return;
+        
+        printStudentReceipt(student);
       });
     });
 
@@ -180,6 +203,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     bindFilters();
+    loadCurrentUser();
     loadStudents().catch(err => alert(err.message || 'Failed to load data'));
     
   });
@@ -187,7 +211,7 @@
   // Modal management functions
   let currentStudentId = null;
 
-  function openMarkPaidModal(studentId, studentName = '') {
+  async function openMarkPaidModal(studentId, studentName = '') {
     currentStudentId = studentId;
     const modal = document.getElementById('markPaidModal');
     const overlay = document.getElementById('markPaidModalOverlay');
@@ -198,19 +222,28 @@
     if (modal && overlay) {
       document.getElementById('modalStudentName').value = studentName || '';
       document.getElementById('modalPaymentDate').value = new Date().toISOString().split('T')[0];
-      document.getElementById('modalAmountPaid').value = '';
+      document.getElementById('modalAmountPaid').value = '250.00';
       
-      // Generate receipt preview when amount or date changes
-      const amountInput = document.getElementById('modalAmountPaid');
+      // Fetch next control number
+      try {
+        const res = await fetch('../api/get_next_control_number.php');
+        const result = await res.json();
+        if (result.success && result.next_control_number) {
+          if (student) {
+            student.membership_control_number = result.next_control_number;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch control number:', err);
+      }
+      
+      // Generate receipt preview when date changes
       const dateInput = document.getElementById('modalPaymentDate');
       
-      // Remove existing listeners by cloning and replacing
-      const newAmountInput = amountInput.cloneNode(true);
+      // Remove existing listener by cloning and replacing
       const newDateInput = dateInput.cloneNode(true);
-      amountInput.parentNode.replaceChild(newAmountInput, amountInput);
       dateInput.parentNode.replaceChild(newDateInput, dateInput);
       
-      newAmountInput.addEventListener('input', () => generateReceiptPreview(student));
       newDateInput.addEventListener('change', () => generateReceiptPreview(student));
       
       // Initial receipt preview
@@ -249,10 +282,8 @@
       hour12: true 
     }).toUpperCase();
     
-    // Generate receipt number (random hex)
-    const receiptNo = Array.from(crypto.getRandomValues(new Uint8Array(8)))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('').toUpperCase();
+    // Get control number (will be assigned when payment is confirmed)
+    const controlNumber = student.membership_control_number || 'PENDING';
     
     // Convert amount to words
     const amountInWords = convertNumberToWords(amount);
@@ -268,13 +299,13 @@
         </div>
         
         <div class="receipt-divider"></div>
-        <div class="receipt-title">OFFICIAL RECEIPT</div>
+        <div class="receipt-title">SYSTEM RECEIPT</div>
         <div class="receipt-divider"></div>
         
         <div class="receipt-details">
           <div class="receipt-detail-row">
-            <span class="receipt-detail-label">NO.:</span>
-            <span class="receipt-detail-value">${receiptNo}</span>
+            <span class="receipt-detail-label">CONTROL NO.:</span>
+            <span class="receipt-detail-value">${controlNumber}</span>
           </div>
           <div class="receipt-detail-row">
             <span class="receipt-detail-label">DATE:</span>
@@ -320,7 +351,7 @@
         <div class="receipt-divider"></div>
         
         <div class="receipt-received-by">
-          <div class="receipt-received-by-label">RECEIVED BY: [ADMIN NAME]</div>
+          <div class="receipt-received-by-label">RECEIVED BY: ${state.currentUser?.full_name || state.currentUser?.email || 'ADMIN'}</div>
           <div class="receipt-system-message">This is a system-generated receipt. Thank you for your payment.</div>
         </div>
         <div class="receipt-divider"></div>
@@ -642,7 +673,7 @@
     const paymentDate = document.getElementById('modalPaymentDate').value;
 
     if (!amount || !paymentDate || parseFloat(amount) <= 0) {
-      alert('Please enter a valid amount and payment date');
+      showValidationErrorModal();
       return;
     }
 
@@ -652,23 +683,29 @@
       formData.append('amount', amount);
       formData.append('payment_date', paymentDate);
 
-      // TODO: Replace with actual API endpoint
-      // const res = await fetch('../api/mark_membership_paid.php', {
-      //   method: 'POST',
-      //   body: formData
-      // });
-      // const result = await res.json();
-      // if (!res.ok || !result.success) throw new Error(result.error || 'Failed to mark as paid');
-      
-      // Placeholder for review:
-      console.log('Payment Data:', {
-        student_id: currentStudentId,
-        amount,
-        payment_date: paymentDate
+      const res = await fetch('../api/mark_membership_paid.php', {
+        method: 'POST',
+        body: formData
       });
       
-      alert('Payment recorded successfully! (This is a placeholder - implement API endpoint)');
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.error || 'Failed to mark as paid');
+      }
+      
+      // Update the student data with the control number
+      const student = state.students.find(s => s.id == currentStudentId);
+      if (student && result.control_number) {
+        student.membership_control_number = result.control_number;
+        student.membership_fee_status = 'paid';
+        student.membership_fee_paid_at = paymentDate;
+        
+        // Regenerate receipt with control number
+        generateReceiptPreview(student);
+      }
+      
       closeMarkPaidModal();
+      showSuccessModal(result.control_number);
       await loadStudents();
     } catch (err) {
       alert(err.message || 'Failed to record payment');
@@ -732,6 +769,194 @@
       if (wrapper) wrapper.style.display = 'none';
     }
   }
+
+  window.showValidationErrorModal = function() {
+    document.getElementById('validationErrorOverlay').classList.add('show');
+    document.getElementById('validationErrorModal').classList.add('show');
+  };
+
+  window.closeValidationErrorModal = function() {
+    document.getElementById('validationErrorOverlay').classList.remove('show');
+    document.getElementById('validationErrorModal').classList.remove('show');
+  };
+
+  window.showSuccessModal = function(controlNumber) {
+    document.getElementById('successControlNumber').textContent = controlNumber || '---';
+    document.getElementById('successModalOverlay').classList.add('show');
+    document.getElementById('successModal').classList.add('show');
+  };
+
+  window.closeSuccessModal = function() {
+    document.getElementById('successModalOverlay').classList.remove('show');
+    document.getElementById('successModal').classList.remove('show');
+  };
+
+  let pendingUnpaidStudentId = null;
+
+  window.openConfirmUnpaidModal = function(studentId, student) {
+    pendingUnpaidStudentId = studentId;
+    
+    const infoDisplay = document.getElementById('unpaidStudentInfo');
+    if (infoDisplay && student) {
+      infoDisplay.innerHTML = `
+        <p><strong>Student:</strong> ${student.full_name || '-'}</p>
+        <p><strong>ID:</strong> ${student.id || '-'}</p>
+        <p><strong>Control No.:</strong> ${student.membership_control_number || '-'}</p>
+      `;
+    }
+    
+    document.getElementById('confirmUnpaidOverlay').classList.add('show');
+    document.getElementById('confirmUnpaidModal').classList.add('show');
+  };
+
+  window.closeConfirmUnpaidModal = function() {
+    pendingUnpaidStudentId = null;
+    document.getElementById('confirmUnpaidOverlay').classList.remove('show');
+    document.getElementById('confirmUnpaidModal').classList.remove('show');
+  };
+
+  window.confirmMarkUnpaid = async function() {
+    if (!pendingUnpaidStudentId) return;
+    
+    try {
+      const res = await fetch('../api/toggle_membership_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id: pendingUnpaidStudentId, action: 'set_unpaid' })
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.error || 'Update failed');
+      
+      closeConfirmUnpaidModal();
+      await loadStudents();
+      alert('Student marked as unpaid successfully');
+    } catch (err) {
+      alert(err.message || 'Failed to update status');
+    }
+  };
+
+  window.printStudentReceipt = function(student) {
+    if (!student) return;
+    
+    const amount = 250.00;
+    const paymentDate = student.membership_fee_paid_at ? new Date(student.membership_fee_paid_at) : new Date();
+    const formattedDate = paymentDate.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: '2-digit', 
+      year: 'numeric' 
+    });
+    const formattedTime = paymentDate.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    }).toUpperCase();
+    
+    const amountInWords = convertNumberToWords(amount);
+    const controlNumber = student.membership_control_number || '---';
+    const studentName = student.full_name || (student.first_name + ' ' + student.last_name);
+    const processedBy = student.membership_processed_by || state.currentUser?.full_name || 'ADMIN';
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Receipt - ${controlNumber}</title>
+        <style>
+          body { font-family: 'Courier New', monospace; padding: 40px; }
+          .receipt { max-width: 600px; margin: 0 auto; border: 2px dotted #333; padding: 30px; }
+          .receipt-header { text-align: center; margin-bottom: 20px; }
+          .receipt-institution { font-weight: 800; font-size: 16px; text-transform: uppercase; margin-bottom: 8px; }
+          .receipt-address { font-size: 12px; color: #666; margin-bottom: 15px; }
+          .receipt-title { text-align: center; font-weight: 800; font-size: 18px; text-transform: uppercase; margin: 16px 0; padding: 10px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; }
+          .receipt-details { margin-bottom: 20px; font-size: 12px; line-height: 1.8; }
+          .receipt-detail-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+          .receipt-detail-label { font-weight: 700; }
+          .receipt-table { width: 100%; margin: 20px 0; font-size: 12px; }
+          .receipt-table-header { display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb; padding: 8px 0; font-weight: bold; }
+          .receipt-table-row { display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; }
+          .receipt-table-description { flex: 2; text-align: left; }
+          .receipt-table-amount { flex: 1; text-align: right; }
+          .receipt-total { display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; padding: 10px 0; font-weight: bold; font-size: 13px; margin: 15px 0; }
+          .receipt-amount-words { text-align: center; font-weight: bold; font-size: 11px; text-transform: uppercase; margin: 20px 0; padding: 10px 0; border-top: 1px dashed #999; border-bottom: 1px dashed #999; }
+          .receipt-received-by { text-align: center; margin-top: 25px; padding-top: 12px; border-top: 1px solid #e5e7eb; }
+          .receipt-received-by-label { font-weight: bold; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; }
+          .receipt-system-message { text-align: center; font-size: 10px; color: #666; margin: 10px 0; font-style: italic; }
+          .receipt-footer { text-align: center; font-size: 10px; color: #666; margin-top: 15px; padding-top: 10px; border-top: 1px solid #e5e7eb; }
+          @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body onload="window.print(); window.close();">
+        <div class="receipt">
+          <div class="receipt-header">
+            <div class="receipt-institution">Student Organization of the College of Computer Studies</div>
+            <div class="receipt-address">Santa Cruz, Laguna - Main Campus</div>
+          </div>
+          
+          <div class="receipt-title">SYSTEM RECEIPT</div>
+          
+          <div class="receipt-details">
+            <div class="receipt-detail-row">
+              <span class="receipt-detail-label">CONTROL NO.:</span>
+              <span class="receipt-detail-value">${controlNumber}</span>
+            </div>
+            <div class="receipt-detail-row">
+              <span class="receipt-detail-label">DATE:</span>
+              <span class="receipt-detail-value">${formattedDate} ${formattedTime}</span>
+            </div>
+            <div class="receipt-detail-row">
+              <span class="receipt-detail-label">ID:</span>
+              <span class="receipt-detail-value">${student.id || '-'}</span>
+            </div>
+            <div class="receipt-detail-row">
+              <span class="receipt-detail-label">STUDENT:</span>
+              <span class="receipt-detail-value">${studentName}</span>
+            </div>
+            <div class="receipt-detail-row">
+              <span class="receipt-detail-label">COURSE / YEAR:</span>
+              <span class="receipt-detail-value">${student.course || '-'} - ${student.year_level || '-'}</span>
+            </div>
+          </div>
+          
+          <div class="receipt-table">
+            <div class="receipt-table-header">
+              <span class="receipt-table-description">DESCRIPTION</span>
+              <span class="receipt-table-amount">AMOUNT PAID</span>
+            </div>
+            <div class="receipt-table-row">
+              <span class="receipt-table-description">SOCCS Membership Fee</span>
+              <span class="receipt-table-amount">₱${amount.toFixed(2)}</span>
+            </div>
+          </div>
+          
+          <div class="receipt-total">
+            <span>TOTAL:</span>
+            <span>₱${amount.toFixed(2)}</span>
+          </div>
+          
+          <div class="receipt-amount-words">
+            *** ${amountInWords} ***
+          </div>
+          
+          <div class="receipt-received-by">
+            <div class="receipt-received-by-label">RECEIVED BY: ${processedBy}</div>
+            <div class="receipt-system-message">This is a system-generated receipt. Thank you for your payment.</div>
+          </div>
+          
+          <div class="receipt-footer">-- END OF RECEIPT --</div>
+        </div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  document.getElementById('validationErrorOverlay')?.addEventListener('click', window.closeValidationErrorModal);
+  document.getElementById('successModalOverlay')?.addEventListener('click', window.closeSuccessModal);
+  document.getElementById('confirmUnpaidOverlay')?.addEventListener('click', window.closeConfirmUnpaidModal);
 })();
 
 

@@ -2,10 +2,17 @@
 header('Content-Type: application/json');
 session_start();
 require_once '../../includes/database.php';
+require_once '../../includes/auth_check.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'DELETE') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+    exit;
+}
+
+if (!hasPermission('manage_users')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Access denied. You do not have permission to delete users.']);
     exit;
 }
 

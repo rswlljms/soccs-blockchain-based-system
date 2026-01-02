@@ -41,13 +41,24 @@ try {
         throw new Exception('Receipt is required to mark student as paid. Please upload a receipt first.');
     }
     
+    // Generate control number if marking as paid
+    $controlNumber = null;
+    if ($newStatus === 'paid') {
+        // Get the count of paid memberships + 1
+        $countStmt = $pdo->prepare("SELECT COUNT(*) as total FROM students WHERE membership_fee_status = 'paid' AND id != ?");
+        $countStmt->execute([$studentId]);
+        $count = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+        $controlNumber = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+    }
+    
     $updateSql = "UPDATE students SET 
                   membership_fee_status = ?,
-                  membership_fee_paid_at = " . ($newStatus === 'paid' ? 'NOW()' : 'NULL') . "
+                  membership_fee_paid_at = " . ($newStatus === 'paid' ? 'NOW()' : 'NULL') . ",
+                  membership_control_number = ?
                   WHERE id = ?";
     
     $updateStmt = $pdo->prepare($updateSql);
-    $updateStmt->execute([$newStatus, $studentId]);
+    $updateStmt->execute([$newStatus, $controlNumber, $studentId]);
     
     if (isset($_SESSION['user_id'])) {
         $getStudentQuery = "SELECT first_name, last_name FROM students WHERE id = ?";

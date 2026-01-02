@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 14, 2025 at 01:56 PM
+-- Generation Time: Jan 02, 2026 at 06:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,7 +68,83 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `activity_descrip
 (56, 6, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:28:14'),
 (57, 5, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:37:59'),
 (58, 3, 'user_login', 'User logged into the system', 'authentication', '2025-11-30 21:49:27'),
-(59, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-09 05:15:58');
+(59, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-09 05:15:58'),
+(60, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 15:25:55'),
+(61, 3, 'event_updated', 'Updated event: Research Colloquium / FOD', 'events', '2025-12-14 15:42:12'),
+(62, 3, 'event_updated', 'Updated event: Research Colloquium / FOD', 'events', '2025-12-14 15:42:18'),
+(63, 4, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 15:52:25'),
+(64, 5, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 16:48:02'),
+(65, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 16:56:59'),
+(66, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 17:13:44'),
+(67, 3, 'user_updated', 'Updated user: ID 7 - first_name: Comelec, last_name: Officer, email: comelec.test@gmail.com, role: {\"from\":\"comelec\",\"to\":\"comelec\"}, status: active, password: changed', 'users', '2025-12-14 17:14:18'),
+(68, 7, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 17:14:55'),
+(69, 7, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 17:18:59'),
+(70, 7, 'election_created', 'Created election: SOCCS Officer Election 2025 (ID: 26)', 'elections', '2025-12-14 17:23:07'),
+(71, 7, 'election_created', 'Created election: SOCCS Officer Election 2025 (ID: 27)', 'elections', '2025-12-14 17:30:34'),
+(72, 7, 'election_started', 'Start election: SOCCS Officer Election 2025 (ID: 27)', 'elections', '2025-12-14 17:30:37'),
+(73, 7, 'election_created', 'Created election: SOCCS Election Officer 2025 (ID: 28)', 'elections', '2025-12-14 17:50:35'),
+(74, 7, 'election_created', 'Created election: SOCCS Election Officer 2025 (ID: 29)', 'elections', '2025-12-14 17:56:27'),
+(75, 7, 'election_created', 'Created election: SOCCS Officer Election 2025 (ID: 30)', 'elections', '2025-12-14 18:22:09'),
+(76, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 18:38:30'),
+(77, 3, 'event_created', 'Created event: Xmas party (social)', 'events', '2025-12-14 18:39:05'),
+(78, 3, 'event_updated', 'Updated event: Research Colloquium / FOD', 'events', '2025-12-14 18:39:40'),
+(79, 3, 'expense_created', 'Created expense: ₱500.00 - Buffet  (FOOD AND DRINKS)', 'financial', '2025-12-14 18:42:24'),
+(80, 7, 'user_login', 'User logged into the system', 'authentication', '2025-12-14 18:52:11'),
+(81, 7, 'election_created', 'Created election: SOCCS Election 2025 (ID: 31)', 'elections', '2025-12-14 18:52:31'),
+(82, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-19 17:10:58'),
+(83, 3, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:21:59'),
+(84, 3, 'membership_status_updated', 'Updated membership status to unpaid for student: 0122-1141 (Roswell James Vitaliz)', 'membership', '2025-12-19 17:22:51'),
+(85, 3, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:22:59'),
+(86, 3, 'membership_status_updated', 'Updated membership status to unpaid for student: 0122-1141 (Roswell James Vitaliz)', 'membership', '2025-12-19 17:23:36'),
+(87, 3, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:23:55'),
+(88, 3, 'membership_status_updated', 'Updated membership status to unpaid for student: 0122-1141 (Roswell James Vitaliz)', 'membership', '2025-12-19 17:24:22'),
+(89, 3, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:29:41'),
+(90, 3, 'membership_status_updated', 'Updated membership status to unpaid for student: 0122-1141 (Roswell James Vitaliz)', 'membership', '2025-12-19 17:30:06'),
+(91, 3, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:42:26'),
+(92, 4, 'user_login', 'User logged into the system', 'authentication', '2025-12-19 17:45:30'),
+(93, 4, 'membership_status_updated', 'Updated membership status to unpaid for student: 0122-1141 (Roswell James Vitaliz)', 'membership', '2025-12-19 17:45:49'),
+(94, 4, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:46:45'),
+(95, 4, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:54:01'),
+(96, 4, 'membership_status_updated', 'Updated membership status to unpaid for student: 0122-1141 (Roswell James Vitaliz)', 'membership', '2025-12-19 17:56:31'),
+(97, 4, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 17:56:40'),
+(98, 4, 'membership_status_updated', 'Updated membership status to unpaid for student: 0122-1141 (Roswell James Vitaliz)', 'membership', '2025-12-19 18:07:24'),
+(99, 4, 'membership_action', 'Recorded membership payment for Roswell James Vitaliz (ID: 0122-1141) - Amount: ₱250.00 - Control No: 001', 'membership', '2025-12-19 18:07:28'),
+(100, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 14:59:54'),
+(101, 5, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 15:36:30'),
+(102, 5, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 15:38:00'),
+(103, 5, 'user_updated', 'Updated user: comelec.test@gmail.com - permissions: updated', 'users', '2025-12-21 15:55:06'),
+(104, 5, 'user_updated', 'Updated user: comelec.test@gmail.com - permissions: updated', 'users', '2025-12-21 15:56:31'),
+(105, 5, 'user_updated', 'Updated user: comelec.test@gmail.com - permissions: updated', 'users', '2025-12-21 15:56:39'),
+(106, 7, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 15:56:55'),
+(107, 5, 'user_updated', 'Updated user: comelec.test@gmail.com - permissions: updated', 'users', '2025-12-21 16:02:01'),
+(108, 7, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:02:13'),
+(109, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:07:43'),
+(110, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:20:12'),
+(111, 3, 'election_created', 'Created election: TEST (ID: 32)', 'elections', '2025-12-21 16:22:38'),
+(112, 3, 'election_started', 'Start election: TEST (ID: 32)', 'elections', '2025-12-21 16:22:42'),
+(113, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:25:42'),
+(114, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:34:30'),
+(115, 3, 'election_created', 'Created election: TEST 1 (ID: 33)', 'elections', '2025-12-21 16:36:06'),
+(116, 3, 'election_updated', 'Update election: TEST (ID: 32)', 'elections', '2025-12-21 16:36:15'),
+(117, 3, 'election_started', 'Start election: TEST 1 (ID: 33)', 'elections', '2025-12-21 16:36:45'),
+(118, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:41:46'),
+(119, 6, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:43:45'),
+(120, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:50:10'),
+(121, 3, 'user_updated', 'Updated user: treasurer.test@gmail.com - permissions: updated', 'users', '2025-12-21 16:50:22'),
+(122, 4, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:50:38'),
+(123, 3, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:56:59'),
+(124, 4, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:57:09'),
+(125, 3, 'user_updated', 'Updated user: treasurer.test@gmail.com - permissions: updated', 'users', '2025-12-21 16:57:54'),
+(126, 4, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:58:25'),
+(127, 3, 'user_updated', 'Updated user: treasurer.test@gmail.com - permissions: updated', 'users', '2025-12-21 16:59:34'),
+(128, 4, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 16:59:46'),
+(129, 3, 'user_updated', 'Updated user: treasurer.test@gmail.com - permissions: updated', 'users', '2025-12-21 17:00:13'),
+(130, 4, 'user_login', 'User logged into the system', 'authentication', '2025-12-21 17:01:18'),
+(131, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-02 15:56:53'),
+(132, 3, 'user_deactivated', 'Deactivated user: treasurer.test@gmail.com (Role: treasurer)', 'users', '2026-01-02 15:57:27'),
+(133, 3, 'user_updated', 'Updated user: treasurer.test@gmail.com - status: active', 'users', '2026-01-02 15:58:10'),
+(134, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-02 16:05:29'),
+(135, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-02 16:29:02');
 
 -- --------------------------------------------------------
 
@@ -162,7 +238,7 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `title`, `description`, `date`, `end_date`, `is_multi_day`, `location`, `category`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
-(2, 'Research Colloquium / FOD', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'upcoming', 'admin', '2025-11-29 12:02:51', '2025-11-30 20:10:10');
+(2, 'Research Colloquium / FOD', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'completed', 'admin', '2025-11-29 12:02:51', '2025-12-14 18:39:40');
 
 -- --------------------------------------------------------
 
@@ -217,6 +293,22 @@ INSERT INTO `funds` (`id`, `source`, `amount`, `description`, `date_received`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `masterlist`
+--
+
+CREATE TABLE `masterlist` (
+  `id` int(11) NOT NULL,
+  `student_id` varchar(20) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `course` varchar(10) DEFAULT NULL,
+  `section` varchar(1) DEFAULT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `uploaded_by` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `password_resets`
 --
 
@@ -231,8 +323,7 @@ CREATE TABLE `password_resets` (
 --
 
 INSERT INTO `password_resets` (`email`, `otp`, `expires_at`) VALUES
-('liyaaanping@gmail.com', '392488', '2025-12-09 13:24:09'),
-('roswelljamesvitaliz@gmail.com', '504565', '2025-12-09 13:23:21');
+('liyaaanping@gmail.com', '392488', '2025-12-09 13:24:09');
 
 -- --------------------------------------------------------
 
@@ -266,7 +357,6 @@ INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `module`, `creat
 (10, 'Manage Students', 'manage_students', 'Archive and manage student records', 'students', '2025-11-30 10:07:44'),
 (11, 'Verify Students', 'verify_students', 'Approve or reject student registrations', 'students', '2025-11-30 10:07:44'),
 (12, 'View Events', 'view_events', 'View events', 'events', '2025-11-30 10:07:44'),
-(13, 'Add Events', 'add_events', 'Create new events', 'events', '2025-11-30 10:07:44'),
 (14, 'Manage Events', 'manage_events', 'Create, edit, delete events', 'events', '2025-11-30 10:07:44'),
 (15, 'Generate Reports', 'generate_reports', 'Generate and view reports', 'reports', '2025-11-30 10:07:44'),
 (16, 'Generate Financial Reports', 'generate_financial_reports', 'Generate financial reports', 'reports', '2025-11-30 10:07:44'),
@@ -347,7 +437,6 @@ INSERT INTO `role_default_permissions` (`id`, `role`, `permission_id`) VALUES
 (26, 'adviser', 10),
 (27, 'adviser', 11),
 (8, 'adviser', 12),
-(9, 'adviser', 13),
 (10, 'adviser', 14),
 (18, 'adviser', 15),
 (19, 'adviser', 16),
@@ -398,7 +487,6 @@ INSERT INTO `role_default_permissions` (`id`, `role`, `permission_id`) VALUES
 (105, 'event_coordinator', 3),
 (106, 'event_coordinator', 6),
 (104, 'event_coordinator', 12),
-(99, 'event_coordinator', 13),
 (102, 'event_coordinator', 14),
 (101, 'event_coordinator', 18),
 (100, 'event_coordinator', 19),
@@ -451,8 +539,8 @@ CREATE TABLE `students` (
   `year_level` int(1) NOT NULL,
   `section` varchar(1) NOT NULL,
   `course` varchar(10) NOT NULL DEFAULT 'BSIT',
-  `age` int(3) DEFAULT NULL,
   `gender` enum('male','female','other') NOT NULL,
+  `profile_image` varchar(255) DEFAULT NULL COMMENT 'Path to student profile image',
   `receipt_file` varchar(255) DEFAULT NULL,
   `payment_status` enum('paid','unpaid') DEFAULT 'unpaid',
   `is_archived` tinyint(1) DEFAULT 0,
@@ -465,6 +553,8 @@ CREATE TABLE `students` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `membership_fee_status` enum('unpaid','paid') DEFAULT 'unpaid',
   `membership_fee_receipt` varchar(255) DEFAULT NULL,
+  `membership_control_number` varchar(10) DEFAULT NULL COMMENT 'Sequential control number for membership fee payment (e.g., 001, 002, 003)',
+  `membership_processed_by` varchar(255) DEFAULT NULL COMMENT 'Name of admin who processed the payment',
   `membership_fee_paid_at` timestamp NULL DEFAULT NULL,
   `academic_year` varchar(20) DEFAULT NULL COMMENT 'Academic Year extracted from COR (e.g., 2025-2026)',
   `semester` varchar(50) DEFAULT NULL COMMENT 'Semester extracted from COR (e.g., First (1st) Semester, Second (2nd) Semester)',
@@ -477,8 +567,8 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `year_level`, `section`, `course`, `age`, `gender`, `receipt_file`, `payment_status`, `is_archived`, `archived_at`, `archived_by`, `restored_at`, `restored_by`, `is_active`, `created_at`, `updated_at`, `membership_fee_status`, `membership_fee_receipt`, `membership_fee_paid_at`, `academic_year`, `semester`, `date_of_birth`, `phone_number`, `address`) VALUES
-('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$Da3j2HmlBvw/K7xKYfOvkOp.B9lfAi6z.e1yiBYWBhw5sMmjku7mq', 4, 'A', 'BSIT', 24, 'male', NULL, 'unpaid', 0, NULL, NULL, NULL, NULL, 1, '2025-10-30 15:40:08', '2025-10-31 13:47:16', 'unpaid', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `students` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `year_level`, `section`, `course`, `gender`, `profile_image`, `receipt_file`, `payment_status`, `is_archived`, `archived_at`, `archived_by`, `restored_at`, `restored_by`, `is_active`, `created_at`, `updated_at`, `membership_fee_status`, `membership_fee_receipt`, `membership_control_number`, `membership_processed_by`, `membership_fee_paid_at`, `academic_year`, `semester`, `date_of_birth`, `phone_number`, `address`) VALUES
+('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$vsL/s50f.RWXl.995TSz4OpAOoz26XiKLXypG35tJnNhbj35685Hm', 4, 'A', 'BSIT', 'male', 'uploads/student-profiles/profile_0122-1141_1765729381.png', NULL, 'unpaid', 0, NULL, NULL, NULL, NULL, 1, '2025-10-30 15:40:08', '2025-12-21 17:17:31', 'paid', NULL, '001', 'SOCCS Treasurer', '2025-12-18 16:00:00', '2025-2026', 'First (1st) Semester', '2001-02-21', '09212729043', 'Narra Layugan Pagsanjan, Laguna 4008');
 
 -- --------------------------------------------------------
 
@@ -496,7 +586,6 @@ CREATE TABLE `student_registrations` (
   `course` varchar(10) NOT NULL DEFAULT 'BSIT',
   `year_level` int(1) NOT NULL,
   `section` varchar(1) NOT NULL,
-  `age` int(3) NOT NULL,
   `gender` enum('male','female','other') NOT NULL,
   `student_id_image` varchar(255) DEFAULT NULL,
   `cor_file` varchar(255) DEFAULT NULL,
@@ -516,9 +605,8 @@ CREATE TABLE `student_registrations` (
 -- Dumping data for table `student_registrations`
 --
 
-INSERT INTO `student_registrations` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `course`, `year_level`, `section`, `age`, `gender`, `student_id_image`, `cor_file`, `set_password_token`, `set_password_expires_at`, `approval_status`, `created_at`, `approved_at`, `rejected_at`, `approved_by`, `rejection_reason`, `academic_year`, `semester`) VALUES
-('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$Da3j2HmlBvw/K7xKYfOvkOp.B9lfAi6z.e1yiBYWBhw5sMmjku7mq', 'BSIT', 4, 'A', 24, 'male', 'uploads/student-ids/0122-1141.png', 'uploads/documents/690386d1a1db9_COR_0122-1141.png', NULL, NULL, 'approved', '2025-10-30 15:40:01', '2025-10-30 15:40:08', NULL, 'System', NULL, NULL, NULL),
-('0122-1142', 'Liyan', '', 'Ping', 'liyaaanping@gmail.com', NULL, 'BSIT', 4, 'A', 24, 'male', 'uploads/student-ids/0122-1142.png', 'uploads/documents/6904bef8713ad_COR_0122-1142.jpg', '7455e6b5d8e1a269b8274d171ec2cf008985d7faea8e8b2b927ab7e6297f9d1e', '2025-11-01 14:51:52', 'rejected', '2025-10-31 13:51:52', NULL, '2025-10-31 13:51:59', NULL, 'Name not found in Student ID or COR; Student ID number not found in COR', NULL, NULL);
+INSERT INTO `student_registrations` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `course`, `year_level`, `section`, `gender`, `student_id_image`, `cor_file`, `set_password_token`, `set_password_expires_at`, `approval_status`, `created_at`, `approved_at`, `rejected_at`, `approved_by`, `rejection_reason`, `academic_year`, `semester`) VALUES
+('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$Da3j2HmlBvw/K7xKYfOvkOp.B9lfAi6z.e1yiBYWBhw5sMmjku7mq', 'BSIT', 4, 'A', 'male', 'uploads/student-ids/0122-1141.png', 'uploads/documents/690386d1a1db9_COR_0122-1141.png', NULL, NULL, 'approved', '2025-10-30 15:40:01', '2025-10-30 15:40:08', NULL, 'System', NULL, '2025-2026', NULL);
 
 -- --------------------------------------------------------
 
@@ -545,11 +633,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password`, `role`, `status`, `last_login`, `created_by`, `created_at`, `updated_at`) VALUES
-(3, 'SOCCS', 'Adviser', 'soccsadviser.test@gmail.com', '$2y$10$R731fPWbB7cv6RyNF3aU6OptcMzwaiW9bPrtsmJvpM3.jiRtim3gm', 'adviser', 'active', '2025-12-09 13:15:58', NULL, '2025-04-18 12:18:54', '2025-12-09 05:15:58'),
-(4, 'SOCCS', 'Treasurer', 'treasurer.test@gmail.com', '$2y$10$4G4CH6xpxEpcF4MIPBSLf.n4b1IbulEMDRO8z9S41YbfHXhhgF4ri', 'treasurer', 'active', '2025-12-01 05:27:26', 3, '2025-11-30 10:30:17', '2025-11-30 21:27:26'),
-(5, 'CCS', 'Dean', 'dean.test@gmail.com', '$2y$10$QSqaMWLZBGpE01ohVv7Yp.pWPPOGZ7OhKLaNq6ebp64ZDonuZXyQ6', 'dean', 'active', '2025-12-01 05:37:59', 3, '2025-11-30 15:57:11', '2025-11-30 21:37:59'),
-(6, 'Event', 'Coordinator', 'event.test@gmail.com', '$2y$10$FPwqpLlHkwC4AdtZitIkIeLb3e5EpIdh4Sr6s2vP6S0rbRElnkome', 'event_coordinator', 'active', '2025-12-01 05:28:14', 3, '2025-11-30 16:00:59', '2025-11-30 21:28:14'),
-(7, 'Comelec', 'Officer', 'comelec.test@gmail.com', '$2y$10$NlMI06mXTblynXwyrjzsL.8vgXiw3kvdv6RqdG5uRPVwxvuwoJUzq', 'comelec', 'active', '2025-12-01 00:18:22', 3, '2025-11-30 16:03:18', '2025-11-30 16:18:22');
+(3, 'SOCCS', 'Adviser', 'soccsadviser.test@gmail.com', '$2y$10$R731fPWbB7cv6RyNF3aU6OptcMzwaiW9bPrtsmJvpM3.jiRtim3gm', 'adviser', 'active', '2026-01-03 00:29:02', NULL, '2025-04-18 12:18:54', '2026-01-02 16:29:02'),
+(4, 'SOCCS', 'Treasurer', 'treasurer.test@gmail.com', '$2y$10$4G4CH6xpxEpcF4MIPBSLf.n4b1IbulEMDRO8z9S41YbfHXhhgF4ri', 'treasurer', 'active', '2025-12-22 01:01:18', 3, '2025-11-30 10:30:17', '2026-01-02 15:58:10'),
+(5, 'CCS', 'Dean', 'dean.test@gmail.com', '$2y$10$QSqaMWLZBGpE01ohVv7Yp.pWPPOGZ7OhKLaNq6ebp64ZDonuZXyQ6', 'dean', 'active', '2025-12-21 23:38:00', 3, '2025-11-30 15:57:11', '2025-12-21 15:38:00'),
+(6, 'Event', 'Coordinator', 'event.test@gmail.com', '$2y$10$FPwqpLlHkwC4AdtZitIkIeLb3e5EpIdh4Sr6s2vP6S0rbRElnkome', 'event_coordinator', 'active', '2025-12-22 00:43:45', 3, '2025-11-30 16:00:59', '2025-12-21 16:43:45'),
+(7, 'Comelec', 'Officer', 'comelec.test@gmail.com', '$2y$10$v6r8pzx6Q5LuGvaZSR9eg.Twgc1p.aFe1OGC0b8Xkpj.WzEmhfHca', 'comelec', 'active', '2025-12-22 00:02:13', 3, '2025-11-30 16:03:18', '2025-12-21 16:02:13');
 
 -- --------------------------------------------------------
 
@@ -607,7 +695,6 @@ INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`, `granted_by`, 
 (6, 3, 24, 3, '2025-11-30 10:07:45'),
 (7, 3, 25, 3, '2025-11-30 10:07:45'),
 (8, 3, 12, 3, '2025-11-30 10:07:45'),
-(9, 3, 13, 3, '2025-11-30 10:07:45'),
 (10, 3, 14, 3, '2025-11-30 10:07:45'),
 (11, 3, 2, 3, '2025-11-30 10:07:45'),
 (12, 3, 3, 3, '2025-11-30 10:07:45'),
@@ -630,17 +717,6 @@ INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`, `granted_by`, 
 (29, 3, 27, 3, '2025-11-30 10:07:45'),
 (30, 3, 28, 3, '2025-11-30 10:07:45'),
 (31, 3, 29, 3, '2025-11-30 10:07:45'),
-(47, 4, 1, 3, '2025-11-30 10:41:49'),
-(48, 4, 12, 3, '2025-11-30 10:41:49'),
-(49, 4, 5, 3, '2025-11-30 10:41:49'),
-(50, 4, 4, 3, '2025-11-30 10:41:49'),
-(51, 4, 3, 3, '2025-11-30 10:41:49'),
-(52, 4, 2, 3, '2025-11-30 10:41:49'),
-(53, 4, 8, 3, '2025-11-30 10:41:49'),
-(54, 4, 7, 3, '2025-11-30 10:41:49'),
-(55, 4, 19, 3, '2025-11-30 10:41:49'),
-(56, 4, 16, 3, '2025-11-30 10:41:49'),
-(57, 4, 15, 3, '2025-11-30 10:41:49'),
 (58, 5, 1, 3, '2025-11-30 15:57:11'),
 (59, 5, 2, 3, '2025-11-30 15:57:11'),
 (60, 5, 3, 3, '2025-11-30 15:57:11'),
@@ -658,18 +734,29 @@ INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`, `granted_by`, 
 (75, 6, 3, 3, '2025-11-30 16:00:59'),
 (76, 6, 6, 3, '2025-11-30 16:00:59'),
 (77, 6, 12, 3, '2025-11-30 16:00:59'),
-(78, 6, 13, 3, '2025-11-30 16:00:59'),
 (79, 6, 14, 3, '2025-11-30 16:00:59'),
 (80, 6, 18, 3, '2025-11-30 16:00:59'),
 (81, 6, 19, 3, '2025-11-30 16:00:59'),
-(95, 7, 1, 3, '2025-11-30 16:06:03'),
-(96, 7, 25, 3, '2025-11-30 16:06:03'),
-(97, 7, 23, 3, '2025-11-30 16:06:03'),
-(98, 7, 22, 3, '2025-11-30 16:06:03'),
-(99, 7, 21, 3, '2025-11-30 16:06:03'),
-(100, 7, 20, 3, '2025-11-30 16:06:03'),
-(101, 7, 24, 3, '2025-11-30 16:06:03'),
-(102, 7, 19, 3, '2025-11-30 16:06:03');
+(129, 7, 1, 5, '2025-12-21 16:02:01'),
+(130, 7, 25, 5, '2025-12-21 16:02:01'),
+(131, 7, 23, 5, '2025-12-21 16:02:01'),
+(132, 7, 22, 5, '2025-12-21 16:02:01'),
+(133, 7, 21, 5, '2025-12-21 16:02:01'),
+(134, 7, 20, 5, '2025-12-21 16:02:01'),
+(135, 7, 24, 5, '2025-12-21 16:02:01'),
+(136, 7, 12, 5, '2025-12-21 16:02:01'),
+(137, 7, 19, 5, '2025-12-21 16:02:01'),
+(138, 7, 26, 5, '2025-12-21 16:02:01'),
+(177, 4, 1, 3, '2025-12-21 17:00:13'),
+(178, 4, 5, 3, '2025-12-21 17:00:13'),
+(179, 4, 4, 3, '2025-12-21 17:00:13'),
+(180, 4, 3, 3, '2025-12-21 17:00:13'),
+(181, 4, 2, 3, '2025-12-21 17:00:13'),
+(182, 4, 8, 3, '2025-12-21 17:00:13'),
+(183, 4, 7, 3, '2025-12-21 17:00:13'),
+(184, 4, 19, 3, '2025-12-21 17:00:13'),
+(185, 4, 16, 3, '2025-12-21 17:00:13'),
+(186, 4, 15, 3, '2025-12-21 17:00:13');
 
 -- --------------------------------------------------------
 
@@ -765,6 +852,16 @@ ALTER TABLE `funds`
   ADD KEY `idx_created_at` (`created_at`);
 
 --
+-- Indexes for table `masterlist`
+--
+ALTER TABLE `masterlist`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_student_id` (`student_id`),
+  ADD KEY `idx_student_id` (`student_id`),
+  ADD KEY `idx_name` (`name`),
+  ADD KEY `idx_course_section` (`course`,`section`);
+
+--
 -- Indexes for table `password_resets`
 --
 ALTER TABLE `password_resets`
@@ -805,7 +902,9 @@ ALTER TABLE `students`
   ADD KEY `idx_students_is_archived` (`is_archived`),
   ADD KEY `idx_students_course_year_section` (`course`,`year_level`,`section`),
   ADD KEY `idx_students_archived` (`is_archived`),
-  ADD KEY `idx_students_membership_status` (`membership_fee_status`);
+  ADD KEY `idx_students_membership_status` (`membership_fee_status`),
+  ADD KEY `idx_students_profile_image` (`profile_image`),
+  ADD KEY `idx_membership_control_number` (`membership_control_number`);
 
 --
 -- Indexes for table `student_registrations`
@@ -860,7 +959,7 @@ ALTER TABLE `votes`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
 
 --
 -- AUTO_INCREMENT for table `candidates`
@@ -872,25 +971,31 @@ ALTER TABLE `candidates`
 -- AUTO_INCREMENT for table `elections`
 --
 ALTER TABLE `elections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `funds`
 --
 ALTER TABLE `funds`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `masterlist`
+--
+ALTER TABLE `masterlist`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -926,13 +1031,13 @@ ALTER TABLE `user_activity_log`
 -- AUTO_INCREMENT for table `user_permissions`
 --
 ALTER TABLE `user_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
 
 --
 -- AUTO_INCREMENT for table `votes`
 --
 ALTER TABLE `votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
 
 --
 -- Constraints for dumped tables

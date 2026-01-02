@@ -97,7 +97,7 @@ include('../components/sidebar.php');
         <div class="events-card">
           <div class="card-header">
             <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
-            <?php if (hasAnyPermission(['add_events', 'manage_events'])): ?>
+            <?php if (hasPermission('manage_events')): ?>
             <a href="events.php" class="btn-primary btn-sm">View All</a>
             <?php elseif (hasPermission('view_events')): ?>
             <a href="event-calendar.php" class="btn-primary btn-sm">View All</a>

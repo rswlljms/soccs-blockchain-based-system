@@ -63,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Insert into students table
                 $insertQuery = "INSERT INTO students 
                                (id, first_name, middle_name, last_name, email, password, 
-                                course, year_level, section, age, gender, is_active) 
-                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
+                                course, year_level, section, age, gender, academic_year, semester, is_active) 
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
                 $insertStmt = $conn->prepare($insertQuery);
                 $insertStmt->execute([
                     $student['id'],
@@ -77,7 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $student['year_level'],
                     $student['section'],
                     $student['age'],
-                    $student['gender']
+                    $student['gender'],
+                    $student['academic_year'] ?? null,
+                    $student['semester'] ?? null
                 ]);
                 
                 $conn->commit();

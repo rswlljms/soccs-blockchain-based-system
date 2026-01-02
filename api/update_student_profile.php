@@ -21,7 +21,7 @@ try {
     $studentId = $_SESSION['student']['id'];
     
     $firstName = trim($_POST['firstName'] ?? '');
-    $middleName = trim($_POST['middleName'] ?? '');
+    $middleName = trim($_POST['middleName'] ?? '') ?: null;
     $lastName = trim($_POST['lastName'] ?? '');
     $dateOfBirth = trim($_POST['dateOfBirth'] ?? '');
     $phoneNumber = trim($_POST['phoneNumber'] ?? '');

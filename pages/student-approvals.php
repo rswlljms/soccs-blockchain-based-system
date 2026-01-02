@@ -679,6 +679,11 @@ include('../components/sidebar.php');
             document.getElementById('rejectedCount').textContent = stats.rejected || 0;
         }
 
+        function formatFullName(firstName, middleName, lastName) {
+            const nameParts = [firstName, middleName, lastName].filter(part => part && part !== 'null' && part.trim() !== '');
+            return nameParts.join(' ');
+        }
+
         function displayRegistrations(registrations) {
             const container = document.getElementById('registrationsTable');
             
@@ -699,7 +704,7 @@ include('../components/sidebar.php');
             const tableHTML = registrations.map(reg => `
                             <tr>
                                 <td><strong>${reg.id}</strong></td>
-                                <td>${reg.first_name} ${reg.middle_name} ${reg.last_name}</td>
+                                <td>${formatFullName(reg.first_name, reg.middle_name, reg.last_name)}</td>
                                 <td>${reg.course}</td>
                                 <td>${reg.year_level}</td>
                                 <td><span class="status-badge status-${reg.approval_status}">${reg.approval_status}</span></td>
@@ -837,7 +842,7 @@ include('../components/sidebar.php');
                                     </div>
                                     <div style="display: flex; align-items: start; gap: 0.75rem;">
                                         <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Name:</span>
-                                        <span style="color: #1f2937; font-weight: 600; font-size: 15px;">${reg.first_name} ${reg.middle_name} ${reg.last_name}</span>
+                                        <span style="color: #1f2937; font-weight: 600; font-size: 15px;">${formatFullName(reg.first_name, reg.middle_name, reg.last_name)}</span>
                                     </div>
                                     <div style="display: flex; align-items: start; gap: 0.75rem;">
                                         <span style="color: #6b7280; font-size: 14px; min-width: 100px; font-weight: 500;">Email:</span>

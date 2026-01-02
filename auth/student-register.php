@@ -11,9 +11,9 @@ require_once '../includes/document_verification_service.php';
 $response = ['status' => 'error', 'message' => 'Invalid request'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstName = $_POST['firstName'] ?? '';
-    $middleName = $_POST['middleName'] ?? '';
-    $lastName = $_POST['lastName'] ?? '';
+    $firstName = trim($_POST['firstName'] ?? '');
+    $middleName = trim($_POST['middleName'] ?? '') ?: null;
+    $lastName = trim($_POST['lastName'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $studentId = $_POST['studentId'] ?? '';
     $course = $_POST['course'] ?? 'BSIT';
@@ -76,6 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             // If rejected, allow re-registration by updating the existing record
+        }
+        
+        // Validate against masterlist
+        $masterlistValidation = validateAgainstMasterlist($conn, $studentId, $firstName, $lastName);
+        if (!$masterlistValidation['valid']) {
+            $response['message'] = $masterlistValidation['message'];
+            echo json_encode($response);
+            exit;
         }
         
         // prepare set-password token
@@ -263,4 +271,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 echo json_encode($response);
+
+function validateAgainstMasterlist($conn, $studentId, $firstName, $lastName) {
+    try {
+        $normalizedId = normalizeStudentIdForMasterlist($studentId);
+        $fullName = trim($firstName . ' ' . $lastName);
+        $normalizedName = normalizeNameForMasterlist($fullName);
+        
+        $stmt = $conn->prepare("SELECT student_id, name FROM masterlist WHERE student_id = ?");
+        $stmt->execute([$normalizedId]);
+        $masterlistEntry = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$masterlistEntry) {
+            return [
+                'valid' => false,
+                'message' => 'Student ID not found in masterlist. Please ensure you are registered in the official student list.'
+            ];
+        }
+        
+        $masterlistName = normalizeNameForMasterlist($masterlistEntry['name']);
+        
+        if (!fuzzyNameMatch($normalizedName, $masterlistName)) {
+            return [
+                'valid' => false,
+                'message' => 'Name does not match the masterlist. Please ensure your name matches the official student list.'
+            ];
+        }
+        
+        return [
+            'valid' => true,
+            'message' => 'Validation successful'
+        ];
+    } catch (Exception $e) {
+        error_log('Masterlist validation error: ' . $e->getMessage());
+        return [
+            'valid' => false,
+            'message' => 'Masterlist validation failed. Please contact administrator.'
+        ];
+    }
+}
+
+function normalizeStudentIdForMasterlist($id) {
+    $id = preg_replace('/[\s._]+/', '-', $id);
+    $id = preg_replace('/[^0-9-]/', '', $id);
+    
+    if (preg_match('/^\d{8,9}$/', $id)) {
+        $id = substr($id, 0, 4) . '-' . substr($id, 4);
+    }
+    
+    return strtoupper($id);
+}
+
+function normalizeNameForMasterlist($name) {
+    $name = trim($name);
+    $name = preg_replace('/\s+/', ' ', $name);
+    return strtolower($name);
+}
+
+function fuzzyNameMatch($name1, $name2) {
+    $name1 = normalizeNameForMasterlist($name1);
+    $name2 = normalizeNameForMasterlist($name2);
+    
+    if ($name1 === $name2) {
+        return true;
+    }
+    
+    $name1Parts = explode(' ', $name1);
+    $name2Parts = explode(' ', $name2);
+    
+    if (count($name1Parts) < 2 || count($name2Parts) < 2) {
+        return false;
+    }
+    
+    $name1First = $name1Parts[0];
+    $name1Last = end($name1Parts);
+    $name2First = $name2Parts[0];
+    $name2Last = end($name2Parts);
+    
+    if ($name1First === $name2First && $name1Last === $name2Last) {
+        return true;
+    }
+    
+    $similarity = similar_text($name1, $name2, $percent);
+    return $percent >= 80;
+}
 ?>

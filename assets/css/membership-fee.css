@@ -416,6 +416,27 @@ body {
   box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
+.btn-print-receipt {
+  background: #10b981;
+  color: white;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-print-receipt:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
 .mark-unpaid { 
   background: #fee2e2; 
   color: #991b1b; 
@@ -996,6 +1017,216 @@ body {
   transform: translateY(0);
 }
 
+/* Validation Modal Styles */
+.validation-modal {
+  max-width: 440px;
+  padding: 0;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close-icon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #6b7280;
+  z-index: 10;
+}
+
+.modal-close-icon:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: rotate(90deg);
+}
+
+.validation-content {
+  padding: 48px 40px 32px;
+}
+
+.validation-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.validation-icon-wrapper i {
+  font-size: 40px;
+  color: #ef4444;
+}
+
+.validation-icon-wrapper.success-icon {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+}
+
+.validation-icon-wrapper.success-icon i {
+  color: #10b981;
+}
+
+.validation-icon-wrapper.warning-icon {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.validation-icon-wrapper.warning-icon i {
+  color: #f59e0b;
+}
+
+.validation-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.validation-message {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.control-number-display {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f3e9ff 0%, #e9d5ff 100%);
+  border-radius: 12px;
+  border: 2px solid #9933ff;
+}
+
+.control-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b21a8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.control-value {
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  color: #4B0082;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+}
+
+.validation-footer {
+  padding: 0 40px 40px;
+}
+
+.btn-validation-ok {
+  width: 100%;
+  padding: 16px 32px;
+  background: var(--primary-gradient);
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(153, 51, 255, 0.3);
+}
+
+.btn-validation-ok:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(153, 51, 255, 0.4);
+}
+
+.btn-validation-ok:active {
+  transform: translateY(0);
+}
+
+.student-info-display {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border-left: 3px solid #f59e0b;
+  text-align: left;
+}
+
+.student-info-display p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+.student-info-display strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.confirmation-footer {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-validation-cancel {
+  flex: 1;
+  padding: 16px 32px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  color: #374151;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-validation-cancel:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  transform: translateY(-2px);
+}
+
+.btn-validation-cancel:active {
+  transform: translateY(0);
+}
+
+.btn-validation-confirm {
+  flex: 1;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-validation-confirm:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.btn-validation-confirm:active {
+  transform: translateY(0);
+}
+
 @media (max-width: 768px) {
   .modal {
     width: 95%;
@@ -1017,6 +1248,27 @@ body {
   .btn-cancel,
   .btn-save {
     width: 100%;
+  }
+
+  .validation-modal {
+    width: 92%;
+    max-width: 380px;
+  }
+
+  .validation-content {
+    padding: 40px 28px 24px;
+  }
+
+  .validation-footer {
+    padding: 0 28px 32px;
+  }
+
+  .validation-title {
+    font-size: 22px;
+  }
+
+  .validation-message {
+    font-size: 14px;
   }
 }
 

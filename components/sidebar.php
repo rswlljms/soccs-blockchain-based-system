@@ -63,7 +63,7 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
     
     <?php if (hasAnyPermission(['view_students', 'manage_students', 'verify_students'])): ?>
     <li class="dropdown">
-      <a href="javascript:void(0);" class="dropdown-toggle <?= ($currentPage == 'students.php' || $currentPage == 'student-approvals.php') ? 'active' : '' ?>">
+      <a href="javascript:void(0);" class="dropdown-toggle <?= ($currentPage == 'students.php' || $currentPage == 'student-approvals.php' || $currentPage == 'masterlist-upload.php') ? 'active' : '' ?>">
         <i class="fas fa-users"></i>
         <span>Student Management</span>
         <i class="fas fa-chevron-down dropdown-icon"></i>
@@ -72,6 +72,11 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
         <?php if (hasAnyPermission(['view_students', 'manage_students'])): ?>
         <li><a href="../pages/students.php" class="<?= $currentPage == 'students.php' ? 'active' : '' ?>">
           <i class="fas fa-users"></i><span>Active Students</span>
+        </a></li>
+        <?php endif; ?>
+        <?php if (hasAnyPermission(['view_students', 'manage_students'])): ?>
+        <li><a href="../pages/masterlist-upload.php" class="<?= $currentPage == 'masterlist-upload.php' ? 'active' : '' ?>">
+          <i class="fas fa-file-upload"></i><span>Masterlist Upload</span>
         </a></li>
         <?php endif; ?>
         <?php if (hasPermission('verify_students')): ?>
@@ -83,8 +88,8 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
     </li>
     <?php endif; ?>
     
-    <?php if (hasAnyPermission(['view_events', 'add_events', 'manage_events'])): ?>
-    <?php if (hasAnyPermission(['add_events', 'manage_events'])): ?>
+    <?php if (hasAnyPermission(['view_events', 'manage_events'])): ?>
+    <?php if (hasPermission('manage_events')): ?>
     <li><a href="../pages/events.php" class="<?= $currentPage == 'events.php' ? 'active' : '' ?>">
       <i class="fas fa-calendar-alt"></i><span>Event Management</span>
     </a></li>

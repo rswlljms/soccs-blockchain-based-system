@@ -87,7 +87,6 @@ INSERT INTO `permissions` (`name`, `slug`, `description`, `module`) VALUES
 
 -- Events Module
 ('View Events', 'view_events', 'View events', 'events'),
-('Add Events', 'add_events', 'Create new events', 'events'),
 ('Manage Events', 'manage_events', 'Create, edit, delete events', 'events'),
 
 -- Reports Module
@@ -111,9 +110,6 @@ INSERT INTO `permissions` (`name`, `slug`, `description`, `module`) VALUES
 ('Demote Accounts', 'demote_accounts', 'Change user roles (demote/promote)', 'users'),
 ('Manage Users', 'manage_users', 'Full user management (create, edit, deactivate)', 'users'),
 
--- Settings
-('View Settings', 'view_settings', 'View system settings', 'settings'),
-('Manage Settings', 'manage_settings', 'Modify system settings', 'settings');
 
 -- Set up default permissions for each role based on use case diagrams
 
@@ -200,7 +196,6 @@ INSERT INTO `role_default_permissions` (`role`, `permission_id`)
 SELECT 'event_coordinator', id FROM `permissions` WHERE slug IN (
     'view_dashboard',
     'view_events',
-    'add_events',
     'manage_events',
     'view_financial_records',
     'view_funds',

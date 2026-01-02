@@ -17,6 +17,12 @@ function getYearSuffix(year) {
     return suffixes[year] || 'th';
 }
 
+// Helper function to format full name, handling null/empty middle names
+function formatFullName(firstName, middleName, lastName) {
+    const nameParts = [firstName, middleName, lastName].filter(part => part && part !== 'null' && part.trim() !== '');
+    return nameParts.join(' ');
+}
+
 // Function to load student registrations from API or use mock data
 async function loadStudentRegistrations() {
     // Check if we're in development mode (no database) - use mock data
@@ -154,7 +160,7 @@ function renderApprovalsTable(students = pendingStudents) {
     }
 
     students.forEach(student => {
-        const fullName = `${student.firstName} ${student.middleName} ${student.lastName}`.trim();
+        const fullName = formatFullName(student.firstName, student.middleName, student.lastName);
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${fullName}</td>

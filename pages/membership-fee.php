@@ -99,6 +99,7 @@ include('../components/sidebar.php');
               <th>Year</th>
               <th>Section</th>
               <th>Status</th>
+              <th>Control No.</th>
               <th>Receipt</th>
               <th>Actions</th>
             </tr>
@@ -145,7 +146,7 @@ include('../components/sidebar.php');
         </label>
         <div class="amount-input-wrapper">
           <span class="currency-prefix">₱</span>
-          <input type="number" id="modalAmountPaid" name="amount" step="0.01" min="0" placeholder="0.00" required>
+          <input type="number" id="modalAmountPaid" name="amount" step="0.01" min="0" value="250.00" readonly class="readonly-input" required>
         </div>
       </div>
       
@@ -178,6 +179,80 @@ include('../components/sidebar.php');
       <button type="button" class="btn-cancel" onclick="closeMarkPaidModal()">Cancel</button>
       <button type="button" class="btn-save" onclick="submitMarkAsPaid()">
         <i class="fas fa-check"></i> Confirm Payment
+      </button>
+    </div>
+  </div>
+
+  <!-- Validation Error Modal -->
+  <div class="modal-overlay" id="validationErrorOverlay"></div>
+  <div class="modal validation-modal" id="validationErrorModal">
+    <button type="button" class="modal-close-icon" onclick="closeValidationErrorModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="validation-content">
+      <div class="validation-icon-wrapper">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <h3 class="validation-title">Invalid Input</h3>
+      <p class="validation-message">Please enter a valid amount and payment date before confirming the payment.</p>
+    </div>
+    
+    <div class="validation-footer">
+      <button type="button" class="btn-validation-ok" onclick="closeValidationErrorModal()">
+        OK
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModalOverlay"></div>
+  <div class="modal validation-modal success-modal" id="successModal">
+    <button type="button" class="modal-close-icon" onclick="closeSuccessModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="validation-content">
+      <div class="validation-icon-wrapper success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3 class="validation-title">Payment Recorded</h3>
+      <p class="validation-message">The membership fee payment has been successfully recorded.</p>
+      <div class="control-number-display">
+        <span class="control-label">Control Number:</span>
+        <span class="control-value" id="successControlNumber">---</span>
+      </div>
+    </div>
+    
+    <div class="validation-footer">
+      <button type="button" class="btn-validation-ok" onclick="closeSuccessModal()">
+        OK
+      </button>
+    </div>
+  </div>
+
+  <!-- Confirm Unpaid Modal -->
+  <div class="modal-overlay" id="confirmUnpaidOverlay"></div>
+  <div class="modal validation-modal warning-modal" id="confirmUnpaidModal">
+    <button type="button" class="modal-close-icon" onclick="closeConfirmUnpaidModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="validation-content">
+      <div class="validation-icon-wrapper warning-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h3 class="validation-title">Mark as Unpaid?</h3>
+      <p class="validation-message">Are you sure you want to mark this student as unpaid? This will remove their payment record and control number.</p>
+      <div class="student-info-display" id="unpaidStudentInfo"></div>
+    </div>
+    
+    <div class="validation-footer confirmation-footer">
+      <button type="button" class="btn-validation-cancel" onclick="closeConfirmUnpaidModal()">
+        Cancel
+      </button>
+      <button type="button" class="btn-validation-confirm" onclick="confirmMarkUnpaid()">
+        Yes, Mark as Unpaid
       </button>
     </div>
   </div>

@@ -69,17 +69,23 @@ function renderStudentsTable(students) {
     }
 
     students.forEach(student => {
+        if (!student.id) {
+            console.warn('Student missing ID:', student);
+            return;
+        }
+
         const row = document.createElement('tr');
+        const studentId = String(student.id);
         
         const actionButton = student.is_archived 
-            ? `<button class="action-btn restore" onclick="restoreStudent('${student.id}')" title="Restore Student">
+            ? `<button class="action-btn restore" data-action="restore" data-student-id="${studentId}" title="Restore Student">
                  <i class="fas fa-undo"></i>
                </button>`
-            : `<button class="action-btn archive" onclick="archiveStudent('${student.id}')" title="Archive Student">
+            : `<button class="action-btn archive" data-action="archive" data-student-id="${studentId}" title="Archive Student">
                  <i class="fas fa-box-archive"></i>
                </button>`;
 
-        const profileButton = `<button class="action-btn view" onclick="viewStudentProfile('${student.id}')" title="View Profile">
+        const profileButton = `<button class="action-btn view" data-action="view-profile" data-student-id="${studentId}" title="View Profile">
             <i class="fas fa-id-card"></i>
         </button>`;
 
@@ -97,6 +103,8 @@ function renderStudentsTable(students) {
         `;
         tbody.appendChild(row);
     });
+    
+    attachTableEventListeners();
 }
 
 async function loadStudents() {
@@ -395,6 +403,36 @@ function closeConfirmModal() {
     if (modal) modal.classList.remove('show');
 }
 
+function attachTableEventListeners() {
+    const tbody = document.getElementById('students-table-body');
+    if (!tbody) return;
+
+    tbody.addEventListener('click', function(e) {
+        const button = e.target.closest('.action-btn');
+        if (!button) return;
+
+        const action = button.getAttribute('data-action');
+        const studentId = button.getAttribute('data-student-id');
+
+        if (!studentId) {
+            console.error('Student ID not found in button');
+            return;
+        }
+
+        switch (action) {
+            case 'view-profile':
+                viewStudentProfile(studentId);
+                break;
+            case 'archive':
+                archiveStudent(studentId);
+                break;
+            case 'restore':
+                restoreStudent(studentId);
+                break;
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const okBtn = document.getElementById('confirmOk');
     const cancelBtn = document.getElementById('confirmCancel');
@@ -443,80 +481,90 @@ document.addEventListener('DOMContentLoaded', function () {
         successOverlay.addEventListener('click', closeSuccessModal);
     }
 
+    attachTableEventListeners();
+
     // Ensure initial render after DOM is fully ready
     setTimeout(() => loadStudents(), 0);
 });
 
 async function viewStudentProfile(studentId) {
     try {
+        if (!studentId || studentId === 'undefined' || studentId === 'null') {
+            throw new Error('Invalid student ID');
+        }
+
+        console.log('Loading profile for student ID:', studentId);
         const res = await fetch(`../api/get_student_profile.php?id=${encodeURIComponent(studentId)}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (!data.success) throw new Error(data.error || 'Failed to load profile');
+        
+        if (!res.ok || !data.success) {
+            console.error('API Error:', data.error, 'Status:', res.status);
+            throw new Error(data.error || `HTTP ${res.status}: Failed to load profile`);
+        }
 
         const s = data.data;
         const overlay = document.getElementById('studentProfileOverlay');
         const modal = document.getElementById('studentProfileModal');
         const body = document.getElementById('studentProfileBody');
-        if (!overlay || !modal || !body) return;
+        const formBody = modal?.querySelector('.form-body');
+        
+        if (!overlay || !modal || !body) {
+            throw new Error('Modal elements not found');
+        }
 
-        // Build header (icon + title)
         const headerEl = modal.querySelector('.profile-header-container');
-        if (!headerEl) {
-          const titleContainer = document.createElement('div');
-          titleContainer.className = 'profile-header-container';
-          titleContainer.innerHTML = `
-            <div class="profile-header">
-              <div class="badge-icon"><i class="fas fa-id-card"></i></div>
-              <h3 class="profile-title">Student Profile</h3>
-            </div>
-            <div class="divider"></div>
-          `;
-          modal.querySelector('.modal-content')?.insertBefore(titleContainer, body);
+        if (!headerEl && formBody) {
+            const titleContainer = document.createElement('div');
+            titleContainer.className = 'profile-header-container';
+            titleContainer.innerHTML = `
+                <div class="profile-header">
+                    <div class="badge-icon"><i class="fas fa-id-card"></i></div>
+                    <h3 class="profile-title">Student Profile</h3>
+                </div>
+                <div class="divider"></div>
+            `;
+            formBody.insertBefore(titleContainer, body);
         }
 
         body.innerHTML = `
-          <div class="profile-card">
-            <div class="profile-label">Student ID</div>
-            <div class="profile-value">${s.id || ''}</div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-label">Name</div>
-            <div class="profile-value">${[s.first_name, s.middle_name, s.last_name].filter(Boolean).join(' ')}</div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-label">Email</div>
-            <div class="profile-value">${s.email || ''}</div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-label">Course/Year/Section</div>
-            <div class="profile-value">${s.course || ''} / ${s.year_level || ''} / ${s.section || ''}</div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-label">Gender</div>
-            <div class="profile-value">${s.gender || ''}</div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-label">Age</div>
-            <div class="profile-value">${s.age ?? ''}</div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-label">Membership Status</div>
-            <div class="profile-value ${((s.membership_fee_status||'unpaid')==='paid') ? '' : 'muted'}">${(s.membership_fee_status||'unpaid').toUpperCase()}</div>
-          </div>
-          <div class="profile-card">
-            <div class="profile-label">Paid At</div>
-            <div class="profile-value">${s.membership_fee_paid_at || '-'}</div>
-          </div>
-          <div class="profile-card" style="grid-column:1 / -1;">
-            <div class="profile-label">Receipt</div>
-            <div class="profile-value">${s.membership_fee_receipt ? `<a href=\"../uploads/membership-receipts/${s.membership_fee_receipt}\" target=\"_blank\">View Receipt</a>` : 'None'}</div>
-          </div>
+            <div class="profile-card">
+                <div class="profile-label">Student ID</div>
+                <div class="profile-value">${s.id || ''}</div>
+            </div>
+            <div class="profile-card">
+                <div class="profile-label">Name</div>
+                <div class="profile-value">${[s.first_name, s.middle_name, s.last_name].filter(Boolean).join(' ')}</div>
+            </div>
+            <div class="profile-card">
+                <div class="profile-label">Email</div>
+                <div class="profile-value">${s.email || ''}</div>
+            </div>
+            <div class="profile-card">
+                <div class="profile-label">Course/Year/Section</div>
+                <div class="profile-value">${s.course || ''} / ${s.year_level || ''} / ${s.section || ''}</div>
+            </div>
+            <div class="profile-card">
+                <div class="profile-label">Gender</div>
+                <div class="profile-value">${s.gender || ''}</div>
+            </div>
+            <div class="profile-card">
+                <div class="profile-label">Membership Status</div>
+                <div class="profile-value ${((s.membership_fee_status||'unpaid')==='paid') ? '' : 'muted'}">${(s.membership_fee_status||'unpaid').toUpperCase()}</div>
+            </div>
+            <div class="profile-card">
+                <div class="profile-label">Paid At</div>
+                <div class="profile-value">${s.membership_fee_paid_at || '-'}</div>
+            </div>
+            <div class="profile-card" style="grid-column:1 / -1;">
+                <div class="profile-label">Receipt</div>
+                <div class="profile-value">${s.membership_fee_receipt ? `<a href=\"../uploads/membership-receipts/${s.membership_fee_receipt}\" target=\"_blank\">View Receipt</a>` : 'None'}</div>
+            </div>
         `;
 
         overlay.classList.add('show');
         modal.classList.add('show');
     } catch (e) {
+        console.error('Error loading student profile:', e);
         alert(e.message || 'Failed to load profile');
     }
 }

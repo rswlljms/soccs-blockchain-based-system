@@ -14,6 +14,14 @@ include('../components/sidebar.php');
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        const userPermissions = {
+            canViewUsers: <?php echo hasPermission('view_users') ? 'true' : 'false'; ?>,
+            canCreateAccounts: <?php echo hasPermission('create_accounts') || hasPermission('manage_users') ? 'true' : 'false'; ?>,
+            canManageUsers: <?php echo hasPermission('manage_users') ? 'true' : 'false'; ?>,
+            canDemoteAccounts: <?php echo hasPermission('demote_accounts') || hasPermission('manage_users') ? 'true' : 'false'; ?>
+        };
+    </script>
 </head>
 <body>
     <div class="main-content">
@@ -78,10 +86,12 @@ include('../components/sidebar.php');
                     <span>Show Inactive</span>
                 </button>
                 
+                <?php if (hasPermission('create_accounts') || hasPermission('manage_users')): ?>
                 <button class="btn btn-primary" id="addUserBtn">
                     <i class="fas fa-plus"></i>
                     Add User
                 </button>
+                <?php endif; ?>
             </div>
 
             <div class="table-container">
@@ -146,13 +156,17 @@ include('../components/sidebar.php');
                 <div class="form-row">
                     <div class="form-group">
                         <label for="password">Password <span class="required" id="passwordRequired">*</span></label>
-                        <input type="password" id="password" name="password" placeholder="Enter password" minlength="8">
+                        <div class="password-input-wrapper">
+                            <input type="password" id="password" name="password" placeholder="Enter password" minlength="8">
+                            <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
+                                <i class="fas fa-eye-slash" id="passwordToggleIcon"></i>
+                            </button>
+                        </div>
                         <p class="form-hint" id="passwordHint">Minimum 8 characters</p>
                     </div>
                     <div class="form-group">
                         <label for="userRole">Role <span class="required">*</span></label>
                         <select id="userRole" name="role" required>
-                            <option value="officer">Officer</option>
                             <option value="secretary">Secretary</option>
                             <option value="event_coordinator">Event Coordinator</option>
                             <option value="comelec">COMELEC</option>

@@ -2,18 +2,45 @@
 session_start();
 require_once '../includes/database.php';
 
-$_SESSION['student'] = [
-  'id' => '0122-1141', 
-  'firstName' => 'Roswell James',
-  'middleName' => 'D.',
-  'lastName' => 'Vitaliz',
-  'yearLevel' => '3',
-  'section' => 'A',
-  'course' => 'BSIT',
-  'email' => 'roswelljamesvitaliz@gmail.com'
-];
+if (!isset($_SESSION['student'])) {
+    header('Location: ../templates/login.php');
+    exit;
+}
 
-$student = $_SESSION['student'];
+try {
+    $database = new Database();
+    $conn = $database->getConnection();
+    
+    $studentId = $_SESSION['student']['id'];
+    
+    $query = "SELECT * FROM students WHERE id = ? AND is_active = 1";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$studentId]);
+    $studentData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$studentData) {
+        session_destroy();
+        header('Location: ../templates/login.php');
+        exit;
+    }
+    
+    $student = [
+        'id' => $studentData['id'],
+        'firstName' => $studentData['first_name'],
+        'middleName' => $studentData['middle_name'] ?? '',
+        'lastName' => $studentData['last_name'],
+        'email' => $studentData['email'],
+        'yearLevel' => $studentData['year_level'],
+        'section' => $studentData['section'],
+        'course' => $studentData['course'] ?? 'BSIT'
+    ];
+    
+    $_SESSION['student'] = array_merge($_SESSION['student'], $student);
+    
+} catch (Exception $e) {
+    error_log('Results page load error: ' . $e->getMessage());
+    $student = $_SESSION['student'];
+}
 
 // Check for any election (active or completed)
 try {

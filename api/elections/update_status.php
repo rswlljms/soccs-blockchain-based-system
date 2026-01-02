@@ -57,7 +57,9 @@ try {
         $totalVotes = (int)($totalVotesResult['total'] ?? 0);
         
         try {
-            $blockchainUrl = 'http://localhost:3001/confirm-election';
+            require_once __DIR__ . '/../../includes/app_config.php';
+            $blockchainBaseUrl = AppConfig::get('BLOCKCHAIN_URL', 'http://localhost:3001');
+            $blockchainUrl = rtrim($blockchainBaseUrl, '/') . '/confirm-election';
             $electionData = [
                 'electionId' => $id,
                 'electionTitle' => $electionTitle,
@@ -89,6 +91,9 @@ try {
     }
     
     $query = "UPDATE elections SET status = :status";
+    if ($status === 'active') {
+        $query .= ", start_date = NOW()";
+    }
     if ($status === 'completed') {
         $query .= ", transaction_hash = :transaction_hash";
     }

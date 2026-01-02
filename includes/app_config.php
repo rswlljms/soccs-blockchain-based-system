@@ -13,6 +13,10 @@ class AppConfig {
             // SMTP Configuration - SET YOUR GMAIL APP PASSWORD HERE
             'smtp_username' => 'roswelljamesvitaliz@gmail.com',
             'smtp_password' => 'cfjciegpekyxocoy',
+            
+            // Blockchain Service URL - Use environment variable BLOCKCHAIN_URL or default to localhost
+            // For public access, set BLOCKCHAIN_URL to your ngrok/tunnel URL (e.g., https://abc123.ngrok.io)
+            'BLOCKCHAIN_URL' => 'http://localhost:3001',
         ];
         return array_key_exists($key, $overrides) ? $overrides[$key] : $default;
     }

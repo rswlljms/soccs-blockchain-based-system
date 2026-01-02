@@ -657,7 +657,10 @@ include('../components/sidebar.php');
             showModal('loadingModal');
 
             // Send to blockchain
-            const blockchainResponse = await fetch('http://localhost:3001/add-expenses', {
+            while (!AppConfig.initialized) {
+              await new Promise(resolve => setTimeout(resolve, 50));
+            }
+            const blockchainResponse = await fetch(`${AppConfig.blockchainUrl}/add-expenses`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(expenseData)
@@ -753,6 +756,7 @@ include('../components/sidebar.php');
     }
   </script>
 
+  <script src="../assets/js/config.js"></script>
   <script src="../assets/js/expenses.js"></script>
 </body>
 </html>

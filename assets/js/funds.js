@@ -152,7 +152,10 @@ document.getElementById('fund-form').addEventListener('submit', async function (
                 showModal('loadingModal');
 
                 // Send to blockchain
-                const blockchainResponse = await fetch('http://localhost:3001/add-funds', {
+                while (!AppConfig.initialized) {
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+                const blockchainResponse = await fetch(`${AppConfig.blockchainUrl}/add-funds`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(fundData)

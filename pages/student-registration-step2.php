@@ -149,7 +149,7 @@
         <div class="modal-content">
             <i class="fas fa-check-circle modal-icon success"></i>
             <h3 class="modal-title">Registration Successful!</h3>
-            <p>Thank you for registering. Please check your email to confirm and wait for admin approval.</p>
+            <p>Thank you for registering. Please check your email to confirm.</p>
             <button class="modal-btn" id="successOk">Continue to Login</button>
         </div>
     </div>
@@ -161,6 +161,19 @@
             <h3 class="modal-title" id="errorTitle">Error</h3>
             <p id="errorMessage">An error occurred</p>
             <button class="modal-btn" id="errorOk">OK</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmOverlay"></div>
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-triangle modal-icon warning"></i>
+            <h3 class="modal-title">Confirm Action</h3>
+            <p>Are you sure you want to go back? Your uploaded documents will be lost.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" id="confirmCancel">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="confirmOk">OK</button>
+            </div>
         </div>
     </div>
 
@@ -316,6 +329,9 @@
                 console.warn('Gender not extracted from COR');
             }
             
+            console.log('Academic Year extracted:', extracted.academicYear);
+            console.log('Semester extracted:', extracted.semester);
+            
             console.log('=== AUTO-FILL COMPLETE ===');
         }
 
@@ -332,6 +348,23 @@
             e.preventDefault();
 
             const formData = new FormData(form);
+            
+            const registrationData = sessionStorage.getItem('registrationData');
+            if (registrationData) {
+                const data = JSON.parse(registrationData);
+                const extracted = data.extractedInfo || {};
+                
+                console.log('=== SENDING TO BACKEND ===');
+                console.log('Academic Year from extracted:', extracted.academicYear);
+                console.log('Semester from extracted:', extracted.semester);
+                
+                formData.append('academicYear', extracted.academicYear || '');
+                formData.append('semester', extracted.semester || '');
+            } else {
+                console.warn('No registration data found in sessionStorage');
+                formData.append('academicYear', '');
+                formData.append('semester', '');
+            }
 
             // Disable all form inputs
             const inputs = form.querySelectorAll('input, button, select, textarea');
@@ -426,11 +459,21 @@
             hideModal('errorModal');
         });
 
+        document.getElementById('confirmOk').addEventListener('click', function() {
+            sessionStorage.removeItem('registrationData');
+            window.location.href = 'student-registration-step1.php';
+        });
+
+        document.getElementById('confirmCancel').addEventListener('click', function() {
+            hideModal('confirmModal');
+        });
+
+        document.getElementById('confirmOverlay').addEventListener('click', function() {
+            hideModal('confirmModal');
+        });
+
         function goBack() {
-            if (confirm('Are you sure you want to go back? Your uploaded documents will be lost.')) {
-                sessionStorage.removeItem('registrationData');
-                window.location.href = 'student-registration-step1.php';
-            }
+            showModal('confirmModal');
         }
     </script>
 </body>

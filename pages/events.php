@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../includes/page_access.php';
-checkPageAccess(['add_events', 'manage_events']);
+checkPageAccess(['view_events', 'manage_events']);
 include('../components/sidebar.php');
 ?>
 <!DOCTYPE html>
@@ -80,6 +80,10 @@ include('../components/sidebar.php');
         #endDateRow { transition: all 0.3s ease; }
     </style>
     <script>
+        const userPermissions = {
+            canManageEvents: <?php echo hasPermission('manage_events') ? 'true' : 'false'; ?>
+        };
+        
         function toggleDateInputs() {
             const durationType = document.getElementById('eventDurationType').value;
             const endDateRow = document.getElementById('endDateRow');
@@ -146,9 +150,11 @@ include('../components/sidebar.php');
                 
                 <input type="text" id="search-event" placeholder="Search event name...">
                 
+                <?php if (hasPermission('manage_events')): ?>
                 <button class="btn-add-event" id="addEventBtn">
                     <i class="fas fa-plus"></i> Add Event
                 </button>
+                <?php endif; ?>
             </div>
             
             <!-- Event Table -->

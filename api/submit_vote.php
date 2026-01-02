@@ -124,7 +124,9 @@ try {
 
     $db->commit();
     
-    $blockchainUrl = 'http://localhost:3001/add-batch-votes';
+    require_once __DIR__ . '/../includes/app_config.php';
+    $blockchainBaseUrl = AppConfig::get('BLOCKCHAIN_URL', 'http://localhost:3001');
+    $blockchainUrl = rtrim($blockchainBaseUrl, '/') . '/add-batch-votes';
     $candidateIds = [];
     $positionIds = [];
     

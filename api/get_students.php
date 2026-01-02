@@ -58,11 +58,16 @@ try {
         SELECT 
             id,
             CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) as full_name,
+            first_name,
+            middle_name,
+            last_name,
             course,
             year_level,
             section,
             COALESCE(membership_fee_status, 'unpaid') as payment_status,
             membership_fee_receipt as receipt_file,
+            membership_control_number,
+            membership_fee_paid_at,
             is_archived,
             created_at
         FROM students 
@@ -95,9 +100,23 @@ try {
     $summaryArchivedStmt->execute();
     $summaryArchived = $summaryArchivedStmt->fetch(PDO::FETCH_ASSOC);
 
+    // Get membership fee statistics
+    $membershipStatsSql = "
+        SELECT 
+            COUNT(CASE WHEN membership_fee_status = 'paid' THEN 1 END) as paid_students,
+            SUM(CASE WHEN membership_fee_status = 'paid' THEN 250.00 ELSE 0 END) as total_collected
+        FROM students 
+        WHERE is_archived = 0
+    ";
+    $membershipStatsStmt = $pdo->prepare($membershipStatsSql);
+    $membershipStatsStmt->execute();
+    $membershipStats = $membershipStatsStmt->fetch(PDO::FETCH_ASSOC);
+
     $summary = [
         'total_students' => (int)($summaryActive['total_students'] ?? 0),
-        'archived_students' => (int)($summaryArchived['archived_students'] ?? 0)
+        'archived_students' => (int)($summaryArchived['archived_students'] ?? 0),
+        'paid_students' => (int)($membershipStats['paid_students'] ?? 0),
+        'total_collected' => (float)($membershipStats['total_collected'] ?? 0)
     ];
     
     echo json_encode([

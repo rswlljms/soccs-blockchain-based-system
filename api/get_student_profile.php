@@ -10,9 +10,24 @@ try {
     $database = new Database();
     $pdo = $database->getConnection();
 
-    $id = $_GET['id'] ?? '';
-    if (empty($id)) {
-        throw new Exception('Student ID is required');
+    $id = trim($_GET['id'] ?? '');
+    
+    if (empty($id) || $id === 'undefined' || $id === 'null') {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Student ID is required'
+        ]);
+        exit;
+    }
+
+    if (strlen($id) > 20) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Student ID is too long'
+        ]);
+        exit;
     }
 
     $sql = "SELECT 
@@ -24,7 +39,6 @@ try {
                 course,
                 year_level,
                 section,
-                age,
                 gender,
                 membership_fee_status,
                 membership_fee_receipt,
@@ -36,19 +50,36 @@ try {
             WHERE id = ?";
 
     $stmt = $pdo->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Database query preparation failed');
+    }
+    
     $stmt->execute([$id]);
     $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$student) {
-        throw new Exception('Student not found');
+        http_response_code(404);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Student not found'
+        ]);
+        exit;
     }
 
     echo json_encode([
         'success' => true,
         'data' => $student
     ]);
+} catch (PDOException $e) {
+    http_response_code(500);
+    error_log('Database error in get_student_profile.php: ' . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error occurred'
+    ]);
 } catch (Exception $e) {
     http_response_code(400);
+    error_log('Error in get_student_profile.php: ' . $e->getMessage());
     echo json_encode([
         'success' => false,
         'error' => $e->getMessage()

@@ -129,6 +129,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadUsers();
             }
         });
+
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordInput = document.getElementById('password');
+        const passwordToggleIcon = document.getElementById('passwordToggleIcon');
+        
+        if (passwordToggle && passwordInput && passwordToggleIcon) {
+            passwordToggle.addEventListener('click', function() {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                const newType = isPassword ? 'text' : 'password';
+                passwordInput.setAttribute('type', newType);
+                
+                if (newType === 'text') {
+                    passwordToggleIcon.classList.remove('fa-eye-slash');
+                    passwordToggleIcon.classList.add('fa-eye');
+                    passwordToggle.setAttribute('aria-label', 'Hide password');
+                } else {
+                    passwordToggleIcon.classList.remove('fa-eye');
+                    passwordToggleIcon.classList.add('fa-eye-slash');
+                    passwordToggle.setAttribute('aria-label', 'Show password');
+                }
+            });
+        }
     }
 
     function loadUsers() {
@@ -208,14 +230,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     </td>
                     <td style="color: #6b7280; font-size: 13px;">${lastLogin}</td>
                     <td>
+                        ${typeof userPermissions !== 'undefined' && (userPermissions.canManageUsers || userPermissions.canDemoteAccounts) ? `
                         <div class="action-buttons">
+                            ${typeof userPermissions !== 'undefined' && userPermissions.canManageUsers ? `
                             <button class="action-btn edit" onclick="editUser(${user.id})" title="Edit User">
                                 <i class="fas fa-edit"></i>
                             </button>
+                            ` : ''}
+                            ${typeof userPermissions !== 'undefined' && userPermissions.canManageUsers ? `
                             <button class="action-btn permissions" onclick="managePermissions(${user.id}, '${escapeHtml(user.first_name)} ${escapeHtml(user.last_name)}')" title="Manage Permissions">
                                 <i class="fas fa-key"></i>
                             </button>
-                            ${user.status === 'active' ? `
+                            ` : ''}
+                            ${typeof userPermissions !== 'undefined' && userPermissions.canManageUsers ? (user.status === 'active' ? `
                                 <button class="action-btn delete" onclick="deactivateUser(${user.id}, '${escapeHtml(user.first_name)} ${escapeHtml(user.last_name)}')" title="Deactivate User">
                                     <i class="fas fa-user-slash"></i>
                                 </button>
@@ -223,8 +250,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <button class="action-btn restore" onclick="reactivateUser(${user.id})" title="Reactivate User">
                                     <i class="fas fa-user-check"></i>
                                 </button>
-                            `}
+                            `) : ''}
                         </div>
+                        ` : '<span style="color: #9ca3af;">View Only</span>'}
                     </td>
                 </tr>
             `;
@@ -388,12 +416,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     const userPermIds = data.data.permissions.map(p => p.id);
-                    renderPermissions(userPermIds);
+                    const userRole = data.data.role;
+                    renderPermissions(userPermIds, userRole);
                 }
             });
     };
 
-    function renderPermissions(userPermIds) {
+    function renderPermissions(userPermIds, userRole) {
         const moduleIcons = {
             'Dashboard': 'fas fa-home',
             'Funds': 'fas fa-money-bill',
@@ -403,9 +432,20 @@ document.addEventListener('DOMContentLoaded', function() {
             'Events': 'fas fa-calendar',
             'Reports': 'fas fa-file-alt',
             'Elections': 'fas fa-vote-yea',
-            'Users': 'fas fa-user-cog',
-            'Settings': 'fas fa-cog'
+            'Users': 'fas fa-user-cog'
         };
+
+        const isReadOnly = userRole === 'adviser' || userRole === 'dean';
+        
+        if (isReadOnly) {
+            elements.savePermissionsBtn.disabled = true;
+            elements.savePermissionsBtn.style.opacity = '0.6';
+            elements.savePermissionsBtn.style.cursor = 'not-allowed';
+        } else {
+            elements.savePermissionsBtn.disabled = false;
+            elements.savePermissionsBtn.style.opacity = '1';
+            elements.savePermissionsBtn.style.cursor = 'pointer';
+        }
 
         const grouped = {};
         allPermissions.forEach(perm => {
@@ -423,9 +463,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="permissions-grid">
                         ${perms.map(perm => {
                             const isChecked = userPermIds.includes(perm.id);
+                            const disabledAttr = isReadOnly ? 'disabled' : '';
+                            const clickHandler = isReadOnly ? '' : 'onclick="togglePermission(this)"';
+                            const disabledClass = isReadOnly ? 'disabled' : '';
                             return `
-                                <div class="permission-item ${isChecked ? 'checked' : ''}" onclick="togglePermission(this)">
-                                    <input type="checkbox" name="permissions[]" value="${perm.id}" ${isChecked ? 'checked' : ''}>
+                                <div class="permission-item ${isChecked ? 'checked' : ''} ${disabledClass}" ${clickHandler}>
+                                    <input type="checkbox" name="permissions[]" value="${perm.id}" ${isChecked ? 'checked' : ''} ${disabledAttr}>
                                     <label>${perm.name}</label>
                                 </div>
                             `;
@@ -439,7 +482,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.togglePermission = function(element) {
+        if (element.classList.contains('disabled')) {
+            return;
+        }
         const checkbox = element.querySelector('input[type="checkbox"]');
+        if (checkbox.disabled) {
+            return;
+        }
         checkbox.checked = !checkbox.checked;
         element.classList.toggle('checked', checkbox.checked);
     };
@@ -447,10 +496,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function closePermissionsModal() {
         elements.permissionsModal.classList.remove('show');
         elements.permissionsModalOverlay.classList.remove('show');
+        elements.savePermissionsBtn.disabled = false;
+        elements.savePermissionsBtn.style.opacity = '1';
+        elements.savePermissionsBtn.style.cursor = 'pointer';
     }
 
     function savePermissions() {
         const userId = elements.permissionsUserId.value;
+        
+        if (!userId || userId <= 0) {
+            showToast('Invalid user ID', 'error');
+            return;
+        }
+
+        if (elements.savePermissionsBtn.disabled) {
+            showToast('Permissions for SOCCS Adviser cannot be modified', 'error');
+            return;
+        }
+
         const checkboxes = elements.permissionsContainer.querySelectorAll('input[type="checkbox"]:checked');
         const permissions = Array.from(checkboxes).map(cb => parseInt(cb.value));
 
@@ -462,19 +525,37 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: parseInt(userId), permissions: permissions })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        return { success: false, error: `HTTP ${response.status}: ${text.substring(0, 100)}` };
+                    }
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                showToast('Permissions updated successfully', 'success');
+                console.log('Permission update successful:', data);
+                if (data.saved_permissions) {
+                    console.log('Saved permissions:', data.saved_permissions);
+                    console.log('Permission count:', data.permission_count);
+                }
+                const message = data.message || 'Permission Updated';
+                showToast(message, 'success');
                 closePermissionsModal();
                 loadUsers();
             } else {
+                console.error('Permission update error:', data);
                 showToast(data.error || 'Failed to update permissions', 'error');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showToast('Failed to update permissions', 'error');
+            console.error('Network error:', error);
+            showToast('Network error: Failed to update permissions', 'error');
         })
         .finally(() => {
             elements.savePermissionsBtn.disabled = false;

@@ -322,7 +322,9 @@ app.post('/confirm-election', async (req, res) => {
 });
 
 const PORT = 3001;
-app.listen(PORT, () => {
-  console.log(`Blockchain signer service running on http://localhost:${PORT}`);
+const HOST = process.env.HOST || '0.0.0.0';
+app.listen(PORT, HOST, () => {
+  console.log(`Blockchain signer service running on http://${HOST}:${PORT}`);
   console.log('Contract address:', process.env.CONTRACT_ADDRESS);
+  console.log('Service is accessible from external connections');
 });

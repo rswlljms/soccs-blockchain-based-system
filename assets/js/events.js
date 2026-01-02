@@ -195,12 +195,14 @@ class EventsManager {
                     <td><span class="event-status ${event.status}">${this.capitalizeFirstLetter(event.status)}</span></td>
                     <td>
                         <div class="action-buttons">
+                            ${typeof userPermissions !== 'undefined' && userPermissions.canManageEvents ? `
                             <button class="action-btn edit" onclick="eventsManager.editEvent(${event.id})" title="Edit Event">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="action-btn archive" onclick="eventsManager.archiveEvent(${event.id})" title="Archive Event">
                                 <i class="fas fa-archive"></i>
                             </button>
+                            ` : '<span style="color: #9ca3af; font-size: 12px;">No actions available</span>'}
                         </div>
                     </td>
                 `;

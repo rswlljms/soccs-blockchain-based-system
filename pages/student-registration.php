@@ -484,6 +484,149 @@
             transform: translateY(-2px);
         }
 
+        #privacyOverlay {
+            z-index: 2000 !important;
+            position: fixed !important;
+            inset: 0 !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            backdrop-filter: blur(4px) !important;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #privacyOverlay.show {
+            display: block !important;
+            opacity: 1 !important;
+        }
+
+        .privacy-modal {
+            max-width: 700px;
+            width: 90vw;
+            z-index: 2001 !important;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(0.9) !important;
+            display: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .privacy-modal.show {
+            display: block !important;
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) scale(1) !important;
+        }
+
+        .privacy-modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .privacy-modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .privacy-modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .privacy-modal-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .privacy-modal-content::-webkit-scrollbar-thumb:hover {
+            background: #9333ea;
+        }
+
+        .privacy-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .privacy-content {
+            color: #374151;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .privacy-content p {
+            margin-bottom: 1rem;
+        }
+
+        .privacy-content strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .privacy-content a {
+            color: #9333ea;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .privacy-content a:hover {
+            color: #7c3aed;
+        }
+
+        .privacy-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .privacy-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            min-width: 120px;
+        }
+
+        .privacy-btn-exit {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .privacy-btn-exit:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+
+        .privacy-btn-agree {
+            background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+            color: white;
+        }
+
+        .privacy-btn-agree:hover {
+            box-shadow: 0 8px 20px rgba(147, 51, 234, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .form-disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
         #preloader {
             position: fixed;
             inset: 0;
@@ -874,7 +1017,7 @@
         <div class="modal-content">
             <i class="fas fa-check-circle modal-icon success"></i>
             <h3 class="modal-title">Registration Successful!</h3>
-            <p>Thank you for registering. Please check your email to confirm and wait for admin approval.</p>
+            <p>Thank you for registering. Please check your email to confirm.</p>
             <button class="modal-btn" id="successOk">Continue to Login</button>
         </div>
     </div>
@@ -888,6 +1031,30 @@
             <button class="modal-btn" id="errorOk">OK</button>
             </div>
         </div>
+
+    <div class="modal-overlay" id="privacyOverlay"></div>
+    <div class="modal privacy-modal" id="privacyModal">
+        <div class="privacy-modal-content">
+            <h2 class="privacy-title">Data Privacy Notice</h2>
+            <div class="privacy-content">
+                <p><strong>The Student Organization of the College of Computer Studies (SOCCS)</strong> is fully compliant with Republic Act No. 10173, otherwise known as the Data Privacy Act of 2012, by protecting and securing custody of personal data submitted through physical documents, digital mail, or through our websites/portal.</p>
+                
+                <p>By registering with SOCCS, we collect your personal information, academic details, and required documents. This information is used to verify your identity and process your registration.</p>
+                
+                <p>The information collected is protected as we implement stringent security measures by allowing only authorized access to limited authorized personnel to manage our system and records containing sensitive information.</p>
+                
+                <p>Be assured that we only share your information if required by law, or if necessary for compliance associated with a non-disclosure agreement to keep and treat all of your information confidential.</p>
+                
+                <p>For any other concerns regarding this Privacy Notice, you may contact the SOCCS officers through the College of Computer Studies office or email us at <a href="mailto:lspuscc.soccs@gmail.com">lspuscc.soccs@gmail.com</a>.</p>
+                
+                <p><strong>By tapping AGREE, you are deemed to have agreed to the above contents.</strong></p>
+            </div>
+            <div class="privacy-buttons">
+                <button class="privacy-btn privacy-btn-exit" id="privacyExit">Exit</button>
+                <button class="privacy-btn privacy-btn-agree" id="privacyAgree">Agree</button>
+            </div>
+        </div>
+    </div>
 
     <div id="preloader">
         <div class="loader"></div>
@@ -1046,13 +1213,61 @@
             e.target.value = e.target.value.toUpperCase();
         });
 
+        let privacyAgreed = false;
+        let pendingFormData = null;
         const form = document.getElementById('student-registration-form');
         const preloader = document.getElementById('preloader');
+        const privacyModal = document.getElementById('privacyModal');
+        const privacyOverlay = document.getElementById('privacyOverlay');
 
-        form.addEventListener('submit', async function(e) {
-                e.preventDefault();
+        function showPrivacyModal() {
+            if (privacyModal && privacyOverlay) {
+                privacyModal.classList.add('show');
+                privacyOverlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
 
-                const formData = new FormData(form);
+        function hidePrivacyModal() {
+            if (privacyModal && privacyOverlay) {
+                privacyModal.classList.remove('show');
+                privacyOverlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }
+
+        const privacyAgreeBtn = document.getElementById('privacyAgree');
+        const privacyExitBtn = document.getElementById('privacyExit');
+
+        if (privacyAgreeBtn) {
+            privacyAgreeBtn.addEventListener('click', function() {
+                privacyAgreed = true;
+                hidePrivacyModal();
+                
+                if (pendingFormData) {
+                    submitRegistrationForm(pendingFormData);
+                    pendingFormData = null;
+                }
+            });
+        }
+
+        if (privacyExitBtn) {
+            privacyExitBtn.addEventListener('click', function() {
+                hidePrivacyModal();
+                pendingFormData = null;
+            });
+        }
+
+        if (privacyOverlay) {
+            privacyOverlay.addEventListener('click', function(e) {
+                if (e.target === privacyOverlay) {
+                    hidePrivacyModal();
+                    pendingFormData = null;
+                }
+            });
+        }
+
+        async function submitRegistrationForm(formData) {
             preloader.style.display = 'flex';
 
             try {
@@ -1063,20 +1278,35 @@
                 const data = await response.json();
                 preloader.style.display = 'none';
 
-                    if (data.status === 'success') {
-                        showModal('successModal');
-                        form.reset();
+                if (data.status === 'success') {
+                    showModal('successModal');
+                    form.reset();
                     document.getElementById('studentIdDropZone').classList.remove('has-file');
                     document.getElementById('corDropZone').classList.remove('has-file');
                     document.getElementById('studentUploadText').textContent = 'Click or drag to upload Student ID image';
                     document.getElementById('corUploadText').textContent = 'Click or drag to upload COR';
-                    } else {
-                        showErrorModal('Registration Failed', data.message);
-                    }
+                    privacyAgreed = false;
+                } else {
+                    showErrorModal('Registration Failed', data.message);
+                }
             } catch (error) {
                 preloader.style.display = 'none';
-                    showErrorModal('Registration Failed', 'An error occurred. Please try again.');
+                showErrorModal('Registration Failed', 'An error occurred. Please try again.');
             }
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!privacyAgreed) {
+                const formData = new FormData(form);
+                pendingFormData = formData;
+                showPrivacyModal();
+                return;
+            }
+
+            const formData = new FormData(form);
+            await submitRegistrationForm(formData);
         });
 
         function showModal(modalId) {

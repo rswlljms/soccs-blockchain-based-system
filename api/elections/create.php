@@ -39,7 +39,35 @@ if (empty($title)) {
     exit;
 }
 
-if (strtotime($end_date) <= strtotime($start_date)) {
+if (empty($start_date) || empty($end_date)) {
+    echo json_encode([
+        'success' => false,
+        'error' => 'Please fill in both start date and end date.'
+    ]);
+    exit;
+}
+
+$current_time = time();
+$start_timestamp = strtotime($start_date);
+$end_timestamp = strtotime($end_date);
+
+if ($start_timestamp === false || $end_timestamp === false) {
+    echo json_encode([
+        'success' => false,
+        'error' => 'Invalid date format. Please enter valid dates.'
+    ]);
+    exit;
+}
+
+if ($start_timestamp < $current_time) {
+    echo json_encode([
+        'success' => false,
+        'error' => 'The election start date cannot be in the past. Please select a current or future date.'
+    ]);
+    exit;
+}
+
+if ($end_timestamp <= $start_timestamp) {
     echo json_encode([
         'success' => false,
         'error' => 'End date must be after start date'

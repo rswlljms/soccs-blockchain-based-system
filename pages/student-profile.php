@@ -143,8 +143,8 @@ try {
                   <input type="text" id="firstName" name="firstName" value="<?= htmlspecialchars($student['firstName']) ?>" required>
                 </div>
                 <div class="form-group">
-                  <label for="middleName">Middle Name <span class="required">*</span></label>
-                  <input type="text" id="middleName" name="middleName" value="<?= htmlspecialchars($student['middleName']) ?>" required>
+                  <label for="middleName">Middle Name</label>
+                  <input type="text" id="middleName" name="middleName" value="<?= htmlspecialchars($student['middleName']) ?>">
                 </div>
                 <div class="form-group">
                   <label for="lastName">Last Name <span class="required">*</span></label>
@@ -194,11 +194,11 @@ try {
               <div class="form-row">
                 <div class="form-group">
                   <label for="academicYear">Academic Year</label>
-                  <input type="text" id="academicYear" name="academicYear" value="2025-2026" readonly>
+                  <input type="text" id="academicYear" name="academicYear" value="<?= htmlspecialchars($studentData['academic_year'] ?? '2025-2026') ?>" readonly>
                 </div>
                 <div class="form-group">
                   <label for="studentNumber">Student Number</label>
-                  <input type="text" id="studentNumber" name="studentNumber" value="0122-1141" readonly>
+                  <input type="text" id="studentNumber" name="studentNumber" value="<?= htmlspecialchars($student['id']) ?>" readonly>
                 </div>
               </div>
               
@@ -209,22 +209,28 @@ try {
                 </div>
                 <div class="form-group">
                   <label for="course">Course</label>
-                  <input type="text" id="course" name="course" value="Bachelor of Science in Information Technology" readonly>
+                  <input type="text" id="course" name="course" value="<?php 
+                    $courseMap = ['BSIT' => 'Bachelor of Science in Information Technology', 'BSCS' => 'Bachelor of Science in Computer Science'];
+                    echo htmlspecialchars($courseMap[$student['course']] ?? $student['course']);
+                  ?>" readonly>
                 </div>
               </div>
               
               <div class="form-row">
                 <div class="form-group">
                   <label for="yearLevel">Year Level</label>
-                  <input type="text" id="yearLevel" name="yearLevel" value="Fourth Year" readonly>
+                  <input type="text" id="yearLevel" name="yearLevel" value="<?php 
+                    $yearLevelMap = ['1' => 'First Year', '2' => 'Second Year', '3' => 'Third Year', '4' => 'Fourth Year'];
+                    echo htmlspecialchars($yearLevelMap[$student['yearLevel']] ?? $student['yearLevel']);
+                  ?>" readonly>
                 </div>
                 <div class="form-group">
                   <label for="semester">Semester</label>
-                  <input type="text" id="semester" name="semester" value="Second (2nd) Semester" readonly>
+                  <input type="text" id="semester" name="semester" value="<?= !empty(trim($studentData['semester'] ?? '')) ? htmlspecialchars($studentData['semester']) : 'N/A' ?>" readonly>
                 </div>
                 <div class="form-group">
                   <label for="section">Section</label>
-                  <input type="text" id="section" name="section" value="BSIT WAM - 4A" readonly>
+                  <input type="text" id="section" name="section" value="<?= htmlspecialchars($student['course']) ?> - <?= htmlspecialchars($student['yearLevel']) ?><?= htmlspecialchars($student['section']) ?>" readonly>
                 </div>
               </div>
               
