@@ -781,41 +781,45 @@ include('../components/sidebar.php');
                 if (data.success) {
                     const reg = data.data;
                     
-                    // Determine COR file type
-                    let corDisplay = '';
-                    if (reg.cor_file) {
-                        const fileExt = reg.cor_file.split('.').pop().toLowerCase();
-                        if (fileExt === 'pdf') {
-                            corDisplay = `
+                    // Function to create document display
+                    function createDocumentDisplay(filePath, title, icon) {
+                        if (!filePath) return '';
+                        
+                        const fileExt = filePath.split('.').pop().toLowerCase();
+                        const isPdf = fileExt === 'pdf';
+                        const iconClass = isPdf ? 'fa-file-pdf' : icon || 'fa-file-image';
+                        
+                        if (isPdf) {
+                            return `
                                 <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
                                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                                         <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                            <i class="fas fa-file-pdf" style="color: white; font-size: 18px;"></i>
+                                            <i class="fas ${iconClass}" style="color: white; font-size: 18px;"></i>
                                         </div>
-                                        <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Certificate of Registration (COR)</h4>
+                                        <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">${title}</h4>
                                     </div>
                                     <div style="border-radius: 10px; overflow: hidden; border: 2px solid #e5e7eb;">
-                                        <embed src="../${reg.cor_file}" type="application/pdf" width="100%" height="500px" style="display: block;">
+                                        <embed src="../${filePath}" type="application/pdf" width="100%" height="500px" style="display: block;">
                                     </div>
-                                    <a href="../${reg.cor_file}" target="_blank" class="btn btn-view" style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #4B0082, #9933ff); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.3s ease;">
+                                    <a href="../${filePath}" target="_blank" class="btn btn-view" style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #4B0082, #9933ff); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; transition: all 0.3s ease;">
                                         <i class="fas fa-external-link-alt"></i> Open in New Tab
                                     </a>
                                 </div>
                             `;
                         } else {
-                            corDisplay = `
+                            return `
                                 <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
                                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                                         <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                            <i class="fas fa-file-alt" style="color: white; font-size: 18px;"></i>
+                                            <i class="fas ${iconClass}" style="color: white; font-size: 18px;"></i>
                                         </div>
-                                        <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Certificate of Registration (COR)</h4>
+                                        <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">${title}</h4>
                                     </div>
                                     <div style="position: relative; border-radius: 10px; overflow: hidden; border: 2px solid #e5e7eb; cursor: pointer; transition: all 0.3s ease;" 
-                                         onclick="window.open('../${reg.cor_file}', '_blank')" 
+                                         onclick="window.open('../${filePath}', '_blank')" 
                                          onmouseover="this.style.borderColor='#9933ff'; this.style.boxShadow='0 4px 12px rgba(153, 51, 255, 0.2)'" 
                                          onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
-                                        <img src="../${reg.cor_file}" style="width: 100%; height: auto; display: block;" alt="COR">
+                                        <img src="../${filePath}" style="width: 100%; height: auto; display: block; max-height: 600px; object-fit: contain;" alt="${title}">
                                         <div style="position: absolute; top: 10px; right: 10px; background: rgba(75, 0, 130, 0.9); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
                                             <i class="fas fa-external-link-alt"></i>
                                             <span>Click to enlarge</span>
@@ -824,6 +828,16 @@ include('../components/sidebar.php');
                                 </div>
                             `;
                         }
+                    }
+                    
+                    // Create displays for both Student ID and COR
+                    let studentIdDisplay = createDocumentDisplay(reg.student_id_image, 'Student ID Image', 'fa-id-card');
+                    let corDisplay = createDocumentDisplay(reg.cor_file, 'Certificate of Registration (COR)', 'fa-file-alt');
+                    
+                    // Combine document displays
+                    let documentsDisplay = '';
+                    if (studentIdDisplay || corDisplay) {
+                        documentsDisplay = studentIdDisplay + (studentIdDisplay && corDisplay ? '<div style="margin-top: 1.5rem;"></div>' : '') + corDisplay;
                     }
                     
                     const content = `
@@ -902,28 +916,7 @@ include('../components/sidebar.php');
                                 </div>
                             </div>
 
-                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.75rem; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4B0082, #9933ff); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-id-card" style="color: white; font-size: 18px;"></i>
-                                    </div>
-                                    <h4 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">Student ID Image</h4>
-                                </div>
-                                <div style="position: relative; border-radius: 10px; overflow: hidden; border: 2px solid #e5e7eb; cursor: pointer; transition: all 0.3s ease;" 
-                                     onclick="window.open('../${reg.student_id_image}', '_blank')" 
-                                     onmouseover="this.style.borderColor='#9933ff'; this.style.boxShadow='0 4px 12px rgba(153, 51, 255, 0.2)'" 
-                                     onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'">
-                                    <img src="../${reg.student_id_image}" 
-                                         style="width: 100%; height: auto; display: block;" 
-                                         alt="Student ID">
-                                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(75, 0, 130, 0.9); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                                        <i class="fas fa-external-link-alt"></i>
-                                        <span>Click to enlarge</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            ${corDisplay}
+                            ${documentsDisplay}
                         </div>
                     `;
                     

@@ -245,6 +245,14 @@
     padding-left: 24px;
   }
 
+  .user-dropdown-menu {
+    position: fixed;
+    bottom: 80px;
+    left: 16px;
+    right: 16px;
+    width: calc(280px - 32px);
+  }
+
   /* Hide desktop flicker */
   body {
     overflow-x: hidden;
@@ -269,55 +277,118 @@
   }
 }
 
-/* Sidebar Footer and Logout Button */
+/* Sidebar Footer and User Dropdown */
 .sidebar-footer {
   margin-top: auto;
   padding: 20px 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logout-section {
+.user-dropdown {
+  position: relative;
   width: 100%;
 }
 
-.logout-btn {
+.user-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.user-dropdown-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sidebar-footer .user-avatar,
+.user-dropdown .user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  flex-shrink: 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+}
+
+.user-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dropdown-chevron {
+  font-size: 10px;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.user-dropdown.open .dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  overflow: hidden;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.user-dropdown.open .user-dropdown-menu {
+  display: block;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logout-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
   color: #ff6b6b;
   text-decoration: none;
-  padding: 14px 20px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  font-size: 15px;
-  width: 100%;
-  box-sizing: border-box;
-  background: transparent;
-  border: 2px solid #ff6b6b;
-  position: relative;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.logout-btn:hover {
-  background: #ff6b6b;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+.logout-option:hover {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff5252;
 }
 
-.logout-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(255, 107, 107, 0.2);
-}
-
-.logout-btn i {
-  font-size: 18px;
-  transition: transform 0.3s ease;
-}
-
-.logout-btn:hover i {
-  transform: translateX(2px);
+.logout-option i {
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
 }
 
 /* Global fix for main-content overlapping - applies to all admin pages */

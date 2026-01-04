@@ -301,32 +301,43 @@
             
             const extracted = data.extractedInfo;
             
+            // Auto-fill First Name and Last Name (from Student ID or COR)
+            if (extracted.firstName) {
+                console.log('Auto-filling First Name:', extracted.firstName);
+                document.getElementById('firstName').value = extracted.firstName;
+            }
+            
+            if (extracted.lastName) {
+                console.log('Auto-filling Last Name:', extracted.lastName);
+                document.getElementById('lastName').value = extracted.lastName;
+            }
+            
             if (extracted.studentId) {
                 console.log('Auto-filling Student ID:', extracted.studentId);
                 document.getElementById('studentId').value = extracted.studentId;
             } else {
-                console.warn('Student ID not extracted from COR');
+                console.warn('Student ID not extracted from document');
             }
             
             if (extracted.course) {
                 console.log('Auto-filling Course:', extracted.course);
                 document.getElementById('course').value = extracted.course;
             } else {
-                console.warn('Course not extracted from COR');
+                console.warn('Course not extracted from document');
             }
             
             if (extracted.yearLevel) {
                 console.log('Auto-filling Year Level:', extracted.yearLevel);
                 document.getElementById('yearLevel').value = extracted.yearLevel;
             } else {
-                console.warn('Year Level not extracted from COR');
+                console.warn('Year Level not extracted from document');
             }
             
             if (extracted.gender) {
                 console.log('Auto-filling Gender:', extracted.gender);
                 document.getElementById('gender').value = extracted.gender;
             } else {
-                console.warn('Gender not extracted from COR');
+                console.warn('Gender not extracted from document');
             }
             
             console.log('Academic Year extracted:', extracted.academicYear);

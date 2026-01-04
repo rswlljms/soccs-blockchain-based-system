@@ -60,32 +60,19 @@
 
                 <div class="info-badge" style="margin-bottom: 1.5rem;">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <span>Please upload clear and readable documents.</span>
+                    <span>Upload either Student ID image or COR.</span>
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Student ID <span class="required">*</span></label>
+                    <label>Student ID Image or Certificate of Registration (COR) <span class="required">*</span></label>
                     <div class="file-upload-container">
-                        <input type="file" id="studentIdImage" name="studentIdImage" class="file-upload-input" accept=".jpg,.jpeg,.png,.heic,.heif,.webp" required>
-                        <label for="studentIdImage" class="file-upload-label" id="studentIdDropZone">
-                            <i class="fas fa-id-card"></i>
-                            <div class="upload-title">Upload Student ID</div>
+                        <input type="file" id="documentFile" name="documentFile" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp" required>
+                        <label for="documentFile" class="file-upload-label" id="documentDropZone">
+                            <i class="fas fa-file-upload"></i>
+                            <div class="upload-title">Upload Student ID or COR</div>
                             <div class="upload-subtitle">Click or drag to upload</div>
                         </label>
-                        <div class="file-info">JPG, PNG, HEIC, or WEBP - Max 5MB</div>
-                    </div>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label>Certificate of Registration (COR) <span class="required">*</span></label>
-                    <div class="file-upload-container">
-                        <input type="file" id="corFile" name="corFile" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp" required>
-                        <label for="corFile" class="file-upload-label" id="corDropZone">
-                            <i class="fas fa-file-alt"></i>
-                            <div class="upload-title">Upload Certificate of Registration</div>
-                            <div class="upload-subtitle">Click or drag to upload</div>
-                        </label>
-                        <div class="file-info">PDF, JPG, PNG, HEIC, or WEBP - Max 10MB</div>
+                        <div class="file-info">JPG, PNG, HEIC, WEBP, or PDF - Max 1MB</div>
                     </div>
                 </div>
 
@@ -221,6 +208,16 @@
             input.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    // Validate file size (max 1MB)
+                    if (file.size > 1 * 1024 * 1024) {
+                        showErrorModal('File Too Large', 'File size must be less than 1MB. Please upload a smaller file.');
+                        input.value = ''; // Clear the file input
+                        label.classList.remove('has-file');
+                        const title = label.querySelector('.upload-title');
+                        title.textContent = 'Upload Student ID or COR';
+                        return;
+                    }
+                    
                     const title = label.querySelector('.upload-title');
                     title.textContent = file.name;
                     label.classList.add('has-file');
@@ -244,6 +241,16 @@
             label.addEventListener('drop', (e) => {
                 const file = e.dataTransfer.files[0];
                 if (file) {
+                    // Validate file size (max 1MB)
+                    if (file.size > 1 * 1024 * 1024) {
+                        showErrorModal('File Too Large', 'File size must be less than 1MB. Please upload a smaller file.');
+                        input.value = ''; // Clear the file input
+                        label.classList.remove('has-file');
+                        const title = label.querySelector('.upload-title');
+                        title.textContent = 'Upload Student ID or COR';
+                        return;
+                    }
+                    
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
                     input.files = dataTransfer.files;
@@ -254,8 +261,7 @@
             });
         }
 
-        setupFileUpload('studentIdImage', 'studentIdDropZone');
-        setupFileUpload('corFile', 'corDropZone');
+        setupFileUpload('documentFile', 'documentDropZone');
 
         const form = document.getElementById('document-upload-form');
         const submitBtn = document.getElementById('submitBtn');
@@ -266,6 +272,38 @@
             e.preventDefault();
 
             const formData = new FormData(form);
+            
+            const documentFile = document.getElementById('documentFile').files[0];
+            
+            if (!documentFile) {
+                showErrorModal('Upload Required', 'Please upload either Student ID image or Certificate of Registration (COR).');
+                return;
+            }
+            
+            // Validate file size (max 1MB)
+            if (documentFile.size > 1 * 1024 * 1024) {
+                showErrorModal('File Too Large', 'File size must be less than 1MB. Please upload a smaller file.');
+                return;
+            }
+            
+            // Determine file type and set appropriate field name
+            const fileExtension = documentFile.name.split('.').pop().toLowerCase();
+            const isPdf = fileExtension === 'pdf';
+            
+            // Add file to formData with appropriate field name
+            if (isPdf) {
+                formData.append('corFile', documentFile);
+            } else {
+                // For images, treat as Student ID if small, otherwise COR
+                if (documentFile.size <= 1 * 1024 * 1024) {
+                    formData.append('studentIdImage', documentFile);
+                } else {
+                    formData.append('corFile', documentFile);
+                }
+            }
+            
+            // Remove the original documentFile from formData
+            formData.delete('documentFile');
             
             // Disable all form inputs
             const inputs = form.querySelectorAll('input, button, select, textarea');

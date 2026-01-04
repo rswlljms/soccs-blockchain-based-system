@@ -299,6 +299,28 @@
   box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
 }
 
+.action-btn.toggle {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.action-btn.toggle.active {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.action-btn.toggle.inactive {
+  background: #f3f4f6;
+  color: #9ca3af;
+}
+
+.action-btn.toggle:hover {
+  background: #059669;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
+}
+
 .action-btn:active {
   transform: translateY(0);
 }

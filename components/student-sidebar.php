@@ -49,11 +49,36 @@
   </ul>
 
   <div class="sidebar-footer">
-    <div class="logout-section">
-      <a href="../templates/login.php" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
-      </a>
+    <div class="user-dropdown">
+      <?php
+      $student = $_SESSION['student'] ?? [];
+      $firstName = $student['firstName'] ?? '';
+      $displayName = !empty($firstName) ? $firstName : 'Student User';
+      
+      $initials = 'SU';
+      if (!empty($firstName)) {
+        $firstNameParts = explode(' ', trim($firstName));
+        
+        if (count($firstNameParts) >= 2) {
+          $initials = strtoupper(substr($firstNameParts[0], 0, 1) . substr($firstNameParts[1], 0, 1));
+        } else {
+          $initials = strtoupper(substr($firstName, 0, 2));
+        }
+      }
+      ?>
+      <div class="user-dropdown-toggle">
+        <div class="user-avatar">
+          <span><?= htmlspecialchars($initials) ?></span>
+        </div>
+        <span class="user-name"><?= htmlspecialchars($displayName) ?></span>
+        <i class="fas fa-chevron-up dropdown-chevron"></i>
+      </div>
+      <div class="user-dropdown-menu">
+        <a href="../logout.php" class="logout-option">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -73,6 +98,24 @@
     const activeDropdownItem = document.querySelector(".dropdown-menu a.active");
     if (activeDropdownItem) {
       activeDropdownItem.closest(".dropdown").classList.add("open");
+    }
+
+    // User dropdown toggle
+    const userDropdownToggle = document.querySelector(".user-dropdown-toggle");
+    const userDropdown = document.querySelector(".user-dropdown");
+    
+    if (userDropdownToggle && userDropdown) {
+      userDropdownToggle.addEventListener("click", function(e) {
+        e.stopPropagation();
+        userDropdown.classList.toggle("open");
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function(e) {
+        if (!userDropdown.contains(e.target)) {
+          userDropdown.classList.remove("open");
+        }
+      });
     }
   });
 </script>

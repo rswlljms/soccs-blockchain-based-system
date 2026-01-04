@@ -27,6 +27,24 @@ class EmailService {
         }
     }
     
+    private function sanitizeRichText($text) {
+        if (empty($text)) {
+            return '';
+        }
+        
+        $allowedTags = '<p><br><strong><b><em><i><u><ul><ol><li><h1><h2><h3><h4><h5><h6><blockquote><a><span><div>';
+        $text = strip_tags($text, $allowedTags);
+        
+        $text = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $text);
+        $text = preg_replace('/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/mi', '', $text);
+        $text = preg_replace('/on\w+="[^"]*"/i', '', $text);
+        $text = preg_replace('/on\w+=\'[^\']*\'/i', '', $text);
+        
+        $text = nl2br($text);
+        
+        return $text;
+    }
+    
     public function sendEmail($to, $subject, $htmlMessage, $plainMessage = '') {
         $mail = new PHPMailer(true);
         
@@ -47,6 +65,8 @@ class EmailService {
             
             // Content
             $mail->isHTML(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64';
             $mail->Subject = $subject;
             $mail->Body = $htmlMessage;
             $mail->AltBody = $plainMessage ?: strip_tags($htmlMessage);
@@ -297,6 +317,296 @@ class EmailService {
         ";
         
         return $this->sendEmail($email, $subject, $htmlContent);
+    }
+
+    public function getActiveStudentEmails() {
+        require_once __DIR__ . '/database.php';
+        $database = new Database();
+        $conn = $database->getConnection();
+        
+        try {
+            $query = "SELECT email, first_name FROM students WHERE is_active = 1 AND email IS NOT NULL AND email != ''";
+            $stmt = $conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching student emails: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function sendBulkEmail($emails, $subject, $htmlMessage, $plainMessage = '') {
+        $successCount = 0;
+        $failCount = 0;
+        
+        foreach ($emails as $emailData) {
+            $email = is_array($emailData) ? $emailData['email'] : $emailData;
+            if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                if ($this->sendEmail($email, $subject, $htmlMessage, $plainMessage)) {
+                    $successCount++;
+                } else {
+                    $failCount++;
+                }
+                usleep(50000);
+            }
+        }
+        
+        return [
+            'success' => $successCount,
+            'failed' => $failCount,
+            'total' => count($emails)
+        ];
+    }
+
+    public function sendBulkEmailAsync($emails, $subject, $htmlMessage, $plainMessage = '') {
+        ignore_user_abort(true);
+        set_time_limit(300);
+        
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+        
+        $this->sendBulkEmail($emails, $subject, $htmlMessage, $plainMessage);
+    }
+
+    public function getEventNotificationContent($eventTitle, $eventDate, $eventLocation, $eventDescription, $eventCategory) {
+        date_default_timezone_set('Asia/Manila');
+        $formattedDate = date('F d, Y h:i A', strtotime($eventDate));
+        
+        $htmlContent = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>New Event Announcement</title>
+            <style>
+                body { font-family: 'Segoe UI', 'Microsoft YaHei', 'SimHei', 'SimSun', 'Arial Unicode MS', Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+                .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+                .content { padding: 30px; }
+                .message { font-size: 16px; line-height: 1.6; margin-bottom: 25px; }
+                .event-box { background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #2196F3; margin: 20px 0; }
+                .event-title { font-size: 20px; font-weight: bold; color: #1976D2; margin-bottom: 15px; }
+                .event-detail { color: #424242; margin: 10px 0; }
+                .event-detail strong { color: #1976D2; }
+                .description-content { color: #424242; line-height: 1.8; word-wrap: break-word; }
+                .description-content p { margin: 10px 0; }
+                .description-content ul, .description-content ol { margin: 10px 0; padding-left: 30px; }
+                .description-content li { margin: 5px 0; }
+                .footer { background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 14px; }
+                .banner { width: 100%; height: auto; display: block; }
+                .footer-org { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+                .copyright { font-size: 12px; color: #bdc3c7; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <img src='https://i.imgur.com/cRtxCnL.jpeg' alt='SOCCS Banner' class='banner'>
+                <div class='content'>
+                    <div class='message'>
+                        <p>Dear SOCCS Member,</p>
+                        <p>We are excited to announce a new event that you might be interested in!</p>
+                    </div>
+                    <div class='event-box'>
+                        <div class='event-title'>" . htmlspecialchars($eventTitle) . "</div>
+                        <div class='event-detail'><strong>Date & Time:</strong> " . htmlspecialchars($formattedDate) . "</div>
+                        <div class='event-detail'><strong>Location:</strong> " . htmlspecialchars($eventLocation) . "</div>
+                        <div class='event-detail'><strong>Category:</strong> " . htmlspecialchars(ucfirst($eventCategory)) . "</div>
+                        <div class='event-detail'><strong>Description:</strong><br><div class='description-content'>" . $this->sanitizeRichText($eventDescription) . "</div></div>
+                    </div>
+                    <div class='message'>
+                        <p>We hope to see you there! Please check your student dashboard for more details and updates.</p>
+                    </div>
+                    <div style='background-color: #f8f9fa; padding: 20px; border-top: 1px solid #e0e0e0; margin-top: 20px;'>
+                        <p style='color: #718096; font-size: 13px; margin: 8px 0;'><strong>This is a system generated message. Do not reply.</strong></p>
+                        <p style='color: #718096; font-size: 13px; margin: 8px 0;'>This message was sent to all registered SOCCS members on " . date('M d, Y h:i a', time()) . ".</p>
+                        <p style='color: #4a5568; font-size: 14px; margin-top: 15px;'>If you have questions, feedback or suggestions, feel free to contact us at <a href='mailto:lspuscc.soccs@gmail.com' style='color: #2196F3; text-decoration: none;'>lspuscc.soccs@gmail.com</a></p>
+                    </div>
+                </div>
+                <div class='footer'>
+                    <div class='footer-org'>Student Organization of the College of Computer Studies</div>
+                    <div class='copyright'>Copyright © 2024</div>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        return ['subject' => "New SOCCS Event: " . $eventTitle, 'content' => $htmlContent];
+    }
+
+    public function sendEventNotification($eventTitle, $eventDate, $eventLocation, $eventDescription, $eventCategory) {
+        $students = $this->getActiveStudentEmails();
+        if (empty($students)) {
+            return ['success' => 0, 'failed' => 0, 'total' => 0];
+        }
+        
+        $emailData = $this->getEventNotificationContent($eventTitle, $eventDate, $eventLocation, $eventDescription, $eventCategory);
+        return $this->sendBulkEmail($students, $emailData['subject'], $emailData['content']);
+    }
+
+    public function getFilingCandidacyNotificationContent($title, $announcementText, $formLink, $startDate, $endDate, $screeningDate = null) {
+        date_default_timezone_set('Asia/Manila');
+        $formattedStartDate = date('F d, Y h:i A', strtotime($startDate));
+        $formattedEndDate = date('F d, Y h:i A', strtotime($endDate));
+        $screeningInfo = $screeningDate ? "<div class='event-detail'><strong>Screening Date:</strong> " . htmlspecialchars($screeningDate) . "</div>" : "";
+        
+        $htmlContent = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Filing of Candidacy</title>
+            <style>
+                body { font-family: 'Segoe UI', 'Microsoft YaHei', 'SimHei', 'SimSun', 'Arial Unicode MS', Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+                .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+                .content { padding: 30px; }
+                .message { font-size: 16px; line-height: 1.6; margin-bottom: 25px; }
+                .candidacy-box { background: #fff3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0; }
+                .candidacy-title { font-size: 20px; font-weight: bold; color: #856404; margin-bottom: 15px; }
+                .event-detail { color: #424242; margin: 10px 0; }
+                .event-detail strong { color: #856404; }
+                .announcement-content { color: #424242; line-height: 1.8; word-wrap: break-word; }
+                .announcement-content p { margin: 10px 0; }
+                .announcement-content ul, .announcement-content ol { margin: 10px 0; padding-left: 30px; }
+                .announcement-content li { margin: 5px 0; }
+                .cta-button { display: inline-block; background: #ffc107; color: #000; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+                .footer { background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 14px; }
+                .banner { width: 100%; height: auto; display: block; }
+                .footer-org { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+                .copyright { font-size: 12px; color: #bdc3c7; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <img src='https://i.imgur.com/cRtxCnL.jpeg' alt='SOCCS Banner' class='banner'>
+                <div class='content'>
+                    <div class='message'>
+                        <p>Dear SOCCS Member,</p>
+                        <p>The filing of candidacy period is now open! If you are interested in running for a position, please submit your application.</p>
+                    </div>
+                    <div class='candidacy-box'>
+                        <div class='candidacy-title'>" . htmlspecialchars($title) . "</div>
+                        <div class='event-detail'><strong>Start Date:</strong> " . htmlspecialchars($formattedStartDate) . "</div>
+                        <div class='event-detail'><strong>End Date:</strong> " . htmlspecialchars($formattedEndDate) . "</div>
+                        " . $screeningInfo . "
+                        <div class='event-detail'><strong>Announcement:</strong><br><div class='announcement-content'>" . $this->sanitizeRichText($announcementText) . "</div></div>
+                    </div>
+                    <div style='text-align: center;'>
+                        <a href='" . htmlspecialchars($formLink) . "' class='cta-button' target='_blank'>Apply for Candidacy</a>
+                    </div>
+                    <div class='message'>
+                        <p>Don't miss this opportunity to serve the SOCCS community! Click the button above to access the application form.</p>
+                    </div>
+                    <div style='background-color: #f8f9fa; padding: 20px; border-top: 1px solid #e0e0e0; margin-top: 20px;'>
+                        <p style='color: #718096; font-size: 13px; margin: 8px 0;'><strong>This is a system generated message. Do not reply.</strong></p>
+                        <p style='color: #718096; font-size: 13px; margin: 8px 0;'>This message was sent to all registered SOCCS members on " . date('M d, Y h:i a', time()) . ".</p>
+                        <p style='color: #4a5568; font-size: 14px; margin-top: 15px;'>If you have questions, feedback or suggestions, feel free to contact us at <a href='mailto:lspuscc.soccs@gmail.com' style='color: #ffc107; text-decoration: none;'>lspuscc.soccs@gmail.com</a></p>
+                    </div>
+                </div>
+                <div class='footer'>
+                    <div class='footer-org'>Student Organization of the College of Computer Studies</div>
+                    <div class='copyright'>Copyright © 2024</div>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        return ['subject' => "Filing of Candidacy Now Open: " . $title, 'content' => $htmlContent];
+    }
+
+    public function sendFilingCandidacyNotification($title, $announcementText, $formLink, $startDate, $endDate, $screeningDate = null) {
+        $students = $this->getActiveStudentEmails();
+        if (empty($students)) {
+            return ['success' => 0, 'failed' => 0, 'total' => 0];
+        }
+        
+        $emailData = $this->getFilingCandidacyNotificationContent($title, $announcementText, $formLink, $startDate, $endDate, $screeningDate);
+        return $this->sendBulkEmail($students, $emailData['subject'], $emailData['content']);
+    }
+
+    public function getElectionNotificationContent($electionTitle, $electionDescription, $startDate, $endDate) {
+        date_default_timezone_set('Asia/Manila');
+        $formattedStartDate = date('F d, Y h:i A', strtotime($startDate));
+        $formattedEndDate = date('F d, Y h:i A', strtotime($endDate));
+        $dashboardUrl = 'http://localhost/soccs-financial-management/pages/student-voting.php';
+        
+        $htmlContent = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Election Active</title>
+            <style>
+                body { font-family: 'Segoe UI', 'Microsoft YaHei', 'SimHei', 'SimSun', 'Arial Unicode MS', Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+                .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+                .content { padding: 30px; }
+                .message { font-size: 16px; line-height: 1.6; margin-bottom: 25px; }
+                .election-box { background: #d4edda; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; margin: 20px 0; }
+                .election-title { font-size: 20px; font-weight: bold; color: #155724; margin-bottom: 15px; }
+                .event-detail { color: #424242; margin: 10px 0; }
+                .event-detail strong { color: #155724; }
+                .description-content { color: #424242; line-height: 1.8; word-wrap: break-word; }
+                .description-content p { margin: 10px 0; }
+                .description-content ul, .description-content ol { margin: 10px 0; padding-left: 30px; }
+                .description-content li { margin: 5px 0; }
+                .cta-button { display: inline-block; background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 20px 0; }
+                .footer { background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 14px; }
+                .banner { width: 100%; height: auto; display: block; }
+                .footer-org { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+                .copyright { font-size: 12px; color: #bdc3c7; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <img src='https://i.imgur.com/cRtxCnL.jpeg' alt='SOCCS Banner' class='banner'>
+                <div class='content'>
+                    <div class='message'>
+                        <p>Dear SOCCS Member,</p>
+                        <p>The election is now active! Your vote matters in shaping the future of SOCCS.</p>
+                    </div>
+                    <div class='election-box'>
+                        <div class='election-title'>" . htmlspecialchars($electionTitle) . "</div>
+                        <div class='event-detail'><strong>Start Date:</strong> " . htmlspecialchars($formattedStartDate) . "</div>
+                        <div class='event-detail'><strong>End Date:</strong> " . htmlspecialchars($formattedEndDate) . "</div>
+                        " . ($electionDescription ? "<div class='event-detail'><strong>Description:</strong><br><div class='description-content'>" . $this->sanitizeRichText($electionDescription) . "</div></div>" : "") . "
+                    </div>
+                    <div style='text-align: center;'>
+                        <a href='" . htmlspecialchars($dashboardUrl) . "' class='cta-button'>Cast Your Vote</a>
+                    </div>
+                    <div class='message'>
+                        <p><strong>Important:</strong> Please cast your vote before the election ends. Every vote counts!</p>
+                        <p>Log in to your student dashboard to access the voting page.</p>
+                    </div>
+                    <div style='background-color: #f8f9fa; padding: 20px; border-top: 1px solid #e0e0e0; margin-top: 20px;'>
+                        <p style='color: #718096; font-size: 13px; margin: 8px 0;'><strong>This is a system generated message. Do not reply.</strong></p>
+                        <p style='color: #718096; font-size: 13px; margin: 8px 0;'>This message was sent to all registered SOCCS members on " . date('M d, Y h:i a', time()) . ".</p>
+                        <p style='color: #4a5568; font-size: 14px; margin-top: 15px;'>If you have questions, feedback or suggestions, feel free to contact us at <a href='mailto:lspuscc.soccs@gmail.com' style='color: #28a745; text-decoration: none;'>lspuscc.soccs@gmail.com</a></p>
+                    </div>
+                </div>
+                <div class='footer'>
+                    <div class='footer-org'>Student Organization of the College of Computer Studies</div>
+                    <div class='copyright'>Copyright © 2024</div>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        return ['subject' => "Election Now Active: " . $electionTitle, 'content' => $htmlContent];
+    }
+
+    public function sendElectionNotification($electionTitle, $electionDescription, $startDate, $endDate) {
+        $students = $this->getActiveStudentEmails();
+        if (empty($students)) {
+            return ['success' => 0, 'failed' => 0, 'total' => 0];
+        }
+        
+        $emailData = $this->getElectionNotificationContent($electionTitle, $electionDescription, $startDate, $endDate);
+        return $this->sendBulkEmail($students, $emailData['subject'], $emailData['content']);
     }
 }
 ?>

@@ -42,9 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
+    // At least one file must be provided
+    if (empty($studentIdPath) && empty($corPath)) {
+        $response['message'] = 'Either Student ID image or COR file is required';
+        echo json_encode($response);
+        exit;
+    }
+    
     // If session data is missing or files don't exist, try to find the most recent temp files
-    if (empty($tempId) || empty($studentIdPath) || empty($corPath) || 
-        !file_exists($studentIdPath) || !file_exists($corPath)) {
+    if (empty($tempId) || ((empty($corPath) || !file_exists($corPath)) && (empty($studentIdPath) || !file_exists($studentIdPath)))) {
         
         error_log("Session data missing or files not found. Attempting to recover from temp folder.");
         
@@ -67,35 +73,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Sort by modification time (newest first)
             arsort($tempFiles);
             
-            // Find the most recent studentid and cor files
-            $studentIdFile = null;
+            // Find the most recent files
             $corFileFound = null;
+            $studentIdFileFound = null;
             
             foreach (array_keys($tempFiles) as $file) {
-                if (strpos($file, '_studentid.') !== false && !$studentIdFile) {
-                    $studentIdFile = $file;
-                }
                 if (strpos($file, '_cor.') !== false && !$corFileFound) {
                     $corFileFound = $file;
                 }
-                if ($studentIdFile && $corFileFound) break;
+                if (strpos($file, '_studentid.') !== false && !$studentIdFileFound) {
+                    $studentIdFileFound = $file;
+                }
+                if ($corFileFound || $studentIdFileFound) {
+                    // Extract temp ID from filename
+                    preg_match('/temp_([^_]+)/', $file, $matches);
+                    $tempId = $matches[1] ?? uniqid();
+                    break;
+                }
             }
             
-            if ($studentIdFile && $corFileFound) {
-                $studentIdPath = $tempDir . $studentIdFile;
+            if ($corFileFound) {
                 $corPath = $tempDir . $corFileFound;
-                
-                // Extract temp ID from filename
-                preg_match('/temp_([^_]+)/', $studentIdFile, $matches);
-                $tempId = $matches[1] ?? uniqid();
-                
                 $foundFiles = true;
-                error_log("Recovered temp files - studentId: $studentIdFile, cor: $corFileFound");
+            }
+            if ($studentIdFileFound) {
+                $studentIdPath = $tempDir . $studentIdFileFound;
+                $foundFiles = true;
             }
         }
         
         if (!$foundFiles) {
-            $response['message'] = 'Session expired. Please start from step 1 and upload your documents again.';
+            $response['message'] = 'Session expired. Please start from step 1 and upload your document again.';
             error_log("Could not recover temp files from uploads/temp/");
             echo json_encode($response);
             exit;
@@ -136,35 +144,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $token = bin2hex(random_bytes(32));
         $tokenExpiresAt = (new DateTime('+24 hours'))->format('Y-m-d H:i:s');
         
-        $uploadDir = '../uploads/student-ids/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
+        $finalStudentIdName = null;
+        $finalCorName = null;
+        
+        // Handle Student ID image if provided
+        if (!empty($studentIdPath) && file_exists($studentIdPath)) {
+            $studentIdUploadDir = '../uploads/student-ids/';
+            if (!is_dir($studentIdUploadDir)) {
+                mkdir($studentIdUploadDir, 0755, true);
+            }
+            
+            $studentIdExt = pathinfo($studentIdPath, PATHINFO_EXTENSION);
+            $finalStudentIdName = $studentId . '.' . $studentIdExt;
+            $finalStudentIdPath = $studentIdUploadDir . $finalStudentIdName;
+            
+            if (!copy($studentIdPath, $finalStudentIdPath)) {
+                $response['message'] = 'Failed to process student ID image';
+                echo json_encode($response);
+                exit;
+            }
         }
         
-        $studentIdExt = pathinfo($studentIdPath, PATHINFO_EXTENSION);
-        $finalStudentIdName = $studentId . '.' . $studentIdExt;
-        $finalStudentIdPath = $uploadDir . $finalStudentIdName;
+        // Handle COR if provided
+        if (!empty($corPath) && file_exists($corPath)) {
+            $corUploadDir = '../uploads/documents/';
+            if (!is_dir($corUploadDir)) {
+                mkdir($corUploadDir, 0755, true);
+            }
+            
+            $corExt = pathinfo($corPath, PATHINFO_EXTENSION);
+            $finalCorName = uniqid() . '_COR_' . $studentId . '.' . $corExt;
+            $finalCorPath = $corUploadDir . $finalCorName;
+            
+            if (!copy($corPath, $finalCorPath)) {
+                if ($finalStudentIdName) unlink($studentIdUploadDir . $finalStudentIdName);
+                $response['message'] = 'Failed to process COR file';
+                echo json_encode($response);
+                exit;
+            }
+        }
         
-        if (!copy($studentIdPath, $finalStudentIdPath)) {
-            $response['message'] = 'Failed to process student ID image';
+        // Extract name and student ID from whichever document is provided (COR takes priority)
+        define('EXTRACT_STUDENT_INFO_INCLUDED', true);
+        require_once '../api/extract-student-info.php';
+        
+        $apiKey = AppConfig::get('OCR_SPACE_API_KEY', '');
+        $extractedName = '';
+        $extractedStudentId = '';
+        $isStudentIdUpload = !empty($finalStudentIdPath) && empty($finalCorPath); // Track if Student ID was uploaded (and not COR)
+        
+        // Debug logging
+        error_log("=== FILE UPLOAD DETECTION ===");
+        error_log("Student ID Path: " . ($finalStudentIdPath ?? 'NULL'));
+        error_log("COR Path: " . ($finalCorPath ?? 'NULL'));
+        error_log("Is Student ID Upload: " . ($isStudentIdUpload ? 'YES' : 'NO'));
+        
+        if (!empty($apiKey)) {
+            // Prefer COR for extraction, fallback to Student ID
+            $fileToExtract = null;
+            if (!empty($finalCorPath) && file_exists($finalCorPath)) {
+                $fileToExtract = $finalCorPath;
+            } elseif (!empty($finalStudentIdPath) && file_exists($finalStudentIdPath)) {
+                $fileToExtract = $finalStudentIdPath;
+            }
+            
+            if ($fileToExtract) {
+                $ocrText = performOCR($fileToExtract, $apiKey);
+                if (!empty($ocrText)) {
+                    $extractedName = extractStudentName($ocrText);
+                    $extractedStudentId = extractStudentId($ocrText);
+                }
+            }
+        }
+        
+        // Validate student ID matches entered student ID
+        if (!empty($extractedStudentId)) {
+            $normalizedEnteredId = normalizeStudentIdForMasterlist($studentId);
+            $normalizedExtractedId = normalizeStudentIdForMasterlist($extractedStudentId);
+            if ($normalizedEnteredId !== $normalizedExtractedId) {
+                if ($finalStudentIdName) unlink($studentIdUploadDir . $finalStudentIdName);
+                if ($finalCorName) unlink($corUploadDir . $finalCorName);
+                if ($studentIdPath) unlink($studentIdPath);
+                if ($corPath) unlink($corPath);
+                $response['message'] = 'Student ID in document does not match the entered Student ID. Please check and try again.';
+                echo json_encode($response);
+                exit;
+            }
+        }
+        
+        // Masterlist validation - check if name and student ID are in masterlist
+        if (empty($extractedName) || empty($extractedStudentId)) {
+            if ($finalStudentIdName) unlink($studentIdUploadDir . $finalStudentIdName);
+            if ($finalCorName) unlink($corUploadDir . $finalCorName);
+            if ($studentIdPath) unlink($studentIdPath);
+            if ($corPath) unlink($corPath);
+            $response['message'] = 'Could not extract name and student ID from document. Please ensure the document is clear and readable.';
             echo json_encode($response);
             exit;
         }
         
-        $corUploadDir = '../uploads/documents/';
-        if (!is_dir($corUploadDir)) {
-            mkdir($corUploadDir, 0755, true);
-        }
-        
-        $corExt = pathinfo($corPath, PATHINFO_EXTENSION);
-        $finalCorName = uniqid() . '_COR_' . $studentId . '.' . $corExt;
-        $finalCorPath = $corUploadDir . $finalCorName;
-        
-        if (!copy($corPath, $finalCorPath)) {
-            unlink($finalStudentIdPath);
-            $response['message'] = 'Failed to process COR file';
-            echo json_encode($response);
-            exit;
+        // For Student ID uploads: Only validate student ID exists in masterlist (no name check)
+        // For COR uploads: Validate both student ID and name
+        if ($isStudentIdUpload) {
+            // Student ID uploads: Just check if student ID exists in masterlist
+            // No name validation needed
+            error_log("=== STUDENT ID VALIDATION (ID ONLY) ===");
+            error_log("Student ID: " . $extractedStudentId);
+            error_log("Found in masterlist: YES");
+        } else {
+            // COR uploads: Validate name matches masterlist
+            if (empty($extractedName)) {
+                if ($finalStudentIdName) unlink($studentIdUploadDir . $finalStudentIdName);
+                if ($finalCorName) unlink($corUploadDir . $finalCorName);
+                if ($studentIdPath) unlink($studentIdPath);
+                if ($corPath) unlink($corPath);
+                $response['message'] = 'Could not extract name from COR. Please ensure the document is clear and readable.';
+                echo json_encode($response);
+                exit;
+            }
+            
+            $masterlistValidation = validateAgainstMasterlist($conn, $extractedStudentId, $extractedName, false);
+            if (!$masterlistValidation['valid']) {
+                if ($finalStudentIdName) unlink($studentIdUploadDir . $finalStudentIdName);
+                if ($finalCorName) unlink($corUploadDir . $finalCorName);
+                if ($studentIdPath) unlink($studentIdPath);
+                if ($corPath) unlink($corPath);
+                $response['message'] = $masterlistValidation['message'];
+                echo json_encode($response);
+                exit;
+            }
         }
         
         $academicYear = trim($_POST['academicYear'] ?? '');
@@ -208,8 +316,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("Semester from form: " . $semester);
         }
         
-        unlink($studentIdPath);
-        unlink($corPath);
+        if ($studentIdPath && file_exists($studentIdPath)) unlink($studentIdPath);
+        if ($corPath && file_exists($corPath)) unlink($corPath);
         
         error_log("=== FINAL VALUES TO BE SAVED ===");
         error_log("Academic Year: " . var_export($academicYear, true));
@@ -220,6 +328,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         $isReRegistration = ($existingReg && $existingReg['approval_status'] === 'rejected');
+        
+        // Ensure only the correct file path is saved based on what was actually uploaded
+        $studentIdImagePath = null;
+        $corFilePath = null;
+        
+        if ($finalStudentIdName && !$finalCorName) {
+            // Only Student ID was uploaded
+            $studentIdImagePath = 'uploads/student-ids/' . $finalStudentIdName;
+            $corFilePath = null;
+        } elseif ($finalCorName && !$finalStudentIdName) {
+            // Only COR was uploaded
+            $studentIdImagePath = null;
+            $corFilePath = 'uploads/documents/' . $finalCorName;
+        } elseif ($finalStudentIdName && $finalCorName) {
+            // Both were uploaded (shouldn't happen with current UI, but handle it)
+            $studentIdImagePath = 'uploads/student-ids/' . $finalStudentIdName;
+            $corFilePath = 'uploads/documents/' . $finalCorName;
+        }
+        
+        // Debug logging
+        error_log("=== DATABASE PATHS TO BE SAVED ===");
+        error_log("Student ID Image Path: " . ($studentIdImagePath ?? 'NULL'));
+        error_log("COR File Path: " . ($corFilePath ?? 'NULL'));
+        error_log("Final Student ID Name: " . ($finalStudentIdName ?? 'NULL'));
+        error_log("Final COR Name: " . ($finalCorName ?? 'NULL'));
         
         if ($isReRegistration) {
             $updateQuery = "UPDATE student_registrations SET 
@@ -232,8 +365,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateStmt = $conn->prepare($updateQuery);
             $updateStmt->execute([
                 $firstName, $middleName, $lastName, $email, $course, $yearLevel, $section, $gender,
-                'uploads/student-ids/' . $finalStudentIdName,
-                'uploads/documents/' . $finalCorName,
+                $studentIdImagePath,
+                $corFilePath,
                 $token, $tokenExpiresAt, $academicYear, $semester, $studentId
             ]);
         } else {
@@ -243,8 +376,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $insertStmt = $conn->prepare($insertQuery);
             $insertStmt->execute([
                 $studentId, $firstName, $middleName, $lastName, $email, $course, $yearLevel, $section, $gender,
-                'uploads/student-ids/' . $finalStudentIdName,
-                'uploads/documents/' . $finalCorName,
+                $studentIdImagePath,
+                $corFilePath,
                 $token, $tokenExpiresAt, $academicYear, $semester
             ]);
         }

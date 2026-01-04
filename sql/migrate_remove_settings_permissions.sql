@@ -20,3 +20,7 @@ DELETE FROM `permissions` WHERE slug IN ('view_settings', 'manage_settings');
 
 
 
+
+
+
+

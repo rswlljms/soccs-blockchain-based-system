@@ -980,26 +980,14 @@
                     </div>
                     
                     <div class="form-group full-width">
-                        <label>Student ID Image <span class="required">*</span></label>
+                        <label>Student ID Image or Certificate of Registration (COR) <span class="required">*</span></label>
                         <div class="file-upload-container">
-                            <input type="file" id="studentIdImage" name="studentIdImage" class="file-upload-input" accept=".jpg,.jpeg,.png" required>
-                            <label for="studentIdImage" class="file-upload-label" id="studentIdDropZone">
+                            <input type="file" id="documentFile" name="documentFile" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp" required>
+                            <label for="documentFile" class="file-upload-label" id="documentDropZone">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <span id="studentUploadText">Click or drag to upload Student ID image</span>
+                                <span id="documentUploadText">Click or drag to upload Student ID or COR</span>
                             </label>
-                            <div class="file-info">JPG or PNG, max 5MB</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label>Certificate of Registration (COR) <span class="required">*</span></label>
-                        <div class="file-upload-container">
-                            <input type="file" id="corFile" name="corFile" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png" required>
-                            <label for="corFile" class="file-upload-label" id="corDropZone">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <span id="corUploadText">Click or drag to upload COR</span>
-                            </label>
-                            <div class="file-info">PDF, JPG or PNG, max 10MB</div>
+                            <div class="file-info">JPG, PNG, HEIC, WEBP, or PDF - Max 1MB</div>
                         </div>
                     </div>
                 </div>
@@ -1175,6 +1163,15 @@
             input.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    // Validate file size (max 1MB)
+                    if (file.size > 1 * 1024 * 1024) {
+                        showErrorModal('File Too Large', 'File size must be less than 1MB. Please upload a smaller file.');
+                        input.value = ''; // Clear the file input
+                        label.classList.remove('has-file');
+                        text.textContent = 'Click or drag to upload Student ID or COR';
+                        return;
+                    }
+                    
                     text.textContent = file.name;
                     label.classList.add('has-file');
                 }
@@ -1197,6 +1194,15 @@
             label.addEventListener('drop', (e) => {
                 const file = e.dataTransfer.files[0];
                     if (file) {
+                        // Validate file size (max 1MB)
+                        if (file.size > 1 * 1024 * 1024) {
+                            showErrorModal('File Too Large', 'File size must be less than 1MB. Please upload a smaller file.');
+                            input.value = ''; // Clear the file input
+                            label.classList.remove('has-file');
+                            text.textContent = 'Click or drag to upload Student ID or COR';
+                            return;
+                        }
+                        
                         const dataTransfer = new DataTransfer();
                         dataTransfer.items.add(file);
                     input.files = dataTransfer.files;
@@ -1206,8 +1212,7 @@
                 });
             }
 
-        setupFileUpload('studentIdImage', 'studentIdDropZone', 'studentUploadText');
-        setupFileUpload('corFile', 'corDropZone', 'corUploadText');
+        setupFileUpload('documentFile', 'documentDropZone', 'documentUploadText');
 
         document.getElementById('section').addEventListener('input', function(e) {
             e.target.value = e.target.value.toUpperCase();
@@ -1268,6 +1273,34 @@
         }
 
         async function submitRegistrationForm(formData) {
+            const documentFile = document.getElementById('documentFile').files[0];
+            
+            if (!documentFile) {
+                showErrorModal('Upload Required', 'Please upload either Student ID image or Certificate of Registration (COR).');
+                return;
+            }
+            
+            // Validate file size (max 1MB)
+            if (documentFile.size > 1 * 1024 * 1024) {
+                showErrorModal('File Too Large', 'File size must be less than 1MB. Please upload a smaller file.');
+                return;
+            }
+            
+            // Determine file type and set appropriate field name
+            const fileExtension = documentFile.name.split('.').pop().toLowerCase();
+            const isPdf = fileExtension === 'pdf';
+            
+            // Add file to formData with appropriate field name
+            if (isPdf) {
+                formData.append('corFile', documentFile);
+            } else {
+                // For images, treat as Student ID
+                formData.append('studentIdImage', documentFile);
+            }
+            
+            // Remove the original documentFile from formData
+            formData.delete('documentFile');
+            
             preloader.style.display = 'flex';
 
             try {
@@ -1281,10 +1314,8 @@
                 if (data.status === 'success') {
                     showModal('successModal');
                     form.reset();
-                    document.getElementById('studentIdDropZone').classList.remove('has-file');
-                    document.getElementById('corDropZone').classList.remove('has-file');
-                    document.getElementById('studentUploadText').textContent = 'Click or drag to upload Student ID image';
-                    document.getElementById('corUploadText').textContent = 'Click or drag to upload COR';
+                    document.getElementById('documentDropZone').classList.remove('has-file');
+                    document.getElementById('documentUploadText').textContent = 'Click or drag to upload Student ID or COR';
                     privacyAgreed = false;
                 } else {
                     showErrorModal('Registration Failed', data.message);

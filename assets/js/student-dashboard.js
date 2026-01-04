@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadUpcomingEvents();
     loadFinancialData();
     loadRecentTransactions();
+    loadFilingCandidacy();
     
     initializeAnnouncementsCycle();
     initializeFundCharts();
@@ -851,3 +852,145 @@ setTimeout(() => {
         notification.style.opacity = '1';
     });
 }, 100);
+
+// === FILING CANDIDACY FUNCTIONALITY ===
+async function loadFilingCandidacy() {
+    try {
+        const response = await fetch('../api/filing-candidacy/get_active.php');
+        const result = await response.json();
+        
+        const filingBtn = document.getElementById('filingCandidacyBtn');
+        
+        if (result.success && result.data) {
+            const period = result.data;
+            const now = new Date();
+            const startDate = new Date(period.start_date);
+            const endDate = new Date(period.end_date);
+            
+            if (now >= startDate && now <= endDate && period.is_active == 1) {
+                filingBtn.style.display = 'flex';
+                window.currentFilingPeriod = period;
+            } else {
+                filingBtn.style.display = 'none';
+                window.currentFilingPeriod = null;
+            }
+        } else {
+            filingBtn.style.display = 'none';
+            window.currentFilingPeriod = null;
+        }
+    } catch (error) {
+        console.error('Error loading filing candidacy:', error);
+        document.getElementById('filingCandidacyBtn').style.display = 'none';
+        window.currentFilingPeriod = null;
+    }
+}
+
+function openFilingCandidacyModal() {
+    const modal = document.getElementById('filingCandidacyModalOverlay');
+    const modalContent = document.querySelector('.filing-candidacy-modal');
+    const content = document.getElementById('filingCandidacyContent');
+    
+    if (!window.currentFilingPeriod) {
+        content.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; color: #6b7280;">
+                <i class="fas fa-exclamation-circle" style="font-size: 48px; margin-bottom: 16px; color: #f59e0b;"></i>
+                <p>No active filing period available.</p>
+            </div>
+        `;
+        modal.style.display = 'block';
+        setTimeout(() => {
+            modal.style.opacity = '1';
+            if (modalContent) {
+                modalContent.style.opacity = '1';
+                modalContent.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+        }, 10);
+        return;
+    }
+    
+    const period = window.currentFilingPeriod;
+    const startDate = new Date(period.start_date);
+    const endDate = new Date(period.end_date);
+    
+    content.innerHTML = `
+        <div class="filing-candidacy-info">
+            <h4>${escapeHtml(period.title)}</h4>
+            
+            <div class="announcement-text">${escapeHtml(period.announcement_text)}</div>
+            
+            <div class="info-section">
+                <div class="info-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div>
+                        <span class="info-label">Filing Period:</span>
+                        <span class="info-value">${formatDate(startDate)} - ${formatDate(endDate)}</span>
+                    </div>
+                </div>
+                
+                ${period.screening_date ? `
+                <div class="info-item">
+                    <i class="fas fa-calendar-day"></i>
+                    <div>
+                        <span class="info-label">Screening Date:</span>
+                        <span class="info-value">${escapeHtml(period.screening_date)}</span>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            
+            <div class="form-link-container">
+                <p style="margin-bottom: 16px; font-weight: 600; color: var(--text-primary);">
+                    <i class="fas fa-external-link-alt"></i> Submit your Application Form
+                </p>
+                <a href="${escapeHtml(period.form_link)}" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-file-alt"></i>
+                    Open Application Form
+                </a>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'block';
+    setTimeout(() => {
+        modal.style.opacity = '1';
+        if (modalContent) {
+            modalContent.style.opacity = '1';
+            modalContent.style.transform = 'translate(-50%, -50%) scale(1)';
+        }
+    }, 10);
+}
+
+function closeFilingCandidacyModal() {
+    const modal = document.getElementById('filingCandidacyModalOverlay');
+    const modalContent = document.querySelector('.filing-candidacy-modal');
+    
+    if (modalContent) {
+        modalContent.style.opacity = '0';
+        modalContent.style.transform = 'translate(-50%, -50%) scale(0.95)';
+    }
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+function formatDate(date) {
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+document.getElementById('filingCandidacyModalOverlay')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeFilingCandidacyModal();
+    }
+});

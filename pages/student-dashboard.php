@@ -141,6 +141,30 @@ try {
     </div>
   </div>
 
+  <!-- Filing Candidacy Floating Button -->
+  <button class="filing-candidacy-btn" id="filingCandidacyBtn" style="display: none;" onclick="openFilingCandidacyModal()">
+    <i class="fas fa-file-alt"></i>
+    <span>File Candidacy</span>
+  </button>
+
+  <!-- Filing Candidacy Modal -->
+  <div class="modal-overlay" id="filingCandidacyModalOverlay" style="display: none;">
+    <div class="modal filing-candidacy-modal">
+      <div class="modal-header">
+        <h3>Filing of Candidacy</h3>
+        <button class="modal-close" onclick="closeFilingCandidacyModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content" id="filingCandidacyContent">
+        <div style="text-align: center; padding: 40px 20px;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 16px; color: #9933ff;"></i>
+          <p>Loading filing information...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Voting Modal -->
   <div class="modal-overlay" id="votingModal" style="display: none;">
     <div class="modal voting-modal">

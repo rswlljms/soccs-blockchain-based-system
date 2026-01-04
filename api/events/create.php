@@ -8,6 +8,7 @@ session_start();
 require_once '../../includes/database.php';
 require_once '../../includes/auth_check.php';
 require_once '../../includes/activity_logger.php';
+require_once '../../includes/email_config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -66,8 +67,36 @@ try {
     if ($stmt->execute()) {
         $eventId = $conn->lastInsertId();
         
+        // Insert contests if provided
+        if (isset($data['contests']) && is_array($data['contests']) && count($data['contests']) > 0) {
+            $contestQuery = "INSERT INTO event_contests (event_id, contest_details, registration_link) VALUES (:event_id, :contest_details, :registration_link)";
+            $contestStmt = $conn->prepare($contestQuery);
+            
+            foreach ($data['contests'] as $contest) {
+                if (!empty($contest['contest_details']) && !empty($contest['registration_link'])) {
+                    $contestStmt->bindParam(':event_id', $eventId, PDO::PARAM_INT);
+                    $contestStmt->bindParam(':contest_details', $contest['contest_details'], PDO::PARAM_STR);
+                    $contestStmt->bindParam(':registration_link', $contest['registration_link'], PDO::PARAM_STR);
+                    $contestStmt->execute();
+                }
+            }
+        }
+        
         if (isset($_SESSION['user_id'])) {
             logEventActivity($_SESSION['user_id'], 'create', 'Created event: ' . $data['name'] . ' (' . $data['category'] . ')');
+        }
+        
+        $emailService = new EmailService();
+        $students = $emailService->getActiveStudentEmails();
+        $emailData = null;
+        if (!empty($students)) {
+            $emailData = $emailService->getEventNotificationContent(
+                $data['name'],
+                $datetime,
+                $data['location'],
+                $data['description'],
+                $data['category']
+            );
         }
         
         echo json_encode([
@@ -75,6 +104,27 @@ try {
             'message' => 'Event created successfully',
             'event_id' => (int)$eventId
         ]);
+        
+        if (ob_get_level()) {
+            ob_end_flush();
+        }
+        flush();
+        
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+        
+        ignore_user_abort(true);
+        set_time_limit(300);
+        
+        if (!empty($students) && $emailData) {
+            try {
+                $result = $emailService->sendBulkEmail($students, $emailData['subject'], $emailData['content']);
+                error_log("Event notification emails sent: " . json_encode($result));
+            } catch (Exception $e) {
+                error_log("Failed to send event notification emails: " . $e->getMessage());
+            }
+        }
     } else {
         throw new Exception('Failed to create event');
     }

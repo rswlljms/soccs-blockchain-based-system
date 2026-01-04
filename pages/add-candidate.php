@@ -321,18 +321,39 @@ include('../components/sidebar.php');
     .filter-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0;
+      position: relative;
     }
 
-    .filter-group label {
+    .filter-group label.sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .filter-group::before {
+      content: '\f0b0';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9933ff;
       font-size: 14px;
-      color: var(--text-secondary);
-      font-weight: 500;
+      z-index: 1;
+      pointer-events: none;
     }
 
     .filter-group select {
       height: 44px;
-      padding: 12px 36px 12px 18px;
+      padding: 12px 36px 12px 42px;
       border: 2px solid var(--border-color);
       border-radius: var(--radius-sm);
       background: white;
@@ -340,7 +361,7 @@ include('../components/sidebar.php');
       font-size: 14px;
       font-family: 'Work Sans', sans-serif;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.2s;
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -348,7 +369,7 @@ include('../components/sidebar.php');
       background-repeat: no-repeat;
       background-position: right 12px center;
       background-size: 12px 12px;
-      min-width: 180px;
+      min-width: 200px;
     }
 
     .filter-group select:hover {
@@ -619,6 +640,7 @@ include('../components/sidebar.php');
       padding: 32px;
       max-height: calc(90vh - 120px);
       overflow-y: auto;
+      overflow-x: visible;
     }
 
     .candidate-form-modal::-webkit-scrollbar {
@@ -650,6 +672,7 @@ include('../components/sidebar.php');
       display: flex;
       flex-direction: column;
       gap: 10px;
+      position: relative;
     }
 
     .form-group-full {
@@ -685,6 +708,7 @@ include('../components/sidebar.php');
       transition: all 0.2s;
       font-family: 'Work Sans', sans-serif;
       width: 100%;
+      box-sizing: border-box;
     }
 
     .form-group input:focus,
@@ -696,7 +720,7 @@ include('../components/sidebar.php');
     }
 
     .form-group select {
-      height: 44px;
+      height: 50px;
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
@@ -705,7 +729,37 @@ include('../components/sidebar.php');
       background-repeat: no-repeat;
       background-position: right 12px center;
       background-size: 12px 12px;
-      padding-right: 36px;
+      padding: 0 36px 0 18px !important;
+      line-height: 50px;
+      box-sizing: border-box;
+      z-index: 10;
+      position: relative;
+      vertical-align: middle;
+      display: block;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      color: var(--text-primary);
+      background-color: white;
+    }
+
+    .form-group select option {
+      color: #111827;
+      background: white;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-family: 'Work Sans', sans-serif;
+      display: block;
+    }
+
+    .form-group select option:disabled {
+      color: #9ca3af;
+      background: #f9fafb;
+    }
+
+    .form-group select option:checked {
+      background: #9933ff;
+      color: white;
     }
 
     .form-group textarea {
@@ -1167,7 +1221,7 @@ include('../components/sidebar.php');
     <div class="candidate-list-header">
       <h2 class="registered-title">Registered Candidates</h2>
       <div class="filter-group">
-        <label for="filter-position">Filter by Position:</label>
+        <label for="filter-position" class="sr-only">Filter by Position</label>
         <select id="filter-position" onchange="filterCandidates()">
           <option value="">All Positions</option>
         </select>
@@ -1245,9 +1299,9 @@ include('../components/sidebar.php');
         
         <div class="form-group">
           <label for="candidatePhoto">
-            <i class="fas fa-image"></i> Photo
+            <i class="fas fa-image"></i> Photo *
           </label>
-          <input type="file" id="candidatePhoto" name="photo" accept="image/*">
+          <input type="file" id="candidatePhoto" name="photo" accept="image/*" required>
         </div>
         
         <div class="form-group form-group-full">

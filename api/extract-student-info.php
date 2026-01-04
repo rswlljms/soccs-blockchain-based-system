@@ -37,48 +37,22 @@ if (defined('EXTRACT_STUDENT_INFO_INCLUDED')) {
     $response = ['status' => 'error', 'message' => 'Invalid request'];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (!isset($_FILES['studentIdImage']) || $_FILES['studentIdImage']['error'] !== UPLOAD_ERR_OK) {
-            $response['message'] = 'Student ID image is required';
-            echo json_encode($response);
-            exit;
-        }
+        // Accept single file upload - can be either Student ID or COR
+        // Check legacy fields first (studentIdImage, corFile) as they're explicitly set in step 1
+        $hasStudentId = isset($_FILES['studentIdImage']) && $_FILES['studentIdImage']['error'] === UPLOAD_ERR_OK;
+        $hasCor = isset($_FILES['corFile']) && $_FILES['corFile']['error'] === UPLOAD_ERR_OK;
+        $hasDocument = isset($_FILES['documentFile']) && $_FILES['documentFile']['error'] === UPLOAD_ERR_OK;
         
-        if (!isset($_FILES['corFile']) || $_FILES['corFile']['error'] !== UPLOAD_ERR_OK) {
-            $response['message'] = 'Certificate of Registration (COR) is required';
+        // Support both new single field and legacy dual fields
+        if (!$hasDocument && !$hasStudentId && !$hasCor) {
+            $response['message'] = 'Please upload either Student ID image or Certificate of Registration (COR).';
             echo json_encode($response);
             exit;
         }
         
         try {
-        $studentIdFile = $_FILES['studentIdImage'];
-        $corFile = $_FILES['corFile'];
-        
         $allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif', 'image/webp'];
         $allowedCorTypes = array_merge($allowedImageTypes, ['application/pdf']);
-        
-        if (!in_array($studentIdFile['type'], $allowedImageTypes)) {
-            $response['message'] = 'Invalid Student ID format. Allowed: JPG, PNG, HEIC, WEBP';
-            echo json_encode($response);
-            exit;
-        }
-        
-        if (!in_array($corFile['type'], $allowedCorTypes)) {
-            $response['message'] = 'Invalid COR format. Allowed: PDF, JPG, PNG, HEIC, WEBP';
-            echo json_encode($response);
-            exit;
-        }
-        
-        if ($studentIdFile['size'] > 5 * 1024 * 1024) {
-            $response['message'] = 'Student ID file size must be less than 5MB';
-            echo json_encode($response);
-            exit;
-        }
-        
-        if ($corFile['size'] > 10 * 1024 * 1024) {
-            $response['message'] = 'COR file size must be less than 10MB';
-            echo json_encode($response);
-            exit;
-        }
         
         $uploadDir = '../uploads/temp/';
         if (!is_dir($uploadDir)) {
@@ -86,55 +60,263 @@ if (defined('EXTRACT_STUDENT_INFO_INCLUDED')) {
         }
         
         $tempId = uniqid('temp_', true);
+        $studentIdPath = null;
+        $corPath = null;
+        $extractedInfo = null;
         
-        $studentIdExt = pathinfo($studentIdFile['name'], PATHINFO_EXTENSION);
-        $studentIdPath = $uploadDir . $tempId . '_studentid.' . $studentIdExt;
+        // Handle single documentFile upload (new approach)
+        if ($hasDocument) {
+            $documentFile = $_FILES['documentFile'];
+            $fileExtension = strtolower(pathinfo($documentFile['name'], PATHINFO_EXTENSION));
+            $isPdf = $fileExtension === 'pdf';
+            $fileSize = $documentFile['size'];
+            
+            // Validate file size (max 1MB)
+            if ($fileSize > 1 * 1024 * 1024) {
+                $response['message'] = 'File size must be less than 1MB. Please upload a smaller file.';
+                echo json_encode($response);
+                exit;
+            }
+            
+            // Determine if it's Student ID or COR based on extension
+            if ($isPdf) {
+                // PDF is always COR
+                if (!in_array($documentFile['type'], $allowedCorTypes)) {
+                    $response['message'] = 'Invalid COR format. Allowed: PDF, JPG, PNG, HEIC, WEBP';
+                    echo json_encode($response);
+                    exit;
+                }
+                
+                $corPath = $uploadDir . $tempId . '_cor.' . $fileExtension;
+                
+                if (!move_uploaded_file($documentFile['tmp_name'], $corPath)) {
+                    $response['message'] = 'Failed to upload document';
+                    echo json_encode($response);
+                    exit;
+                }
+                
+                // Extract info from COR
+                $extractedInfo = extractInformationFromCOR($corPath);
+            } else {
+                // Image file - treat as Student ID
+                if (!in_array($documentFile['type'], $allowedImageTypes)) {
+                    $response['message'] = 'Invalid file format. Allowed: PDF, JPG, PNG, HEIC, WEBP';
+                    echo json_encode($response);
+                    exit;
+                }
+                
+                $studentIdPath = $uploadDir . $tempId . '_studentid.' . $fileExtension;
+                
+                if (!move_uploaded_file($documentFile['tmp_name'], $studentIdPath)) {
+                    $response['message'] = 'Failed to upload document';
+                    echo json_encode($response);
+                    exit;
+                }
+                
+                // Extract info from Student ID
+                $extractedInfo = extractInformationFromStudentId($studentIdPath);
+            }
+        }
         
-        $corExt = pathinfo($corFile['name'], PATHINFO_EXTENSION);
-        $corPath = $uploadDir . $tempId . '_cor.' . $corExt;
+        // Handle legacy dual field approach (for backward compatibility)
+        if ($hasStudentId && !$hasDocument) {
+            $studentIdFile = $_FILES['studentIdImage'];
+            
+            if (!in_array($studentIdFile['type'], $allowedImageTypes)) {
+                $response['message'] = 'Invalid Student ID format. Allowed: JPG, PNG, HEIC, WEBP';
+                echo json_encode($response);
+                exit;
+            }
+            
+            if ($studentIdFile['size'] > 1 * 1024 * 1024) {
+                $response['message'] = 'File size must be less than 1MB. Please upload a smaller file.';
+                echo json_encode($response);
+                exit;
+            }
+            
+            $studentIdExt = pathinfo($studentIdFile['name'], PATHINFO_EXTENSION);
+            $studentIdPath = $uploadDir . $tempId . '_studentid.' . $studentIdExt;
+            
+            if (!move_uploaded_file($studentIdFile['tmp_name'], $studentIdPath)) {
+                $response['message'] = 'Failed to upload Student ID';
+                echo json_encode($response);
+                exit;
+            }
+            
+            // Extract info from Student ID
+            $extractedInfo = extractInformationFromStudentId($studentIdPath);
+        }
         
-        if (!move_uploaded_file($studentIdFile['tmp_name'], $studentIdPath)) {
-            $response['message'] = 'Failed to upload Student ID';
+        // Handle COR if provided (legacy)
+        if ($hasCor && !$hasDocument && !$hasStudentId) {
+            $corFile = $_FILES['corFile'];
+            
+            if (!in_array($corFile['type'], $allowedCorTypes)) {
+                if ($studentIdPath) unlink($studentIdPath);
+                $response['message'] = 'Invalid COR format. Allowed: PDF, JPG, PNG, HEIC, WEBP';
+                echo json_encode($response);
+                exit;
+            }
+            
+            if ($corFile['size'] > 1 * 1024 * 1024) {
+                if ($studentIdPath) unlink($studentIdPath);
+                $response['message'] = 'File size must be less than 1MB. Please upload a smaller file.';
+                echo json_encode($response);
+                exit;
+            }
+            
+            $corExt = pathinfo($corFile['name'], PATHINFO_EXTENSION);
+            $corPath = $uploadDir . $tempId . '_cor.' . $corExt;
+            
+            if (!move_uploaded_file($corFile['tmp_name'], $corPath)) {
+                if ($studentIdPath) unlink($studentIdPath);
+                $response['message'] = 'Failed to upload COR';
+                echo json_encode($response);
+                exit;
+            }
+            
+            // Extract info from COR (overrides Student ID if both provided)
+            $corExtractedInfo = extractInformationFromCOR($corPath);
+            if ($corExtractedInfo['success']) {
+                $extractedInfo = $corExtractedInfo;
+            }
+        }
+        
+        if (!$extractedInfo || !$extractedInfo['success']) {
+            if ($studentIdPath) unlink($studentIdPath);
+            if ($corPath) unlink($corPath);
+            $response['message'] = 'Could not extract information from document. Please ensure the document is clear and readable.';
             echo json_encode($response);
             exit;
         }
         
-        if (!move_uploaded_file($corFile['tmp_name'], $corPath)) {
-            unlink($studentIdPath);
-            $response['message'] = 'Failed to upload COR';
+        // Validate against masterlist
+        require_once '../includes/database.php';
+        $database = new Database();
+        $conn = $database->getConnection();
+        
+        $extractedStudentId = $extractedInfo['data']['studentId'] ?? '';
+        $isStudentIdUpload = !empty($studentIdPath) && empty($corPath); // Track if Student ID was uploaded (and not COR)
+        
+        if (empty($extractedStudentId)) {
+            if ($studentIdPath) unlink($studentIdPath);
+            if ($corPath) unlink($corPath);
+            $response['message'] = 'Could not extract student ID from document. Please ensure the document is clear and readable.';
             echo json_encode($response);
             exit;
         }
         
-        $validationResult = validateDocuments($studentIdPath, $corPath);
+        // Get name from masterlist for auto-filling (authoritative source)
+        $normalizedId = normalizeStudentIdForMasterlist($extractedStudentId);
+        $stmt = $conn->prepare("SELECT student_id, name FROM masterlist WHERE student_id = ?");
+        $stmt->execute([$normalizedId]);
+        $masterlistEntry = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        if (!$validationResult['success']) {
-            unlink($studentIdPath);
-            unlink($corPath);
-            $response['message'] = $validationResult['message'];
+        if (!$masterlistEntry) {
+            if ($studentIdPath) unlink($studentIdPath);
+            if ($corPath) unlink($corPath);
+            $response['message'] = 'Student not found. Please ensure you are registered in the official student list.';
             echo json_encode($response);
             exit;
         }
         
-        $extractedInfo = extractInformationFromCOR($corPath);
+        // For Student ID uploads: Only validate student ID exists in masterlist (no name check)
+        // For COR uploads: Validate both student ID and name
+        if ($isStudentIdUpload) {
+            // Student ID uploads: Just check if student ID exists in masterlist
+            // No name validation needed
+            error_log("=== STUDENT ID VALIDATION (ID ONLY) ===");
+            error_log("Student ID: " . $extractedStudentId);
+            error_log("Normalized ID: " . $normalizedId);
+            error_log("Found in masterlist: YES");
+        } else {
+            // COR uploads: Extract name and validate both ID and name
+            $extractedName = '';
+            if (!empty($extractedInfo['data']['studentName'])) {
+                $extractedName = $extractedInfo['data']['studentName'];
+            } elseif (!empty($extractedInfo['data']['ocrText'])) {
+                $extractedName = extractStudentName($extractedInfo['data']['ocrText']);
+            }
+            
+            // If still no name, try to extract from the file directly using full OCR
+            if (empty($extractedName)) {
+                $apiKey = AppConfig::get('OCR_SPACE_API_KEY', '');
+                $fileToCheck = $corPath ? $corPath : $studentIdPath;
+                if ($fileToCheck && !empty($apiKey)) {
+                    $ocrText = performOCR($fileToCheck, $apiKey);
+                    if (!empty($ocrText)) {
+                        $extractedName = extractStudentName($ocrText);
+                    }
+                }
+            }
+            
+            if (empty($extractedName)) {
+                if ($studentIdPath) unlink($studentIdPath);
+                if ($corPath) unlink($corPath);
+                $response['message'] = 'Could not extract name from COR. Please ensure the document is clear and readable.';
+                echo json_encode($response);
+                exit;
+            }
+            
+            // Validate against masterlist (full name for COR)
+            $masterlistValidation = validateAgainstMasterlist($conn, $extractedStudentId, $extractedName, false);
+            if (!$masterlistValidation['valid']) {
+                if ($studentIdPath) unlink($studentIdPath);
+                if ($corPath) unlink($corPath);
+                $response['message'] = $masterlistValidation['message'];
+                echo json_encode($response);
+                exit;
+            }
+        }
         
-        if (!$extractedInfo['success']) {
-            unlink($studentIdPath);
-            unlink($corPath);
-            $response['message'] = $extractedInfo['message'];
-            echo json_encode($response);
-            exit;
+        // Use masterlist name for auto-filling (authoritative source)
+        $masterlistName = $masterlistEntry['name'];
+        $masterlistNameParts = preg_split('/\s+/', trim($masterlistName));
+        $namePartsCount = count($masterlistNameParts);
+        
+        // Smart name extraction: Handle multi-word first names
+        // Pattern: For names like "Christine Nicole Valdellon" or "Juan Carlos Dela Cruz"
+        // - If 2 parts: First = first part, Last = last part
+        // - If 3 parts: First = first 2 parts (e.g., "Christine Nicole"), Last = last part
+        // - If 4+ parts: First = first 2 parts, Middle = middle parts, Last = last part
+        if ($namePartsCount === 1) {
+            $masterlistFirstName = $masterlistNameParts[0];
+            $masterlistLastName = '';
+        } elseif ($namePartsCount === 2) {
+            $masterlistFirstName = $masterlistNameParts[0];
+            $masterlistLastName = $masterlistNameParts[1];
+        } elseif ($namePartsCount === 3) {
+            // For 3 parts, include first 2 as first name (e.g., "Christine Nicole")
+            $masterlistFirstName = $masterlistNameParts[0] . ' ' . $masterlistNameParts[1];
+            $masterlistLastName = $masterlistNameParts[2];
+        } else {
+            // For 4+ parts, first 2 parts as first name, rest as middle, last as last name
+            $masterlistFirstName = $masterlistNameParts[0] . ' ' . $masterlistNameParts[1];
+            $masterlistLastName = end($masterlistNameParts);
+        }
+        
+        // Add masterlist name to response data for auto-fill
+        $extractedInfoData = $extractedInfo['data'];
+        $extractedInfoData['firstName'] = trim($masterlistFirstName);
+        $extractedInfoData['lastName'] = trim($masterlistLastName);
+        $extractedInfoData['fullName'] = $masterlistName; // Include full name for reference
+        
+        $responseData = [
+            'tempId' => $tempId,
+            'extractedInfo' => $extractedInfoData
+        ];
+        
+        if ($studentIdPath) {
+            $responseData['studentIdPath'] = realpath($studentIdPath);
+        }
+        if ($corPath) {
+            $responseData['corPath'] = realpath($corPath);
         }
         
         $response = [
             'status' => 'success',
-            'message' => 'Documents uploaded successfully',
-            'data' => [
-                'tempId' => $tempId,
-                'studentIdPath' => realpath($studentIdPath),
-                'corPath' => realpath($corPath),
-                'extractedInfo' => $extractedInfo['data']
-            ]
+            'message' => 'Document uploaded and validated successfully',
+            'data' => $responseData
         ];
         
         } catch (Exception $e) {
@@ -150,7 +332,7 @@ if (defined('EXTRACT_STUDENT_INFO_INCLUDED')) {
     }
 }
 
-function validateDocuments($studentIdPath, $corPath) {
+function validateDocuments($corPath) {
     $apiKey = AppConfig::get('OCR_SPACE_API_KEY', '');
     
     if (empty($apiKey)) {
@@ -160,23 +342,21 @@ function validateDocuments($studentIdPath, $corPath) {
         ];
     }
     
-    $studentIdOcrText = performOCR($studentIdPath, $apiKey);
     $corOcrText = performOCR($corPath, $apiKey);
     
-    if (empty($studentIdOcrText) || empty($corOcrText)) {
+    if (empty($corOcrText)) {
         return [
             'success' => false,
-            'message' => 'Invalid document. Please upload valid and clear documents.'
+            'message' => 'Invalid document. Please upload valid and clear COR.'
         ];
     }
     
-    $studentName = extractStudentName($studentIdOcrText);
     $hasSchoolName = validateSchoolName($corOcrText);
     
-    if (empty($studentName) || !$hasSchoolName) {
+    if (!$hasSchoolName) {
         return [
             'success' => false,
-            'message' => 'Invalid document. Please upload valid and clear documents.'
+            'message' => 'Invalid document. Please upload valid and clear COR.'
         ];
     }
     
@@ -243,6 +423,59 @@ function validateSchoolName($text) {
     
     error_log("School name validation failed. OCR text sample: " . substr($text, 0, 200));
     return false;
+}
+
+function extractInformationFromStudentId($filePath) {
+    $apiKey = AppConfig::get('OCR_SPACE_API_KEY', '');
+    
+    if (empty($apiKey)) {
+        return [
+            'success' => false,
+            'message' => 'OCR service not configured'
+        ];
+    }
+    
+    $ocrText = '';
+    $maxRetries = 2;
+    $retryCount = 0;
+    
+    while (empty($ocrText) && $retryCount < $maxRetries) {
+        if ($retryCount > 0) {
+            error_log("OCR retry attempt {$retryCount} for Student ID file: {$filePath}");
+            sleep(2);
+        }
+        $ocrText = performOCR($filePath, $apiKey);
+        $retryCount++;
+    }
+    
+    if (empty($ocrText)) {
+        error_log("OCR failed after {$maxRetries} attempts for Student ID file: {$filePath}");
+        return [
+            'success' => false,
+            'message' => 'Could not read text from Student ID. OCR service timeout or unavailable.'
+        ];
+    }
+    
+    $studentId = extractStudentId($ocrText);
+    $studentName = extractStudentName($ocrText);
+    
+    error_log("=== STUDENT ID EXTRACTION RESULTS ===");
+    error_log("Student ID: " . ($studentId ?: 'NOT FOUND'));
+    error_log("Student Name: " . ($studentName ?: 'NOT FOUND'));
+    
+    return [
+        'success' => true,
+        'data' => [
+            'studentId' => $studentId,
+            'studentName' => $studentName,
+            'ocrText' => $ocrText,
+            'course' => '',
+            'yearLevel' => '',
+            'gender' => '',
+            'academicYear' => '',
+            'semester' => ''
+        ]
+    ];
 }
 
 function extractInformationFromCOR($filePath) {
@@ -676,5 +909,115 @@ function extractSemester($text) {
     
     error_log("Failed to extract Semester from text. Text sample: " . substr($text, 0, 500));
     return '';
+}
+
+function validateAgainstMasterlist($conn, $studentId, $extractedName, $isStudentIdUpload = false) {
+    try {
+        $normalizedId = normalizeStudentIdForMasterlist($studentId);
+        
+        $stmt = $conn->prepare("SELECT student_id, name FROM masterlist WHERE student_id = ?");
+        $stmt->execute([$normalizedId]);
+        $masterlistEntry = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$masterlistEntry) {
+            return [
+                'valid' => false,
+                'message' => 'Student not found. Please ensure you are registered in the official student list.'
+            ];
+        }
+        
+        // For Student ID uploads: Only check if student ID exists (no name validation)
+        if ($isStudentIdUpload) {
+            // Student ID found in masterlist - validation passed
+            return [
+                'valid' => true,
+                'message' => 'Validation successful'
+            ];
+        } else {
+            // For COR uploads, match full name
+            $normalizedName = normalizeNameForMasterlist($extractedName);
+            $masterlistName = normalizeNameForMasterlist($masterlistEntry['name']);
+            
+            if (!fuzzyNameMatch($normalizedName, $masterlistName)) {
+                return [
+                    'valid' => false,
+                    'message' => 'Name does not match the masterlist. Please ensure your name matches the official student list.'
+                ];
+            }
+        }
+        
+        return [
+            'valid' => true,
+            'message' => 'Validation successful'
+        ];
+    } catch (Exception $e) {
+        error_log('Masterlist validation error: ' . $e->getMessage());
+        return [
+            'valid' => false,
+            'message' => 'Masterlist validation failed. Please contact administrator.'
+        ];
+    }
+}
+
+function extractFirstName($fullName) {
+    // Clean the name first
+    $fullName = trim($fullName);
+    $fullName = preg_replace('/\s+/', ' ', $fullName);
+    
+    // Split by spaces
+    $nameParts = preg_split('/\s+/', $fullName);
+    
+    // Return first part, or full name if empty
+    $firstName = !empty($nameParts[0]) ? trim($nameParts[0]) : $fullName;
+    
+    // Remove any special characters that might interfere (keep letters, numbers, hyphens, apostrophes)
+    $firstName = preg_replace('/[^a-zA-Z0-9\-\']/', '', $firstName);
+    
+    return $firstName;
+}
+
+function normalizeStudentIdForMasterlist($id) {
+    $id = preg_replace('/[\s._]+/', '-', $id);
+    $id = preg_replace('/[^0-9-]/', '', $id);
+    
+    if (preg_match('/^\d{8,9}$/', $id)) {
+        $id = substr($id, 0, 4) . '-' . substr($id, 4);
+    }
+    
+    return strtoupper($id);
+}
+
+function normalizeNameForMasterlist($name) {
+    $name = trim($name);
+    $name = preg_replace('/\s+/', ' ', $name);
+    return strtolower($name);
+}
+
+function fuzzyNameMatch($name1, $name2) {
+    $name1 = normalizeNameForMasterlist($name1);
+    $name2 = normalizeNameForMasterlist($name2);
+    
+    if ($name1 === $name2) {
+        return true;
+    }
+    
+    $name1Parts = explode(' ', $name1);
+    $name2Parts = explode(' ', $name2);
+    
+    if (count($name1Parts) < 2 || count($name2Parts) < 2) {
+        return false;
+    }
+    
+    $name1First = $name1Parts[0];
+    $name1Last = end($name1Parts);
+    $name2First = $name2Parts[0];
+    $name2Last = end($name2Parts);
+    
+    if ($name1First === $name2First && $name1Last === $name2Last) {
+        return true;
+    }
+    
+    $similarity = similar_text($name1, $name2, $percent);
+    return $percent >= 80;
 }
 ?>

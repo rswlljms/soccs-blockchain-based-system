@@ -90,6 +90,30 @@ try {
     $stmt = $conn->prepare($query);
     
     if ($stmt->execute($params)) {
+        // Handle contests update
+        if (isset($data['contests']) && is_array($data['contests'])) {
+            // Delete existing contests
+            $deleteQuery = "DELETE FROM event_contests WHERE event_id = :event_id";
+            $deleteStmt = $conn->prepare($deleteQuery);
+            $deleteStmt->bindParam(':event_id', $data['id'], PDO::PARAM_INT);
+            $deleteStmt->execute();
+            
+            // Insert new contests
+            if (count($data['contests']) > 0) {
+                $contestQuery = "INSERT INTO event_contests (event_id, contest_details, registration_link) VALUES (:event_id, :contest_details, :registration_link)";
+                $contestStmt = $conn->prepare($contestQuery);
+                
+                foreach ($data['contests'] as $contest) {
+                    if (!empty($contest['contest_details']) && !empty($contest['registration_link'])) {
+                        $contestStmt->bindParam(':event_id', $data['id'], PDO::PARAM_INT);
+                        $contestStmt->bindParam(':contest_details', $contest['contest_details'], PDO::PARAM_STR);
+                        $contestStmt->bindParam(':registration_link', $contest['registration_link'], PDO::PARAM_STR);
+                        $contestStmt->execute();
+                    }
+                }
+            }
+        }
+        
         if (isset($_SESSION['user_id'])) {
             $getEventQuery = "SELECT title FROM events WHERE id = :id";
             $getEventStmt = $conn->prepare($getEventQuery);

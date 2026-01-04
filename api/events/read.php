@@ -16,18 +16,18 @@ try {
     $categoryFilter = isset($_GET['category']) ? $_GET['category'] : 'all';
     
     $query = "SELECT 
-                id,
-                title,
-                description,
-                date,
-                end_date,
-                is_multi_day,
-                location,
-                category,
-                status,
-                created_by,
-                created_at
-              FROM events 
+                e.id,
+                e.title,
+                e.description,
+                e.date,
+                e.end_date,
+                e.is_multi_day,
+                e.location,
+                e.category,
+                e.status,
+                e.created_by,
+                e.created_at
+              FROM events e
               WHERE 1=1";
     
     $params = [];
@@ -63,9 +63,25 @@ try {
     $events = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $eventDate = new DateTime($row['date']);
+        $eventId = (int)$row['id'];
+        
+        // Fetch contests for this event
+        $contestsQuery = "SELECT id, contest_details, registration_link FROM event_contests WHERE event_id = :event_id ORDER BY id ASC";
+        $contestsStmt = $conn->prepare($contestsQuery);
+        $contestsStmt->bindParam(':event_id', $eventId, PDO::PARAM_INT);
+        $contestsStmt->execute();
+        
+        $contests = [];
+        while ($contestRow = $contestsStmt->fetch(PDO::FETCH_ASSOC)) {
+            $contests[] = [
+                'id' => (int)$contestRow['id'],
+                'contest_details' => $contestRow['contest_details'],
+                'registration_link' => $contestRow['registration_link']
+            ];
+        }
         
         $event = [
-            'id' => (int)$row['id'],
+            'id' => $eventId,
             'name' => $row['title'],
             'date' => $eventDate->format('Y-m-d'),
             'time' => $eventDate->format('H:i'),
@@ -73,6 +89,7 @@ try {
             'description' => $row['description'],
             'category' => $row['category'],
             'status' => $row['status'],
+            'contests' => $contests,
             'created_by' => $row['created_by'],
             'created_at' => $row['created_at'],
             'is_multi_day' => (bool)$row['is_multi_day']

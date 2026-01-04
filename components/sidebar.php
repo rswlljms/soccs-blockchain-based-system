@@ -102,12 +102,15 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
 
     <?php if (hasAnyPermission(['view_election', 'manage_election_status', 'register_candidates', 'manage_positions', 'view_election_results'])): ?>
     <li class="dropdown">
-      <a href="javascript:void(0);" class="dropdown-toggle <?= ($currentPage == 'add-candidate.php' || $currentPage == 'positions.php' || $currentPage == 'elections.php' || $currentPage == 'admin-election-overview.php') ? 'active' : '' ?>">
+      <a href="javascript:void(0);" class="dropdown-toggle <?= ($currentPage == 'add-candidate.php' || $currentPage == 'positions.php' || $currentPage == 'elections.php' || $currentPage == 'admin-election-overview.php' || $currentPage == 'filing-candidacy.php') ? 'active' : '' ?>">
         <i class="fas fa-vote-yea"></i>
         <span>Election</span>
         <i class="fas fa-chevron-down dropdown-icon"></i>
       </a>
       <ul class="dropdown-menu">
+        <?php if (hasPermission('manage_election_status') || isAdviser()): ?>
+        <li><a href="../pages/filing-candidacy.php" class="<?= $currentPage == 'filing-candidacy.php' ? 'active' : '' ?>"><i class="fas fa-file-alt"></i><span>Filing of Candidacy</span></a></li>
+        <?php endif; ?>
         <?php if (hasPermission('manage_election_status')): ?>
         <li><a href="../pages/elections.php" class="<?= $currentPage == 'elections.php' ? 'active' : '' ?>"><i class="fas fa-cog"></i><span>Manage Elections</span></a></li>
         <?php endif; ?>
@@ -138,11 +141,50 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
   </ul>
 
   <div class="sidebar-footer">
-    <div class="logout-section">
-      <a href="../templates/login.php" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
-      </a>
+    <div class="user-dropdown">
+      <?php
+      $displayName = 'Admin User';
+      $firstName = '';
+      $initials = 'AU';
+      
+      if (isset($_SESSION['user_id'])) {
+        try {
+          require_once __DIR__ . '/../includes/database.php';
+          $database = new Database();
+          $pdo = $database->getConnection();
+          $stmt = $pdo->prepare("SELECT first_name FROM users WHERE id = ?");
+          $stmt->execute([$_SESSION['user_id']]);
+          $user = $stmt->fetch(PDO::FETCH_ASSOC);
+          
+          if ($user && !empty($user['first_name'])) {
+            $firstName = trim($user['first_name']);
+            $displayName = $firstName;
+            $firstNameParts = explode(' ', $firstName);
+            
+            if (count($firstNameParts) >= 2) {
+              $initials = strtoupper(substr($firstNameParts[0], 0, 1) . substr($firstNameParts[1], 0, 1));
+            } else {
+              $initials = strtoupper(substr($firstName, 0, 2));
+            }
+          }
+        } catch (Exception $e) {
+          error_log('Error fetching first name: ' . $e->getMessage());
+        }
+      }
+      ?>
+      <div class="user-dropdown-toggle">
+        <div class="user-avatar">
+          <span><?= htmlspecialchars($initials) ?></span>
+        </div>
+        <span class="user-name"><?= htmlspecialchars($displayName) ?></span>
+        <i class="fas fa-chevron-up dropdown-chevron"></i>
+      </div>
+      <div class="user-dropdown-menu">
+        <a href="../logout.php" class="logout-option">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -162,6 +204,24 @@ $userRole = $_SESSION['user_role'] ?? 'officer';
     const activeDropdownItem = document.querySelector(".dropdown-menu a.active");
     if (activeDropdownItem) {
       activeDropdownItem.closest(".dropdown").classList.add("open");
+    }
+
+    // User dropdown toggle
+    const userDropdownToggle = document.querySelector(".user-dropdown-toggle");
+    const userDropdown = document.querySelector(".user-dropdown");
+    
+    if (userDropdownToggle && userDropdown) {
+      userDropdownToggle.addEventListener("click", function(e) {
+        e.stopPropagation();
+        userDropdown.classList.toggle("open");
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function(e) {
+        if (!userDropdown.contains(e.target)) {
+          userDropdown.classList.remove("open");
+        }
+      });
     }
   });
 </script>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2026 at 06:51 PM
+-- Generation Time: Jan 04, 2026 at 05:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -144,7 +144,102 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `activity_descrip
 (132, 3, 'user_deactivated', 'Deactivated user: treasurer.test@gmail.com (Role: treasurer)', 'users', '2026-01-02 15:57:27'),
 (133, 3, 'user_updated', 'Updated user: treasurer.test@gmail.com - status: active', 'users', '2026-01-02 15:58:10'),
 (134, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-02 16:05:29'),
-(135, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-02 16:29:02');
+(135, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-02 16:29:02'),
+(136, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-04 06:59:45'),
+(137, 7, 'user_login', 'User logged into the system', 'authentication', '2026-01-04 08:53:18'),
+(138, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-04 08:53:34'),
+(139, 3, 'user_updated', 'Updated user: comelec.test@gmail.com - permissions: updated', 'users', '2026-01-04 08:53:41'),
+(140, 7, 'user_login', 'User logged into the system', 'authentication', '2026-01-04 08:53:51'),
+(141, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-04 09:20:51'),
+(142, 3, 'election_created', 'Created filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 1)', 'elections', '2026-01-04 09:50:48'),
+(143, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 1)', 'elections', '2026-01-04 09:53:49'),
+(144, 3, 'election_updated', 'deactivated filing candidacy period (ID: 1)', 'elections', '2026-01-04 09:56:09'),
+(145, 3, 'election_updated', 'activated filing candidacy period (ID: 1)', 'elections', '2026-01-04 09:57:41'),
+(146, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 1)', 'elections', '2026-01-04 10:03:47'),
+(147, 3, 'election_updated', 'deactivated filing candidacy period (ID: 1)', 'elections', '2026-01-04 10:04:22'),
+(148, 3, 'election_updated', 'activated filing candidacy period (ID: 1)', 'elections', '2026-01-04 10:04:27'),
+(149, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 1)', 'elections', '2026-01-04 10:04:42'),
+(150, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 1)', 'elections', '2026-01-04 10:06:30'),
+(151, 3, 'election_deleted', 'Deleted filing candidacy period (ID: 1)', 'elections', '2026-01-04 10:07:35'),
+(152, 3, 'user_deactivated', 'Deactivated user: comelec.test@gmail.com (Role: comelec)', 'users', '2026-01-04 12:07:49'),
+(153, 3, 'user_updated', 'Updated user: comelec.test@gmail.com - status: active', 'users', '2026-01-04 12:08:01'),
+(154, 3, 'election_created', 'Created election: Test (ID: 34)', 'elections', '2026-01-04 12:10:56'),
+(155, 3, 'user_logout', 'User logged out of the system', 'authentication', '2026-01-04 13:34:07'),
+(156, 7, 'user_login', 'User logged into the system', 'authentication', '2026-01-04 13:34:14'),
+(157, 7, 'user_logout', 'User logged out of the system', 'authentication', '2026-01-04 13:34:25'),
+(158, 3, 'user_login', 'User logged into the system', 'authentication', '2026-01-04 13:34:33'),
+(159, 3, 'event_created', 'Created event: JANUARY FEST (social)', 'events', '2026-01-04 14:03:35'),
+(160, 3, 'event_updated', 'Updated event: JANUARY FEST', 'events', '2026-01-04 14:07:08'),
+(161, 3, 'election_created', 'Created filing candidacy period: 𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 2)', 'elections', '2026-01-04 14:21:59'),
+(162, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 2)', 'elections', '2026-01-04 14:24:13'),
+(163, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 2)', 'elections', '2026-01-04 14:33:03'),
+(164, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 𝐟𝐨𝐫 𝐭𝐡𝐞 𝐀𝐜𝐚𝐝𝐞𝐦𝐢𝐜 𝐘𝐞𝐚𝐫 𝟐𝟎𝟐𝟓–𝟐𝟎𝟐𝟔 (ID: 2)', 'elections', '2026-01-04 14:34:33'),
+(165, 3, 'election_updated', 'deactivated filing candidacy period (ID: 2)', 'elections', '2026-01-04 14:37:49'),
+(166, 3, 'election_updated', 'activated filing candidacy period (ID: 2)', 'elections', '2026-01-04 14:37:53'),
+(167, 3, 'election_deleted', 'Deleted filing candidacy period (ID: 2)', 'elections', '2026-01-04 14:38:31'),
+(168, 3, 'election_created', 'Created filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 (ID: 3)', 'elections', '2026-01-04 14:39:42'),
+(169, 3, 'election_created', 'Created election: Test (ID: 35)', 'elections', '2026-01-04 14:41:19'),
+(170, 3, 'election_started', 'Start election: Test (ID: 35)', 'elections', '2026-01-04 14:41:26'),
+(171, 3, 'election_updated', 'Update election: Test (ID: 35)', 'elections', '2026-01-04 14:43:02'),
+(172, 3, 'election_deleted', 'Deleted election: Election #35 (ID: 35)', 'elections', '2026-01-04 14:43:05'),
+(173, 3, 'event_created', 'Created event: Test (academic)', 'events', '2026-01-04 14:43:28'),
+(174, 3, 'election_created', 'Created election: Test (ID: 36)', 'elections', '2026-01-04 14:48:52'),
+(175, 3, 'election_updated', 'Update election: Test (ID: 36)', 'elections', '2026-01-04 14:50:32'),
+(176, 3, 'election_deleted', 'Deleted election: Election #36 (ID: 36)', 'elections', '2026-01-04 14:50:34'),
+(177, 3, 'election_created', 'Created election: test (ID: 37)', 'elections', '2026-01-04 14:52:11'),
+(178, 3, 'election_started', 'Start election: test (ID: 37)', 'elections', '2026-01-04 14:52:16'),
+(179, 3, 'election_updated', 'Update election: test (ID: 37)', 'elections', '2026-01-04 14:55:52'),
+(180, 3, 'election_deleted', 'Deleted election: Election #37 (ID: 37)', 'elections', '2026-01-04 14:55:55'),
+(181, 3, 'election_created', 'Created election: test (ID: 38)', 'elections', '2026-01-04 14:56:13'),
+(182, 3, 'election_started', 'Start election: test (ID: 38)', 'elections', '2026-01-04 14:56:15'),
+(183, 3, 'election_updated', 'Update election: test (ID: 38)', 'elections', '2026-01-04 14:56:56'),
+(184, 3, 'election_deleted', 'Deleted election: Election #38 (ID: 38)', 'elections', '2026-01-04 14:56:59'),
+(185, 3, 'election_created', 'Created election: test2 (ID: 39)', 'elections', '2026-01-04 14:57:09'),
+(186, 3, 'election_updated', 'Update election: test2 (ID: 39)', 'elections', '2026-01-04 15:00:50'),
+(187, 3, 'election_deleted', 'Deleted election: Election #39 (ID: 39)', 'elections', '2026-01-04 15:00:52'),
+(188, 3, 'election_created', 'Created election: test 2 (ID: 40)', 'elections', '2026-01-04 15:01:06'),
+(189, 3, 'election_updated', 'Update election: test 2 (ID: 40)', 'elections', '2026-01-04 15:03:52'),
+(190, 3, 'election_deleted', 'Deleted election: Election #40 (ID: 40)', 'elections', '2026-01-04 15:03:54'),
+(191, 3, 'election_deleted', 'Deleted filing candidacy period (ID: 3)', 'elections', '2026-01-04 15:04:07'),
+(192, 3, 'election_created', 'Created filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 (ID: 4)', 'elections', '2026-01-04 15:05:13'),
+(193, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 (ID: 4)', 'elections', '2026-01-04 15:05:29'),
+(194, 3, 'election_created', 'Created election: test 2 (ID: 41)', 'elections', '2026-01-04 15:29:04'),
+(195, 3, 'election_started', 'Start election: test 2 (ID: 41)', 'elections', '2026-01-04 15:29:06'),
+(196, 3, 'election_updated', 'Update election: test 2 (ID: 41)', 'elections', '2026-01-04 15:29:27'),
+(197, 3, 'election_deleted', 'Deleted election: Election #41 (ID: 41)', 'elections', '2026-01-04 15:29:29'),
+(198, 3, 'election_created', 'Created election: test 3 (ID: 42)', 'elections', '2026-01-04 15:29:41'),
+(199, 3, 'election_started', 'Start election: test 3 (ID: 42)', 'elections', '2026-01-04 15:33:51'),
+(200, 3, 'election_updated', 'Update election: test 3 (ID: 42)', 'elections', '2026-01-04 15:34:14'),
+(201, 3, 'election_deleted', 'Deleted election: Election #42 (ID: 42)', 'elections', '2026-01-04 15:34:16'),
+(202, 3, 'election_created', 'Created election: test 4 (ID: 43)', 'elections', '2026-01-04 15:34:32'),
+(203, 3, 'election_started', 'Start election: test 4 (ID: 43)', 'elections', '2026-01-04 15:34:34'),
+(204, 3, 'election_updated', 'Update election: test 4 (ID: 43)', 'elections', '2026-01-04 15:36:50'),
+(205, 3, 'election_deleted', 'Deleted election: Election #43 (ID: 43)', 'elections', '2026-01-04 15:36:53'),
+(206, 3, 'election_created', 'Created election: test 5 (ID: 44)', 'elections', '2026-01-04 15:37:01'),
+(207, 3, 'election_started', 'Start election: test 5 (ID: 44)', 'elections', '2026-01-04 15:37:03'),
+(208, 3, 'election_updated', 'Update election: test 5 (ID: 44)', 'elections', '2026-01-04 15:37:18'),
+(209, 3, 'election_deleted', 'Deleted election: Election #44 (ID: 44)', 'elections', '2026-01-04 15:37:20'),
+(210, 3, 'election_created', 'Created election: Test 6 (ID: 45)', 'elections', '2026-01-04 15:42:28'),
+(211, 3, 'election_started', 'Start election: Test 6 (ID: 45)', 'elections', '2026-01-04 15:42:33'),
+(212, 3, 'election_updated', 'Update election: Test 6 (ID: 45)', 'elections', '2026-01-04 15:42:48'),
+(213, 3, 'election_deleted', 'Deleted election: Election #45 (ID: 45)', 'elections', '2026-01-04 15:43:29'),
+(214, 3, 'election_created', 'Created election: test 1 (ID: 46)', 'elections', '2026-01-04 15:44:25'),
+(215, 3, 'election_started', 'Start election: test 1 (ID: 46)', 'elections', '2026-01-04 15:44:27'),
+(216, 3, 'election_updated', 'Update election: test 1 (ID: 46)', 'elections', '2026-01-04 15:49:45'),
+(217, 3, 'election_deleted', 'Deleted election: Election #46 (ID: 46)', 'elections', '2026-01-04 15:49:49'),
+(218, 3, 'election_created', 'Created election: test 2 (ID: 47)', 'elections', '2026-01-04 15:50:05'),
+(219, 3, 'election_started', 'Start election: test 2 (ID: 47)', 'elections', '2026-01-04 15:50:07'),
+(220, 3, 'election_updated', 'Update election: test 2 (ID: 47)', 'elections', '2026-01-04 15:52:03'),
+(221, 3, 'election_deleted', 'Deleted election: Election #47 (ID: 47)', 'elections', '2026-01-04 15:52:06'),
+(222, 3, 'election_created', 'Created election: test 3 (ID: 48)', 'elections', '2026-01-04 15:52:20'),
+(223, 3, 'election_started', 'Start election: test 3 (ID: 48)', 'elections', '2026-01-04 15:52:22'),
+(224, 3, 'election_updated', 'Update election: test 3 (ID: 48)', 'elections', '2026-01-04 15:52:39'),
+(225, 3, 'election_deleted', 'Deleted election: Election #48 (ID: 48)', 'elections', '2026-01-04 15:52:41'),
+(226, 3, 'event_updated', 'Updated event: Test', 'events', '2026-01-04 15:53:38'),
+(227, 3, 'event_created', 'Created event: Test (competition)', 'events', '2026-01-04 15:54:54'),
+(228, 3, 'election_deleted', 'Deleted filing candidacy period (ID: 4)', 'elections', '2026-01-04 15:56:04'),
+(229, 3, 'election_created', 'Created filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 (ID: 5)', 'elections', '2026-01-04 15:59:50'),
+(230, 3, 'election_updated', 'Updated filing candidacy period: 𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬 (ID: 5)', 'elections', '2026-01-04 16:03:37');
 
 -- --------------------------------------------------------
 
@@ -238,7 +333,31 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `title`, `description`, `date`, `end_date`, `is_multi_day`, `location`, `category`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
-(2, 'Research Colloquium / FOD', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'completed', 'admin', '2025-11-29 12:02:51', '2025-12-14 18:39:40');
+(2, 'Research Colloquium / FOD', 'Defense', '2025-12-01 07:00:00', '2025-12-05 07:00:00', 1, 'CCS Building', 'academic', 'completed', 'admin', '2025-11-29 12:02:51', '2025-12-14 18:39:40'),
+(6, 'JANUARY FEST', 'Students who participate in the event and contest will receive incentives. Please coordinate with your professors.', '2026-01-08 09:00:00', '2026-01-10 09:00:00', 1, 'Quadrangle', 'social', 'upcoming', 'admin', '2026-01-04 14:03:35', '2026-01-04 14:07:08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `event_contests`
+--
+
+CREATE TABLE `event_contests` (
+  `id` int(11) NOT NULL,
+  `event_id` int(11) NOT NULL,
+  `contest_details` text NOT NULL,
+  `registration_link` varchar(500) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `event_contests`
+--
+
+INSERT INTO `event_contests` (`id`, `event_id`, `contest_details`, `registration_link`, `created_at`, `updated_at`) VALUES
+(3, 6, '𝐂𝐎𝐒𝐏𝐋𝐀𝐘 𝐂𝐎𝐍𝐓𝐄𝐒𝐓!\n\n𝗦𝘁𝗲𝗽 𝗶𝗻𝘁𝗼 𝗰𝗵𝗮𝗿𝗮𝗰𝘁𝗲𝗿. 𝗢𝘄𝗻 𝘁𝗵𝗲 𝘀𝘁𝗮𝗴𝗲. 𝗕𝗲𝗰𝗼𝗺𝗲 𝘁𝗵𝗲 𝗹𝗲𝗴𝗲𝗻𝗱!\n\nUnleash your creativity and passion in the 𝗖𝗖𝗦 𝗖𝗢𝗦𝗣𝗟𝗔𝗬 𝗖𝗢𝗡𝗧𝗘𝗦𝗧 — where imagination meets performance! Bring your favorite characters to life and show off your 𝗰𝗿𝗮𝗳𝘁, 𝗰𝗼𝗻𝗳𝗶𝗱𝗲𝗻𝗰𝗲, 𝗮𝗻𝗱 𝗰𝗵𝗮𝗿𝗺!\n\nSuit up, strike a pose, and show your 𝗖𝗖𝗦 𝗦𝗣𝗜𝗥𝗜𝗧 𝗧𝗛𝗥𝗢𝗨𝗚𝗛 𝗖𝗛𝗔𝗥𝗔𝗖𝗧𝗘𝗥 𝗔𝗡𝗗 𝗖𝗥𝗘𝗔𝗧𝗜𝗩𝗜𝗧𝗬.', 'https://forms.gle/xi6BpKcSzp2D3A8a7', '2026-01-04 14:07:08', '2026-01-04 14:07:08'),
+(4, 6, '𝐌𝐎𝐁𝐈𝐋𝐄 𝐋𝐄𝐆𝐄𝐍𝐃𝐒: 𝐁𝐀𝐍𝐆 𝐁𝐀𝐍𝐆 𝐓𝐎𝐔𝐑𝐍𝐀𝐌𝐄𝐍𝐓!\n\nFive heroes. One goal. Total domination!\n\nGather your squad and prove your skills in the 𝗠𝗼𝗯𝗶𝗹𝗲 𝗟𝗲𝗴𝗲𝗻𝗱𝘀: 𝗕𝗮𝗻𝗴 𝗕𝗮𝗻𝗴 𝗧𝗼𝘂𝗿𝗻𝗮𝗺𝗲𝗻𝘁, where teamwork, strategy, and epic plays will determine who reigns supreme in the CCS Esports Arena!\n\n𝗕𝗲 𝘁𝗵𝗲 𝗻𝗲𝘅𝘁 𝗟𝗲𝗴𝗲𝗻𝗱 𝗼𝗳 𝗖𝗖𝗦! Only one team will claim the title — will it be yours?', 'https://forms.gle/6xk7id2hXmpEv5XU8', '2026-01-04 14:07:08', '2026-01-04 14:07:08');
 
 -- --------------------------------------------------------
 
@@ -266,6 +385,33 @@ CREATE TABLE `expenses` (
 INSERT INTO `expenses` (`id`, `name`, `amount`, `category`, `description`, `supplier`, `document`, `date`, `transaction_hash`, `created_at`) VALUES
 (25, 'Teacher’s Day Expenses', 136.00, 'EVENT EXPENSES', 'Materials for appreciation wall.', 'Adorable School Supplies', '692c8d1085196_Expense_proof.png', '2025-11-30', '0x807f8161f4032467de1436c08308b6edcaa4d1dfb483d4270b73789c567dfb18', '2025-11-30 18:29:36'),
 (27, 'Teacher’s Day Expenses', 3500.00, 'FOOD AND DRINKS', 'Catering Service', 'Thatalicious - Food Packages And Catering Services', '692c9b98809b9_food and drinks.png', '2025-11-30', '0x50a54665ecab60a4a578884c800e1a034a4b040ee621b6dedfa297806ea916e7', '2025-11-30 19:31:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `filing_candidacy_periods`
+--
+
+CREATE TABLE `filing_candidacy_periods` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `announcement_text` text NOT NULL,
+  `form_link` varchar(500) NOT NULL,
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL,
+  `screening_date` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 0,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `filing_candidacy_periods`
+--
+
+INSERT INTO `filing_candidacy_periods` (`id`, `title`, `announcement_text`, `form_link`, `start_date`, `end_date`, `screening_date`, `is_active`, `created_by`, `created_at`, `updated_at`) VALUES
+(5, '𝐅𝐢𝐥𝐢𝐧𝐠 𝐨𝐟 𝐂𝐚𝐧𝐝𝐢𝐝𝐚𝐜𝐲 𝐟𝐨𝐫 𝐒𝐎𝐂𝐂𝐒 𝐎𝐟𝐟𝐢𝐜𝐞𝐫𝐬', 'Aspiring student leaders are invited to 𝘀𝘂𝗯𝗺𝗶𝘁 𝘁𝗵𝗲𝗶𝗿 𝗔𝗽𝗽𝗹𝗶𝗰𝗮𝘁𝗶𝗼𝗻 𝗙𝗼𝗿𝗺 𝘃𝗶𝗮 𝘁𝗵𝗲 𝗽𝗿𝗼𝘃𝗶𝗱𝗲𝗱 𝗹𝗶𝗻𝗸.\n\nThe deadline for filing is 𝐉𝐚𝐧𝐮𝐚𝐫𝐲 𝟐𝟗. 𝟐𝟎𝟐𝟔, 𝘄𝗶𝘁𝗵 𝘁𝗵𝗲 𝘀𝗰𝗿𝗲𝗲𝗻𝗶𝗻𝗴 𝘀𝗰𝗵𝗲𝗱𝘂𝗹𝗲𝗱 𝗼𝗻 𝐅𝐞𝐛𝐫𝐮𝐚𝐫𝐲 𝟭–𝟮, 𝟮𝟬𝟮𝟱. Please ensure to bring a hard copy of your completed form.\n\n𝐀𝐯𝐚𝐢𝐥𝐚𝐛𝐥𝐞 𝐩𝐨𝐬𝐢𝐭𝐢𝐨𝐧𝐬 𝐢𝐧𝐜𝐥𝐮𝐝𝐞:\n* President\n* Vice President\n* Secretary\n* Treasurer\n* Auditor\n* Public Information Officers (2)\n* Event Coordinator (2)\n* Business Manager (2)\n* Year Representatives (1st to 4th Year)\n\nTake the first step toward becoming a catalyst for change and leadership within the CCS community.', 'https://form.jotform.com/252161495612051', '2026-01-05 00:04:00', '2026-01-29 17:00:00', '𝐅𝐞𝐛𝐫𝐮𝐚𝐫𝐲 𝟏-𝟐', 1, 3, '2026-01-04 15:59:50', '2026-01-04 16:03:37');
 
 -- --------------------------------------------------------
 
@@ -305,6 +451,45 @@ CREATE TABLE `masterlist` (
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `uploaded_by` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `masterlist`
+--
+
+INSERT INTO `masterlist` (`id`, `student_id`, `name`, `course`, `section`, `uploaded_at`, `uploaded_by`) VALUES
+(155, '0122-0806', 'Fresdie P Andallo', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(156, '0122-0298', 'Maria Alffin A Andrade', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(157, '0122-0319', 'Vien Andrai A Apilado', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(158, '0122-0375', 'John Nico T Articona', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(159, '0122-0277', 'Louise Francois T Calica', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(160, '0122-3640', 'Mark Christian G Capillan', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(161, '0122-0449', 'Marwin M Dalin', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(162, '0122-0586', 'James Houard A Datay', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(163, '0122-0477', 'Jonel U Dayapera', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(164, '0121-2271', 'Eirich M Elca', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(165, '0123-0105', 'Niarcus Isaiah A Escueta', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(166, '0122-0519', 'Jonamie C Javier', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(167, '0122-1619', 'Alfredo J Joya', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(168, '0121-2979', 'Mary Ann C Labanda', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(169, '0122-0674', 'Renz Allen S Magdaraog', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(170, '0121-4089', 'Lord Joaquin S Mangubat', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(171, '0120-3492', 'Merce Ynnofranz H Mondez', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(172, '0122-0739', 'Alfonso Martin P Movida III', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(173, '0122-1367', 'Joshua M Napola', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(174, '0122-0773', 'Fhammiell D Noguera', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(175, '0121-2355', 'Roldan A Oliveros', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(176, '0122-2247', 'Gary Vedasto T Pascua', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(177, '0122-3290', 'John Carl C Porcopio', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(178, '0122-0863', 'Jasper M Ricamora', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(179, '0122-0979', 'Raymond Ryan V Rivarez', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(180, '0122-0930', 'Richjehn D San Luis', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(181, '0122-1645', 'Ella Bianca V San Roque', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(182, '0122-2177', 'Mark Florence T Tablate', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(183, '0122-1205', 'Christine Nicole P Valdellon', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(184, '0122-1028', 'Niña Clarisse R Villodo', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(185, '0122-1141', 'Roswell James D Vitaliz', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(186, '0119-4105', 'Clint John L Lopez', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com'),
+(187, '0118-4140', 'John Paul R Ramirez', 'BSIT', '', '2026-01-04 07:00:10', 'soccsadviser.test@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -568,7 +753,8 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `year_level`, `section`, `course`, `gender`, `profile_image`, `receipt_file`, `payment_status`, `is_archived`, `archived_at`, `archived_by`, `restored_at`, `restored_by`, `is_active`, `created_at`, `updated_at`, `membership_fee_status`, `membership_fee_receipt`, `membership_control_number`, `membership_processed_by`, `membership_fee_paid_at`, `academic_year`, `semester`, `date_of_birth`, `phone_number`, `address`) VALUES
-('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$vsL/s50f.RWXl.995TSz4OpAOoz26XiKLXypG35tJnNhbj35685Hm', 4, 'A', 'BSIT', 'male', 'uploads/student-profiles/profile_0122-1141_1765729381.png', NULL, 'unpaid', 0, NULL, NULL, NULL, NULL, 1, '2025-10-30 15:40:08', '2025-12-21 17:17:31', 'paid', NULL, '001', 'SOCCS Treasurer', '2025-12-18 16:00:00', '2025-2026', 'First (1st) Semester', '2001-02-21', '09212729043', 'Narra Layugan Pagsanjan, Laguna 4008');
+('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$vsL/s50f.RWXl.995TSz4OpAOoz26XiKLXypG35tJnNhbj35685Hm', 4, 'A', 'BSIT', 'male', 'uploads/student-profiles/profile_0122-1141_1765729381.png', NULL, 'unpaid', 0, NULL, NULL, NULL, NULL, 1, '2025-10-30 15:40:08', '2026-01-04 13:02:03', 'paid', NULL, '001', 'SOCCS Treasurer', '2025-12-18 16:00:00', '2025-2026', 'First (1st) Semester', '2001-02-21', '09212729043', 'Narra Layugan Pagsanjan, Laguna 4008'),
+('0122-1205', 'Christine Nicole', NULL, 'Valdellon', 'liyaaanping@gmail.com', '$2y$10$VHKrSzvl3220RSC.gziAauFzijC/A.NCmjfzg8cU2aSXjA1yP/2ta', 4, 'A', 'BSIT', 'female', NULL, NULL, 'unpaid', 0, NULL, NULL, NULL, NULL, 1, '2026-01-04 07:59:53', '2026-01-04 13:03:14', 'unpaid', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -606,7 +792,8 @@ CREATE TABLE `student_registrations` (
 --
 
 INSERT INTO `student_registrations` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `course`, `year_level`, `section`, `gender`, `student_id_image`, `cor_file`, `set_password_token`, `set_password_expires_at`, `approval_status`, `created_at`, `approved_at`, `rejected_at`, `approved_by`, `rejection_reason`, `academic_year`, `semester`) VALUES
-('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$Da3j2HmlBvw/K7xKYfOvkOp.B9lfAi6z.e1yiBYWBhw5sMmjku7mq', 'BSIT', 4, 'A', 'male', 'uploads/student-ids/0122-1141.png', 'uploads/documents/690386d1a1db9_COR_0122-1141.png', NULL, NULL, 'approved', '2025-10-30 15:40:01', '2025-10-30 15:40:08', NULL, 'System', NULL, '2025-2026', NULL);
+('0122-1141', 'Roswell James', 'Democrito', 'Vitaliz', 'roswelljamesvitaliz@gmail.com', '$2y$10$Da3j2HmlBvw/K7xKYfOvkOp.B9lfAi6z.e1yiBYWBhw5sMmjku7mq', 'BSIT', 4, 'A', 'male', NULL, 'uploads/documents/690386d1a1db9_COR_0122-1141.png', NULL, NULL, 'approved', '2025-10-30 15:40:01', '2025-10-30 15:40:08', NULL, 'System', NULL, '2025-2026', NULL),
+('0122-1205', 'Christine Nicole', NULL, 'Valdellon', 'liyaaanping@gmail.com', '$2y$10$VHKrSzvl3220RSC.gziAauFzijC/A.NCmjfzg8cU2aSXjA1yP/2ta', 'BSIT', 4, 'A', 'female', 'uploads/student-ids/0122-1205.jpg', NULL, NULL, NULL, 'approved', '2026-01-04 07:59:50', '2026-01-04 07:59:53', NULL, 'System', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -633,11 +820,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password`, `role`, `status`, `last_login`, `created_by`, `created_at`, `updated_at`) VALUES
-(3, 'SOCCS', 'Adviser', 'soccsadviser.test@gmail.com', '$2y$10$R731fPWbB7cv6RyNF3aU6OptcMzwaiW9bPrtsmJvpM3.jiRtim3gm', 'adviser', 'active', '2026-01-03 00:29:02', NULL, '2025-04-18 12:18:54', '2026-01-02 16:29:02'),
+(3, 'SOCCS', 'Adviser', 'soccsadviser.test@gmail.com', '$2y$10$R731fPWbB7cv6RyNF3aU6OptcMzwaiW9bPrtsmJvpM3.jiRtim3gm', 'adviser', 'active', '2026-01-04 21:34:33', NULL, '2025-04-18 12:18:54', '2026-01-04 13:34:33'),
 (4, 'SOCCS', 'Treasurer', 'treasurer.test@gmail.com', '$2y$10$4G4CH6xpxEpcF4MIPBSLf.n4b1IbulEMDRO8z9S41YbfHXhhgF4ri', 'treasurer', 'active', '2025-12-22 01:01:18', 3, '2025-11-30 10:30:17', '2026-01-02 15:58:10'),
 (5, 'CCS', 'Dean', 'dean.test@gmail.com', '$2y$10$QSqaMWLZBGpE01ohVv7Yp.pWPPOGZ7OhKLaNq6ebp64ZDonuZXyQ6', 'dean', 'active', '2025-12-21 23:38:00', 3, '2025-11-30 15:57:11', '2025-12-21 15:38:00'),
 (6, 'Event', 'Coordinator', 'event.test@gmail.com', '$2y$10$FPwqpLlHkwC4AdtZitIkIeLb3e5EpIdh4Sr6s2vP6S0rbRElnkome', 'event_coordinator', 'active', '2025-12-22 00:43:45', 3, '2025-11-30 16:00:59', '2025-12-21 16:43:45'),
-(7, 'Comelec', 'Officer', 'comelec.test@gmail.com', '$2y$10$v6r8pzx6Q5LuGvaZSR9eg.Twgc1p.aFe1OGC0b8Xkpj.WzEmhfHca', 'comelec', 'active', '2025-12-22 00:02:13', 3, '2025-11-30 16:03:18', '2025-12-21 16:02:13');
+(7, 'Comelec', 'Officer', 'comelec.test@gmail.com', '$2y$10$v6r8pzx6Q5LuGvaZSR9eg.Twgc1p.aFe1OGC0b8Xkpj.WzEmhfHca', 'comelec', 'active', '2026-01-04 21:34:14', 3, '2025-11-30 16:03:18', '2026-01-04 13:34:14');
 
 -- --------------------------------------------------------
 
@@ -737,16 +924,6 @@ INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`, `granted_by`, 
 (79, 6, 14, 3, '2025-11-30 16:00:59'),
 (80, 6, 18, 3, '2025-11-30 16:00:59'),
 (81, 6, 19, 3, '2025-11-30 16:00:59'),
-(129, 7, 1, 5, '2025-12-21 16:02:01'),
-(130, 7, 25, 5, '2025-12-21 16:02:01'),
-(131, 7, 23, 5, '2025-12-21 16:02:01'),
-(132, 7, 22, 5, '2025-12-21 16:02:01'),
-(133, 7, 21, 5, '2025-12-21 16:02:01'),
-(134, 7, 20, 5, '2025-12-21 16:02:01'),
-(135, 7, 24, 5, '2025-12-21 16:02:01'),
-(136, 7, 12, 5, '2025-12-21 16:02:01'),
-(137, 7, 19, 5, '2025-12-21 16:02:01'),
-(138, 7, 26, 5, '2025-12-21 16:02:01'),
 (177, 4, 1, 3, '2025-12-21 17:00:13'),
 (178, 4, 5, 3, '2025-12-21 17:00:13'),
 (179, 4, 4, 3, '2025-12-21 17:00:13'),
@@ -756,7 +933,17 @@ INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`, `granted_by`, 
 (183, 4, 7, 3, '2025-12-21 17:00:13'),
 (184, 4, 19, 3, '2025-12-21 17:00:13'),
 (185, 4, 16, 3, '2025-12-21 17:00:13'),
-(186, 4, 15, 3, '2025-12-21 17:00:13');
+(186, 4, 15, 3, '2025-12-21 17:00:13'),
+(189, 7, 1, 3, '2026-01-04 08:53:41'),
+(190, 7, 25, 3, '2026-01-04 08:53:41'),
+(191, 7, 23, 3, '2026-01-04 08:53:41'),
+(192, 7, 22, 3, '2026-01-04 08:53:41'),
+(193, 7, 21, 3, '2026-01-04 08:53:41'),
+(194, 7, 20, 3, '2026-01-04 08:53:41'),
+(195, 7, 24, 3, '2026-01-04 08:53:41'),
+(196, 7, 12, 3, '2026-01-04 08:53:41'),
+(197, 7, 19, 3, '2026-01-04 08:53:41'),
+(198, 7, 26, 3, '2026-01-04 08:53:41');
 
 -- --------------------------------------------------------
 
@@ -838,10 +1025,25 @@ ALTER TABLE `events`
   ADD KEY `idx_category` (`category`);
 
 --
+-- Indexes for table `event_contests`
+--
+ALTER TABLE `event_contests`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_event_id` (`event_id`);
+
+--
 -- Indexes for table `expenses`
 --
 ALTER TABLE `expenses`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `filing_candidacy_periods`
+--
+ALTER TABLE `filing_candidacy_periods`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_active` (`is_active`),
+  ADD KEY `idx_dates` (`start_date`,`end_date`);
 
 --
 -- Indexes for table `funds`
@@ -959,7 +1161,7 @@ ALTER TABLE `votes`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=231;
 
 --
 -- AUTO_INCREMENT for table `candidates`
@@ -971,12 +1173,18 @@ ALTER TABLE `candidates`
 -- AUTO_INCREMENT for table `elections`
 --
 ALTER TABLE `elections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `event_contests`
+--
+ALTER TABLE `event_contests`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
@@ -984,6 +1192,12 @@ ALTER TABLE `events`
 --
 ALTER TABLE `expenses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT for table `filing_candidacy_periods`
+--
+ALTER TABLE `filing_candidacy_periods`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `funds`
@@ -995,13 +1209,13 @@ ALTER TABLE `funds`
 -- AUTO_INCREMENT for table `masterlist`
 --
 ALTER TABLE `masterlist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=188;
 
 --
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `positions`
@@ -1031,7 +1245,7 @@ ALTER TABLE `user_activity_log`
 -- AUTO_INCREMENT for table `user_permissions`
 --
 ALTER TABLE `user_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=199;
 
 --
 -- AUTO_INCREMENT for table `votes`
@@ -1054,6 +1268,12 @@ ALTER TABLE `activity_logs`
 --
 ALTER TABLE `candidates`
   ADD CONSTRAINT `candidates_ibfk_1` FOREIGN KEY (`position_id`) REFERENCES `positions` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `event_contests`
+--
+ALTER TABLE `event_contests`
+  ADD CONSTRAINT `event_contests_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_permissions`

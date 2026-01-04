@@ -224,6 +224,13 @@ class EventsManager {
     openModal(eventId = null) {
         this.editingEventId = eventId;
         const modalTitle = document.getElementById('eventModalTitle');
+        
+        // Always reset contest counter and clear contests container when opening modal
+        window.contestCounter = 0;
+        const contestsContainer = document.getElementById('contestsContainer');
+        if (contestsContainer) {
+            contestsContainer.innerHTML = '';
+        }
 
         if (eventId) {
             // Edit existing event
@@ -247,6 +254,33 @@ class EventsManager {
                     document.getElementById('eventDurationType').value = 'single';
                     toggleDateInputs();
                 }
+                
+                // Handle contests (counter already reset above)
+                if (event.contests && event.contests.length > 0) {
+                    event.contests.forEach((contest, index) => {
+                        window.contestCounter++;
+                        const contestItem = document.createElement('div');
+                        contestItem.className = 'contest-item';
+                        contestItem.dataset.contestId = window.contestCounter;
+                        contestItem.innerHTML = `
+                            <div class="contest-item-header">
+                                <h4><i class="fas fa-trophy"></i> Contest</h4>
+                                <button type="button" class="remove-contest-btn" onclick="removeContest(${window.contestCounter})">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-file-alt"></i>
+                                <textarea name="contest_details[]" class="contest-details-input" placeholder="Contest Details" rows="4" required>${contest.contest_details || ''}</textarea>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-link"></i>
+                                <input type="url" name="registration_link[]" class="registration-link-input" placeholder="Registration Link (e.g., Google Forms, etc.)" value="${contest.registration_link || ''}" required>
+                            </div>
+                        `;
+                        contestsContainer.appendChild(contestItem);
+                    });
+                }
             }
         } else {
             // Add new event
@@ -256,6 +290,8 @@ class EventsManager {
             document.getElementById('eventTime').value = '09:00';
             document.getElementById('eventDurationType').value = 'single';
             toggleDateInputs();
+            document.getElementById('contestsContainer').innerHTML = '';
+            window.contestCounter = 0;
         }
 
         document.body.classList.add('modal-open');
@@ -269,23 +305,48 @@ class EventsManager {
         document.getElementById('eventForm').reset();
         document.getElementById('eventDurationType').value = 'single';
         toggleDateInputs();
+        document.getElementById('contestsContainer').innerHTML = '';
+        window.contestCounter = 0;
     }
 
     async saveEvent() {
-        const durationType = document.getElementById('eventDurationType').value;
-        const eventData = {
-            name: document.getElementById('eventName').value,
-            date: document.getElementById('eventDate').value,
-            location: document.getElementById('eventLocation').value,
-            description: document.getElementById('eventDescription').value,
-            status: document.getElementById('eventStatus').value,
-            time: document.getElementById('eventTime').value || "09:00",
-            category: document.getElementById('eventCategory').value,
-            is_multi_day: durationType === 'multiple',
-            end_date: durationType === 'multiple' ? document.getElementById('eventEndDate').value : null
-        };
-
+        const saveButton = document.querySelector('#eventModalOverlay .modal-footer button[type="submit"]');
+        const originalButtonText = saveButton ? saveButton.innerHTML : '';
+        
+        if (saveButton) {
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        }
+        
         try {
+            const durationType = document.getElementById('eventDurationType').value;
+            
+            const contests = [];
+            const contestItems = document.querySelectorAll('.contest-item');
+            contestItems.forEach(item => {
+                const details = item.querySelector('.contest-details-input').value.trim();
+                const link = item.querySelector('.registration-link-input').value.trim();
+                if (details && link) {
+                    contests.push({
+                        contest_details: details,
+                        registration_link: link
+                    });
+                }
+            });
+            
+            const eventData = {
+                name: document.getElementById('eventName').value,
+                date: document.getElementById('eventDate').value,
+                location: document.getElementById('eventLocation').value,
+                description: document.getElementById('eventDescription').value,
+                status: document.getElementById('eventStatus').value,
+                time: document.getElementById('eventTime').value || "09:00",
+                category: document.getElementById('eventCategory').value,
+                is_multi_day: durationType === 'multiple',
+                end_date: durationType === 'multiple' ? document.getElementById('eventEndDate').value : null,
+                contests: contests
+            };
+
             let url, method;
             
             if (this.editingEventId) {
@@ -312,7 +373,6 @@ class EventsManager {
                 await this.loadEvents();
                 this.updateSummaryCards();
                 this.displayEvents();
-                // Small delay to ensure modal is closed before showing success
                 setTimeout(() => this.showSuccessModal(), 100);
             } else {
                 alert('Error: ' + result.error);
@@ -320,6 +380,11 @@ class EventsManager {
         } catch (error) {
             console.error('Error saving event:', error);
             alert('An error occurred while saving the event');
+        } finally {
+            if (saveButton) {
+                saveButton.disabled = false;
+                saveButton.innerHTML = originalButtonText;
+            }
         }
     }
 

@@ -272,6 +272,7 @@ function openElectionModal(election = null) {
     title.textContent = 'Add New Election';
     form.reset();
     editingElectionId = null;
+    loadElections();
   }
 
   modal.classList.add('show');
@@ -315,6 +316,9 @@ async function startElection(id) {
   const election = elections.find(e => e.id === id);
   if (!election) return;
   
+  const startButton = document.querySelector(`button[onclick="startElection(${id})"]`);
+  const originalButtonHTML = startButton ? startButton.innerHTML : '';
+  
   const details = `
     <p><strong>Election:</strong> ${election.title}</p>
     <p><strong>Action:</strong> Students will be able to vote immediately</p>
@@ -326,6 +330,20 @@ async function startElection(id) {
     'Are you sure you want to start this election?',
     details,
     async () => {
+      const okBtn = document.getElementById('confirmOkBtn');
+      const originalOkBtnText = okBtn ? okBtn.innerHTML : '';
+      
+      if (startButton) {
+        startButton.disabled = true;
+        startButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        startButton.style.opacity = '0.6';
+      }
+      
+      if (okBtn) {
+        okBtn.disabled = true;
+        okBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+      }
+      
       try {
         const response = await fetch('../api/elections/update_status.php', {
           method: 'POST',
@@ -336,14 +354,33 @@ async function startElection(id) {
         const result = await response.json();
         
         if (result.success) {
+          closeConfirmModal();
           showNotification('success', 'Election Started!', `"${election.title}" is now active. Students can cast their votes.`);
           loadElections();
         } else {
           showNotification('error', 'Failed to Start', result.error || 'Could not start the election.');
+          if (okBtn) {
+            okBtn.disabled = false;
+            okBtn.innerHTML = originalOkBtnText;
+          }
+          if (startButton) {
+            startButton.disabled = false;
+            startButton.innerHTML = originalButtonHTML;
+            startButton.style.opacity = '1';
+          }
         }
       } catch (error) {
         console.error('Error starting election:', error);
         showNotification('error', 'Error', 'An unexpected error occurred.');
+        if (okBtn) {
+          okBtn.disabled = false;
+          okBtn.innerHTML = originalOkBtnText;
+        }
+        if (startButton) {
+          startButton.disabled = false;
+          startButton.innerHTML = originalButtonHTML;
+          startButton.style.opacity = '1';
+        }
       }
     }
   );
@@ -486,39 +523,75 @@ async function deleteElection(id) {
 document.getElementById('electionForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   
-  const formData = new FormData(this);
-  const data = {
-    title: formData.get('title'),
-    description: formData.get('description'),
-    start_date: formData.get('start_date'),
-    end_date: formData.get('end_date')
-  };
-
-  if (!data.start_date || !data.end_date) {
-    showNotification('error', 'Missing Required Fields', 'Please fill in both start date and end date.');
-    return;
-  }
-
-  const startDate = new Date(data.start_date);
-  const endDate = new Date(data.end_date);
-  const now = new Date();
+  const saveButton = document.querySelector('#electionModalOverlay .btn-save');
+  const originalButtonText = saveButton ? saveButton.innerHTML : '';
   
-  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-    showNotification('error', 'Invalid Date Format', 'Please enter valid dates for start and end dates.');
-    return;
+  if (saveButton) {
+    saveButton.disabled = true;
+    saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
   }
   
-  if (startDate < now) {
-    showNotification('error', 'Invalid Start Date', 'The election start date cannot be in the past. Please select a current or future date.');
-    return;
-  }
-  
-  if (endDate <= startDate) {
-    showNotification('error', 'Invalid Dates', 'End date must be after start date.');
-    return;
-  }
-
   try {
+    const formData = new FormData(this);
+    const data = {
+      title: formData.get('title'),
+      description: formData.get('description'),
+      start_date: formData.get('start_date'),
+      end_date: formData.get('end_date')
+    };
+
+    if (!data.start_date || !data.end_date) {
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalButtonText;
+      }
+      showNotification('error', 'Missing Required Fields', 'Please fill in both start date and end date.');
+      return;
+    }
+
+    const startDate = new Date(data.start_date);
+    const endDate = new Date(data.end_date);
+    const now = new Date();
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalButtonText;
+      }
+      showNotification('error', 'Invalid Date Format', 'Please enter valid dates for start and end dates.');
+      return;
+    }
+    
+    if (startDate < now) {
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalButtonText;
+      }
+      showNotification('error', 'Invalid Start Date', 'The election start date cannot be in the past. Please select a current or future date.');
+      return;
+    }
+    
+    if (endDate <= startDate) {
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalButtonText;
+      }
+      showNotification('error', 'Invalid Dates', 'End date must be after start date.');
+      return;
+    }
+
+    if (!editingElectionId) {
+      const activeElection = elections.find(e => e.status === 'active');
+      if (activeElection) {
+        if (saveButton) {
+          saveButton.disabled = false;
+          saveButton.innerHTML = originalButtonText;
+        }
+        showNotification('error', 'Active Election Exists', `Cannot create a new election while there is an active election "${activeElection.title}". Please close the current active election first.`);
+        return;
+      }
+    }
+
     const url = editingElectionId 
       ? '../api/elections/update.php' 
       : '../api/elections/create.php';
@@ -548,6 +621,11 @@ document.getElementById('electionForm').addEventListener('submit', async functio
   } catch (error) {
     console.error('Error saving election:', error);
     showNotification('error', 'Error', 'An unexpected error occurred while saving the election.');
+  } finally {
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.innerHTML = originalButtonText;
+    }
   }
 });
 

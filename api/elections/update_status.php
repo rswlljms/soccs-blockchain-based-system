@@ -4,6 +4,7 @@ header('Content-Type: application/json');
 require_once '../../includes/database.php';
 require_once '../../includes/activity_logger.php';
 require_once '../../includes/auth_check.php';
+require_once '../../includes/email_config.php';
 
 if (!hasPermission('manage_election_status')) {
     echo json_encode([
@@ -39,12 +40,15 @@ if (!in_array($status, $validStatuses)) {
 }
 
 try {
-    $getElectionQuery = "SELECT title FROM elections WHERE id = :id";
+    $getElectionQuery = "SELECT title, description, start_date, end_date FROM elections WHERE id = :id";
     $getElectionStmt = $conn->prepare($getElectionQuery);
     $getElectionStmt->bindParam(':id', $id);
     $getElectionStmt->execute();
     $election = $getElectionStmt->fetch(PDO::FETCH_ASSOC);
     $electionTitle = $election['title'] ?? 'Election #' . $id;
+    $electionDescription = $election['description'] ?? null;
+    $electionStartDate = $election['start_date'] ?? null;
+    $electionEndDate = $election['end_date'] ?? null;
     
     $transactionHash = null;
     
@@ -117,6 +121,22 @@ try {
             logElectionActivity($_SESSION['user_id'], $action, $description);
         }
         
+        $emailService = null;
+        $students = [];
+        $emailData = null;
+        if ($status === 'active' && $electionStartDate && $electionEndDate) {
+            $emailService = new EmailService();
+            $students = $emailService->getActiveStudentEmails();
+            if (!empty($students)) {
+                $emailData = $emailService->getElectionNotificationContent(
+                    $electionTitle,
+                    $electionDescription,
+                    $electionStartDate,
+                    $electionEndDate
+                );
+            }
+        }
+        
         $response = [
             'success' => true,
             'message' => 'Election status updated successfully'
@@ -127,6 +147,27 @@ try {
         }
         
         echo json_encode($response);
+        
+        if (ob_get_level()) {
+            ob_end_flush();
+        }
+        flush();
+        
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+        
+        ignore_user_abort(true);
+        set_time_limit(300);
+        
+        if ($status === 'active' && !empty($students) && $emailData) {
+            try {
+                $result = $emailService->sendBulkEmail($students, $emailData['subject'], $emailData['content']);
+                error_log("Election notification emails sent: " . json_encode($result));
+            } catch (Exception $e) {
+                error_log("Failed to send election notification emails: " . $e->getMessage());
+            }
+        }
     } else {
         echo json_encode([
             'success' => false,

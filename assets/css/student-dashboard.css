@@ -1856,3 +1856,261 @@ html {
     transform: translateY(0);
   }
 }
+
+/* === FILING CANDIDACY FLOATING BUTTON === */
+.filing-candidacy-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(153, 51, 255, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999;
+  transition: all 0.3s ease;
+  font-family: 'Work Sans', sans-serif;
+}
+
+.filing-candidacy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(153, 51, 255, 0.5);
+  background: var(--primary-hover);
+}
+
+.filing-candidacy-btn i {
+  font-size: 20px;
+}
+
+.filing-candidacy-btn span {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .filing-candidacy-btn {
+    bottom: 20px;
+    right: 20px;
+    padding: 14px 20px;
+    font-size: 14px;
+  }
+  
+  .filing-candidacy-btn span {
+    display: none;
+  }
+  
+  .filing-candidacy-btn i {
+    font-size: 24px;
+  }
+}
+
+/* === FILING CANDIDACY MODAL === */
+#filingCandidacyModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: none;
+}
+
+.filing-candidacy-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 1001;
+  max-width: 700px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filing-candidacy-modal .modal-header {
+  background: var(--primary-gradient);
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.filing-candidacy-modal .modal-header h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.filing-candidacy-modal .modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.filing-candidacy-modal .modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.filing-candidacy-modal .modal-content {
+  padding: 32px;
+  max-height: calc(90vh - 120px);
+  overflow-y: auto;
+}
+
+.filing-candidacy-info {
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.filing-candidacy-info h4 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.filing-candidacy-info .announcement-text {
+  background: var(--secondary-color);
+  padding: 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  border-left: 4px solid #9933ff;
+  white-space: pre-wrap;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.filing-candidacy-info .info-section {
+  margin-bottom: 24px;
+}
+
+.filing-candidacy-info .info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.filing-candidacy-info .info-item i {
+  color: #9933ff;
+  margin-top: 4px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.filing-candidacy-info .info-item .info-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 120px;
+}
+
+.filing-candidacy-info .info-item .info-value {
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.filing-candidacy-info .form-link-container {
+  margin-top: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(153, 51, 255, 0.1), rgba(75, 0, 130, 0.1));
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(153, 51, 255, 0.2);
+  text-align: center;
+}
+
+.filing-candidacy-info .form-link-container a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary-gradient);
+  color: white;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(153, 51, 255, 0.3);
+}
+
+.filing-candidacy-info .form-link-container a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 51, 255, 0.4);
+  background: var(--primary-hover);
+}
+
+.filing-candidacy-info .form-link-container a i {
+  font-size: 18px;
+}
+
+.filing-candidacy-info .positions-list {
+  margin-top: 16px;
+  padding-left: 20px;
+}
+
+.filing-candidacy-info .positions-list li {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .filing-candidacy-modal .modal-content {
+    padding: 24px;
+  }
+  
+  .filing-candidacy-info .announcement-text {
+    padding: 16px;
+    font-size: 14px;
+  }
+  
+  .filing-candidacy-info .info-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .filing-candidacy-info .info-item .info-label {
+    min-width: auto;
+  }
+  
+  .filing-candidacy-info .form-link-container {
+    padding: 20px;
+  }
+  
+  .filing-candidacy-info .form-link-container a {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px;
+  }
+}

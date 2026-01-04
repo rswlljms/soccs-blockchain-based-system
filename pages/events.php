@@ -78,6 +78,121 @@ include('../components/sidebar.php');
         .form-row .input-group.flex-2 { flex: 2; }
         .form-row .input-group.flex-1 { flex: 1; }
         #endDateRow { transition: all 0.3s ease; }
+        .input-group textarea {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: #fff;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #9933ff;
+            box-shadow: 0 0 0 3px rgba(153, 51, 255, 0.1);
+        }
+        .contests-section {
+            margin-top: 24px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+        .contests-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .contests-section-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .contests-section-header h3 i {
+            color: #f59e0b;
+        }
+        .add-contest-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .add-contest-btn:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+        }
+        .contests-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .contest-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+        }
+        .contest-item:hover {
+            border-color: #9933ff;
+            box-shadow: 0 2px 8px rgba(153, 51, 255, 0.1);
+        }
+        .contest-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .contest-item-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .contest-item-header h4 i {
+            color: #f59e0b;
+        }
+        .remove-contest-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .remove-contest-btn:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
     </style>
     <script>
         const userPermissions = {
@@ -98,6 +213,42 @@ include('../components/sidebar.php');
                 endDateInput.value = '';
             }
         }
+        
+        window.contestCounter = 0;
+        
+        window.contestCounter = 0;
+        
+        window.addContest = function() {
+            window.contestCounter++;
+            const contestsContainer = document.getElementById('contestsContainer');
+            const contestItem = document.createElement('div');
+            contestItem.className = 'contest-item';
+            contestItem.dataset.contestId = window.contestCounter;
+            contestItem.innerHTML = `
+                <div class="contest-item-header">
+                    <h4><i class="fas fa-trophy"></i> Contest</h4>
+                    <button type="button" class="remove-contest-btn" onclick="removeContest(${window.contestCounter})">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-file-alt"></i>
+                    <textarea name="contest_details[]" class="contest-details-input" placeholder="Contest Details" rows="4" required></textarea>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-link"></i>
+                    <input type="url" name="registration_link[]" class="registration-link-input" placeholder="Registration Link (e.g., Google Forms, etc.)" required>
+                </div>
+            `;
+            contestsContainer.appendChild(contestItem);
+        };
+        
+        window.removeContest = function(id) {
+            const contestItem = document.querySelector(`.contest-item[data-contest-id="${id}"]`);
+            if (contestItem) {
+                contestItem.remove();
+            }
+        };
     </script>
 </head>
 <body>
@@ -252,6 +403,18 @@ include('../components/sidebar.php');
                     <option value="completed">Completed</option>
                     <option value="archived">Archived</option>
                 </select>
+            </div>
+            
+            <div class="contests-section">
+                <div class="contests-section-header">
+                    <h3><i class="fas fa-trophy"></i> Contests</h3>
+                    <button type="button" class="add-contest-btn" onclick="window.addContest()">
+                        <i class="fas fa-plus"></i> Add Contest
+                    </button>
+                </div>
+                <div id="contestsContainer" class="contests-container">
+                    <!-- Contest items will be added here dynamically -->
+                </div>
             </div>
         </form>
         <div class="modal-footer">

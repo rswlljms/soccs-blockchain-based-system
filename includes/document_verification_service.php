@@ -61,15 +61,27 @@ class DocumentVerificationService {
         $studentIdImagePath = $reg['student_id_image'] ?? null;
         $corFilePath = $reg['cor_file'] ?? null;
 
-        $qualityScore = $this->estimateImageQuality($studentIdImagePath);
-        $tamperScore = $this->estimateTamperProbability($studentIdImagePath, $corFilePath);
+        // Check if at least one document is provided
+        if (!$studentIdImagePath && !$corFilePath) {
+            return [
+                'overall_result' => 'invalid',
+                'reason' => 'No document found. Please upload either Student ID image or COR.'
+            ];
+        }
+
+        // Determine which document to use (prioritize COR if both exist)
+        $documentPath = $corFilePath ? $corFilePath : $studentIdImagePath;
+        $isStudentIdUpload = !empty($studentIdImagePath) && empty($corFilePath);
+
+        $qualityScore = $this->estimateImageQuality($documentPath);
+        $tamperScore = $this->estimateTamperProbability(null, $documentPath);
 
         // Real OCR via OCR.Space
         error_log("Starting verification for student: {$studentId}");
-        $ocrId = $this->runOcrSpace($studentIdImagePath);
-        $ocrCor = $this->runOcrSpace($corFilePath);
-        error_log("OCR ID text length: " . strlen($ocrId['text']) . ", confidence: " . $ocrId['confidence']);
-        error_log("OCR COR text length: " . strlen($ocrCor['text']) . ", confidence: " . $ocrCor['confidence']);
+        error_log("Document type: " . ($isStudentIdUpload ? 'Student ID' : 'COR'));
+        error_log("Document path: {$documentPath}");
+        $ocrResult = $this->runOcrSpace($documentPath);
+        error_log("OCR text length: " . strlen($ocrResult['text']) . ", confidence: " . $ocrResult['confidence']);
 
         // Build expected fields (only: full name, student number, course)
         $fullNameParts = array_filter([
@@ -81,25 +93,25 @@ class DocumentVerificationService {
         $expectedId = (string)$reg['id'];
         $expectedCourse = trim((string)($reg['course'] ?? ''));
 
-        // Simplified verification: 
-        // 1. Name (without middle name) must appear in Student ID OR COR
-        // 2. Student ID number must appear in COR
+        // For Student ID uploads: Only check student ID number (name validation already done in masterlist check)
+        // For COR uploads: Check both name and student ID number
         
         // Create name without middle name for matching
         $firstName = trim($reg['first_name']);
         $lastName = trim($reg['last_name']);
         $nameWithoutMiddle = $firstName . ' ' . $lastName;
         
-        // Check name match in Student ID or COR (disregard middle name)
-        $nameMatchId = $this->fuzzyContains($ocrId['text'], $nameWithoutMiddle);
-        $nameMatchCor = $this->fuzzyContains($ocrCor['text'], $nameWithoutMiddle);
+        // Check student ID number in document (required for both)
+        $studentNumberMatch = $this->fuzzyContains($ocrResult['text'], $expectedId);
         
-        // Check student ID number in COR (required)
-        $studentNumberMatchCor = $this->fuzzyContains($ocrCor['text'], $expectedId);
-        
-        // Core matches: name found in any doc AND student ID found in COR
-        $nameMatch = ($nameMatchId || $nameMatchCor);
-        $studentNumberMatch = $studentNumberMatchCor; // Must be in COR
+        // For Student ID uploads: Only validate student ID number (name already validated against masterlist)
+        // For COR uploads: Validate both name and student ID
+        if ($isStudentIdUpload) {
+            $nameMatch = true; // Name already validated against masterlist in registration step
+        } else {
+            // Check name match in COR (disregard middle name)
+            $nameMatch = $this->fuzzyContains($ocrResult['text'], $nameWithoutMiddle);
+        }
         
         // For DB compatibility
         $courseMatch = 1;
@@ -109,53 +121,50 @@ class DocumentVerificationService {
         $failedDocument = null;
 
         // Debug: Log what we're looking for vs what we found
-        error_log("Looking for name (no middle): '{$nameWithoutMiddle}' in ID text: '" . substr($ocrId['text'], 0, 100) . "'");
-        error_log("Looking for name (no middle): '{$nameWithoutMiddle}' in COR text: '" . substr($ocrCor['text'], 0, 100) . "'");
-        error_log("Looking for Student ID: '{$expectedId}' in COR text: '" . substr($ocrCor['text'], 0, 100) . "'");
-        error_log("Name match ID: " . ($nameMatchId ? 'YES' : 'NO') . ", COR: " . ($nameMatchCor ? 'YES' : 'NO'));
-        error_log("Student ID match in COR: " . ($studentNumberMatchCor ? 'YES' : 'NO'));
+        $documentType = $isStudentIdUpload ? 'Student ID' : 'COR';
+        error_log("Looking for name (no middle): '{$nameWithoutMiddle}' in {$documentType} text: '" . substr($ocrResult['text'], 0, 100) . "'");
+        error_log("Looking for Student ID: '{$expectedId}' in {$documentType} text: '" . substr($ocrResult['text'], 0, 100) . "'");
+        error_log("Name match {$documentType}: " . ($nameMatch ? 'YES' : 'NO'));
+        error_log("Student ID match in {$documentType}: " . ($studentNumberMatch ? 'YES' : 'NO'));
 
         // Check if OCR completely failed (no text extracted)
-        $idTextLength = strlen($ocrId['text']);
-        $corTextLength = strlen($ocrCor['text']);
-        if ($idTextLength < 10 && $corTextLength < 10) {
+        $textLength = strlen($ocrResult['text']);
+        if ($textLength < 10) {
             $overall = 'mismatch';
-            $reason = 'Documents could not be read. Please upload clearer images.';
-            $reasons = ['OCR failed to extract text from documents'];
-            $failedDocument = 'both';
+            $reason = $documentType . ' could not be read. Please upload a clearer image.';
+            $reasons = ['OCR failed to extract text from ' . $documentType];
+            $failedDocument = $isStudentIdUpload ? 'student_id' : 'cor';
         }
-        
-        // Additional check: if one document has very little text, it's likely wrong
-        if (($idTextLength < 20 && $corTextLength < 20) || 
-            ($idTextLength < 15 || $corTextLength < 15)) {
+        // Additional check: if document has very little text, it's likely wrong
+        else if ($textLength < 20) {
             $overall = 'mismatch';
-            $reason = 'Documents appear to be unclear or incorrect. Please upload proper Student ID and Certificate of Registration.';
-            $reasons = ['Documents contain insufficient readable text'];
-            $failedDocument = 'both';
+            $reason = $documentType . ' appears to be unclear or incorrect. Please upload a proper document.';
+            $reasons = [$documentType . ' contains insufficient readable text'];
+            $failedDocument = $isStudentIdUpload ? 'student_id' : 'cor';
         }
-        // Simple decision: if BOTH name and ID match anywhere, approve
+        // Simple decision: if student ID matches (and name if COR), approve
         else if ($nameMatch && $studentNumberMatch) {
             $overall = 'valid';
-            $reason = 'Name and student ID verified';
+            $reason = $isStudentIdUpload ? 'Student ID verified' : 'Name and student ID verified in COR';
         } else {
             $overall = 'mismatch';
-            if (!$nameMatch) { $reasons[] = 'Name not found in Student ID or COR'; }
-            if (!$studentNumberMatch) { $reasons[] = 'Student ID number not found in COR'; }
-            $failedDocument = 'both';
+            if (!$isStudentIdUpload && !$nameMatch) { $reasons[] = 'Name not found in COR'; }
+            if (!$studentNumberMatch) { $reasons[] = 'Student ID number not found in ' . $documentType; }
+            $failedDocument = $isStudentIdUpload ? 'student_id' : 'cor';
             $reason = implode('; ', $reasons);
         }
 
         // Final safety check: if no text was extracted at all, always reject
-        if ($idTextLength < 5 && $corTextLength < 5) {
+        if ($textLength < 5) {
             $overall = 'mismatch';
-            $reason = 'Documents could not be read. Please upload clearer images.';
-            $reasons = ['OCR failed to extract text from documents'];
-            $failedDocument = 'both';
+            $reason = $documentType . ' could not be read. Please upload a clearer image.';
+            $reasons = ['OCR failed to extract text from ' . $documentType];
+            $failedDocument = $isStudentIdUpload ? 'student_id' : 'cor';
         }
 
         // Debug: Log final decision
         error_log("FINAL DECISION: {$overall} - {$reason}");
-        error_log("Text lengths - ID: {$idTextLength}, COR: {$corTextLength}");
+        error_log("Text length - {$documentType}: {$textLength}");
         error_log("Name match: " . ($nameMatch ? 'YES' : 'NO') . ", Student ID match: " . ($studentNumberMatch ? 'YES' : 'NO'));
 
         return [
@@ -231,7 +240,7 @@ class DocumentVerificationService {
 
     private function estimateTamperProbability($idPath, $corPath) {
         // Placeholder heuristic: very small files or uncommon extensions -> higher tamper suspicion
-        $paths = array_filter([$idPath, $corPath]);
+        $paths = array_filter([$corPath]);
         if (empty($paths)) return 1.0;
         $base = 0.2;
         foreach ($paths as $p) {

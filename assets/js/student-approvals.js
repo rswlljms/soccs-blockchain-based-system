@@ -41,7 +41,6 @@ async function loadStudentRegistrations() {
                 section: 'A',
                 age: 18,
                 gender: 'female',
-                studentIdImage: '../assets/img/logo.png', // Using logo as placeholder
                 status: 'pending',
                 submittedAt: '2024-12-17 10:30:00'
             },
@@ -55,7 +54,6 @@ async function loadStudentRegistrations() {
                 section: 'B',
                 age: 19,
                 gender: 'male',
-                studentIdImage: '../assets/img/logo.png', // Using logo as placeholder
                 status: 'pending',
                 submittedAt: '2024-12-17 11:15:00'
             },
@@ -69,7 +67,6 @@ async function loadStudentRegistrations() {
                 section: 'A',
                 age: 20,
                 gender: 'female',
-                studentIdImage: '../assets/img/logo.png', // Using logo as placeholder
                 status: 'approved',
                 submittedAt: '2024-12-17 09:45:00'
             },
@@ -83,7 +80,6 @@ async function loadStudentRegistrations() {
                 section: 'C',
                 age: 18,
                 gender: 'male',
-                studentIdImage: '../assets/img/logo.png', // Using logo as placeholder
                 status: 'rejected',
                 submittedAt: '2024-12-17 08:20:00'
             }
@@ -118,7 +114,6 @@ async function loadStudentRegistrations() {
                 section: student.section,
                 age: student.age,
                 gender: student.gender,
-                studentIdImage: '../' + student.student_id_image,
                 status: student.approval_status,
                 submittedAt: student.created_at
             }));
@@ -151,7 +146,7 @@ function renderApprovalsTable(students = pendingStudents) {
     if (students.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="8" style="text-align: center; padding: 2rem;">
+                <td colspan="7" style="text-align: center; padding: 2rem;">
                     No student registrations found
                 </td>
             </tr>
@@ -168,13 +163,6 @@ function renderApprovalsTable(students = pendingStudents) {
             <td>${student.course}</td>
             <td>${student.yearLevel}${getYearSuffix(student.yearLevel)} Year</td>
             <td>${student.section}</td>
-            <td>
-                <img src="${student.studentIdImage}" 
-                     alt="Student ID" 
-                     class="student-id-image" 
-                     onclick="showImageModal('${student.studentIdImage}')"
-                     onerror="this.src='../assets/img/logo.png'">
-            </td>
             <td>
                 <span class="status-badge ${student.status}">
                     ${student.status.charAt(0).toUpperCase() + student.status.slice(1)}

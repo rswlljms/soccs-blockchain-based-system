@@ -357,6 +357,90 @@
   color: #6b21a8;
 }
 
+.event-description {
+  color: var(--calendar-text-secondary);
+  font-size: 14px;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.contest-details {
+  margin-top: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-left: 3px solid #f59e0b;
+  border-radius: 6px;
+}
+
+.contest-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #92400e;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.contest-header i {
+  font-size: 16px;
+}
+
+.contest-details p {
+  color: #78350f;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.registration-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.registration-link-btn:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.4);
+}
+
+.registration-link-btn:active {
+  transform: translateY(0);
+}
+
+.registration-link-btn i {
+  font-size: 12px;
+}
+
+.contests-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contest-item-display {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.contest-item-display .contest-details {
+  margin-bottom: 12px;
+}
+
 
 
 /* Responsive Design */

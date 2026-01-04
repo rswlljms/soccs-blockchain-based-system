@@ -29,6 +29,7 @@ class EventsCalendar {
           location: event.location,
           category: event.category,
           description: event.description,
+          contests: event.contests || [],
           is_multi_day: event.is_multi_day,
           end_date: event.end_date
         }));
@@ -222,6 +223,29 @@ class EventsCalendar {
           durationInfo = `<div class="event-duration"><i class="fas fa-calendar-week"></i> ${days} days event</div>`;
         }
         
+        let contestSection = '';
+        if (event.contests && event.contests.length > 0) {
+          contestSection = '<div class="contests-list">';
+          event.contests.forEach((contest, index) => {
+            contestSection += `
+              <div class="contest-item-display">
+                <div class="contest-details">
+                  <div class="contest-header">
+                    <i class="fas fa-trophy"></i>
+                    <strong>Contest Details</strong>
+                  </div>
+                  <p>${contest.contest_details}</p>
+                </div>
+                <a href="${contest.registration_link}" target="_blank" rel="noopener noreferrer" class="registration-link-btn">
+                  <i class="fas fa-external-link-alt"></i>
+                  Register Now
+                </a>
+              </div>
+            `;
+          });
+          contestSection += '</div>';
+        }
+        
         eventCard.innerHTML = `
           <div class="event-header">
             <div class="event-time">${event.time}</div>
@@ -232,7 +256,9 @@ class EventsCalendar {
             <i class="fas fa-map-marker-alt"></i>
             ${event.location}
           </div>
+          ${event.description ? `<div class="event-description">${event.description}</div>` : ''}
           <div class="event-tag ${event.category}">${event.category}</div>
+          ${contestSection}
         `;
         eventsList.appendChild(eventCard);
       });

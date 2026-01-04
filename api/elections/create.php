@@ -76,6 +76,19 @@ if ($end_timestamp <= $start_timestamp) {
 }
 
 try {
+    $checkActiveQuery = "SELECT id, title FROM elections WHERE status = 'active' LIMIT 1";
+    $checkStmt = $conn->prepare($checkActiveQuery);
+    $checkStmt->execute();
+    $activeElection = $checkStmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($activeElection) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Cannot create a new election while there is an active election. Please close the current active election "' . htmlspecialchars($activeElection['title']) . '" first.'
+        ]);
+        exit;
+    }
+    
     $query = "INSERT INTO elections (title, description, start_date, end_date, status) 
               VALUES (:title, :description, :start_date, :end_date, 'upcoming')";
     
