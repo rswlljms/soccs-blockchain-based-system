@@ -160,24 +160,31 @@ Configure appropriate rewrite rules for PHP routing.
 
 ### Environment Variables
 
-Create a `.env` file in the root directory (if using environment-based configuration):
+Create a `.env` file in the root directory with your credentials:
 
 ```env
-DB_HOST=localhost
-DB_USER=root
-DB_PASS=
-DB_NAME=soccs_financial_management
+# OCR Space API Key (for document verification)
+OCR_SPACE_API_KEY=your_ocr_space_api_key_here
 
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
+# SMTP Configuration (Gmail)
+smtp_username=your_email@gmail.com
+smtp_password=your_gmail_app_password_here
+
+# Blockchain Service URL
+BLOCKCHAIN_URL=http://localhost:3001
 ```
+
+**Important**: Never commit `.env` files to version control. See `docs/ENVIRONMENT_SETUP.md` for detailed configuration instructions.
 
 ### Blockchain Configuration
 
 1. Deploy smart contracts following `blockchain/DEPLOYMENT_GUIDE.md`
-2. Update contract addresses in `blockchain/blockchain-signer/`
+2. Create `.env` file in `blockchain/blockchain-signer/` with:
+   ```env
+   CONTRACT_ADDRESS=your_deployed_contract_address
+   INFURA_URL=https://sepolia.infura.io/v3/your_project_id
+   PRIVATE_KEY=your_wallet_private_key
+   ```
 3. Configure RPC endpoints in blockchain signer configuration
 
 ## 📖 Documentation
@@ -193,6 +200,7 @@ Comprehensive documentation is available in the `docs/` directory:
 - **[Event Management](docs/EVENT_MANAGEMENT_GUIDE.md)** - Event system documentation
 - **[Filing Candidacy](docs/FILING_CANDIDACY_GUIDE.md)** - Candidate registration guide
 - **[Activity Log System](docs/ACTIVITY_LOG_SYSTEM.md)** - Audit trail documentation
+- **[Environment Setup](docs/ENVIRONMENT_SETUP.md)** - Environment configuration guide
 - **[Blockchain Deployment](blockchain/DEPLOYMENT_GUIDE.md)** - Smart contract deployment
 
 ## 🎮 Usage
