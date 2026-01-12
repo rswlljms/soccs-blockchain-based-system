@@ -6,6 +6,8 @@ composer.lock
 /uploads/receipts/*
 /uploads/documents/*
 /uploads/student-ids/*
+/uploads/temp/*
+/uploads/candidates/*
 !uploads/receipts/.gitkeep
 !uploads/documents/.gitkeep
 !uploads/student-ids/.gitkeep
