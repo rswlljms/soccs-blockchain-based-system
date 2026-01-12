@@ -283,11 +283,16 @@ Contributions are welcome! Please follow these guidelines:
 
 ## 📝 License
 
-This project is proprietary software developed for the Student Organization of the College of Computer Studies (SOCCS) at LSPU – Santa Cruz Campus.
+This is a capstone project developed for the Student Organization of the College of Computer Studies (SOCCS) at LSPU – Santa Cruz Campus.
 
 ## 👥 Authors
 
-- Development Team - SOCCS Technical Committee
+**Developer:**
+- Roswell James Vitaliz
+
+**Documentation:**
+- Fhammiell Noguera
+- Christine Nicole Valdellon
 
 ## 🙏 Acknowledgments
 
@@ -295,13 +300,9 @@ This project is proprietary software developed for the Student Organization of t
 - College of Computer Studies
 - SOCCS Organization Members
 
-## 📞 Support
-
-For technical support or inquiries, please contact the SOCCS development team.
-
 ---
 
 **Version**: 1.0.0  
-**Last Updated**: December 2024  
-**Status**: Production Ready
+**Last Updated**: January 2026  
+**Project Type**: Capstone Project
 
