@@ -291,8 +291,8 @@ This is a capstone project developed for the Student Organization of the College
 - Roswell James Vitaliz
 
 **Documentation:**
-- Fhammiell Noguera
 - Christine Nicole Valdellon
+- Fhammiell Noguera
 
 ## 🙏 Acknowledgments
 
