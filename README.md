@@ -68,7 +68,7 @@ SOCCSChain is a modern web application that leverages blockchain technology to p
 ### Blockchain
 - **Solidity** - Smart contract development
 - **Web3.js** - Blockchain interaction
-- **Ethereum** - Blockchain network
+- **Sepolia Testnet (Ethereum)** - Blockchain network
 - **MetaMask** - Wallet integration
 
 ### Development Tools
